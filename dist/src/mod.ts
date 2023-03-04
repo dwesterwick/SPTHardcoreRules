@@ -46,9 +46,6 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
 	
     public preAkiLoad(container: DependencyContainer): void 
     {
-        if (!modConfig.enabled)
-            return;
-		
         this.logger = container.resolve<ILogger>("WinstonLogger");
         const staticRouterModService = container.resolve<StaticRouterModService>("StaticRouterModService");
         const dynamicRouterModService = container.resolve<DynamicRouterModService>("DynamicRouterModService");
@@ -89,28 +86,24 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
                     return output;
                 }
             }], "aki"
-        );*/
+        );
 		
         // Raid end
-        // Needed for updating container filters and Ragfair offers (until I find a better way of doing it)
+        // Needed for updating container filters
         staticRouterModService.registerStaticRouter(`StaticAkiRaidEnd${modName}`,
             [{
                 url: "/client/match/offline/end",
                 action: (url, info, sessionId, output) => 
                 {
                     this.updateSecureContainerRestrictions(sessionId, false);
-                    this.traderAssortGenerator.refreshRagfairOffers();
                     return output;
                 }
             }], "aki"
-        );
+        );*/
     }
 	
     public postDBLoad(container: DependencyContainer): void
     {
-        if (!modConfig.enabled)
-            return;
-		
         this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");		
         this.configServer = container.resolve<ConfigServer>("ConfigServer");		
         this.profileHelper = container.resolve<ProfileHelper>("ProfileHelper");		
@@ -127,6 +120,9 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.traderAssortGenerator = new TraderAssortGenerator(this.commonUtils, this.traderConfig, this.databaseTables, this.ragfairOfferGenerator, this.ragfairServer, this.ragfairOfferService);
         this.itemHelper = new ItemHelper(this.commonUtils, this.databaseTables);
 		
+        if (!modConfig.enabled)
+            return;
+        
         this.databaseTables.globals.config.RagFair.minUserLevel = modConfig.services.flea_market.min_level;
         if (!modConfig.services.flea_market.enabled)
             this.disableFleaMarket();
@@ -147,14 +143,21 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     public postAkiLoad(container: DependencyContainer): void
     {
         if (!modConfig.enabled)
+        {
+            this.commonUtils.logInfo("Mod disabled in config.json.");
             return;
+        }
 		
         this.traderAssortGenerator.refreshRagfairOffers();
     }
 	
     public onGameStart(sessionId): void
     {
-        this.updateScavTimer(sessionId);		
+        this.updateScavTimer(sessionId);
+
+        if (!modConfig.enabled)
+            return;
+        
         this.updateSecureContainerRestrictions(sessionId, false);
     }
 	
@@ -176,7 +179,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
             return;
         }
 		
-        if (modConfig.services.disable_scav_raids)
+        if (modConfig.enabled && modConfig.services.disable_scav_raids)
         {
             this.commonUtils.logInfo(`Increasing scav timer for sessionId=${sessionId}...`);
             this.databaseTables.globals.config.SavagePlayCooldown = 2147483647;

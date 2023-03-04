@@ -5,7 +5,7 @@ This mod is highly customizable, so you can change the configuration to match th
 * **services.flea_market.only_barter_offers**: if you've enabled the flea market, you can set this to *false* to disable all offers using currency.
 * **services.flea_market.min_level**: the minimum level you have to be in order to use the flea market. If you set this to *1* but disable the flea market, you can use the flea-market interface to browse trader offers, which is convenient. 
 * **services.disable_repairs**: this is a misnomer because it doesn't truely disable trader repairs, but it makes them prohibitively expensive. Repair kits are unaffected. 
-* **services.disable_insurance**: You'll still see the pre-raid insurance screen if this is enabled, but all items will be blacklisted from insurance. 
+* **services.disable_insurance**: You'll still see the pre-raid insurance screen if this is enabled, but all items will be blacklisted from insurance. In case you want to turn this off and on during a playthrough, this will not remove insurance for any items that were previously insured. 
 * **services.disable_post_raid_healing**: Disables Therapist's post-raid healing.
 * **services.disable_scav_raids**: Disables Scav raids.
 * **traders.enable_fence**: Allows you to remove all of Fence's offers. You can still sell items to Fence. 
@@ -21,6 +21,7 @@ The following items are whitelisted for trader offers by default:
 * All currency (you can exchange RUB for USD, etc. as much as you want)
 * All inventory containers (item cases, Scav junkboxes, etc.)
 * All special items (markers, signal jammers, etc.)
+* All maps
 
 The following items are whitelisted for putting in your secure container by default:
 * All keys and keycards

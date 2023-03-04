@@ -1,6 +1,6 @@
 {
 	"enabled": true,
-	"debug": true,
+	"debug": false,
 	"services": {
 		"flea_market": {
 				"enabled": false,
@@ -21,7 +21,8 @@
 				"543be5dd4bdc2deb348b4569",
 				"5795f317245977243854e041",
 				"5448bf274bdc2dfc2f8b456a",
-				"5447e0e74bdc2d3c308b4567"
+				"5447e0e74bdc2d3c308b4567",
+				"567849dd4bdc2d150f8b456e"
 			],
 			"items": []
 		}
