@@ -88,7 +88,7 @@ export class TraderAssortGenerator
         {
             const assort = this.databaseTables.traders[trader].assort;
 
-            // Ignore traders who don't sell anything (i.e. Lightkeeper as of making this)
+            // Ignore traders who don't sell anything (i.e. Lightkeeper)
             if ((assort === null) || (assort === undefined))
                 continue;
 			

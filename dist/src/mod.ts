@@ -24,7 +24,7 @@ import { LocaleService } from "@spt-aki/services/LocaleService";
 import { StaticRouterModService } from "@spt-aki/services/mod/staticRouter/StaticRouterModService";
 import { DynamicRouterModService } from "@spt-aki/services/mod/dynamicRouter/DynamicRouterModService";
 
-const modName = "Hardcore Rules";
+const modName = "SPTHardcoreRules";
 
 class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
 {
@@ -51,11 +51,11 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         const dynamicRouterModService = container.resolve<DynamicRouterModService>("DynamicRouterModService");
 		
         // Game start
-        // Needed to pass sessionId for disabling Scav runs and updating container filters
+        // Needed to pass sessionId for disabling Scav runs and updating container filters (to see which items have been inspected)
         staticRouterModService.registerStaticRouter(`StaticAkiGameStart${modName}`,
             [{
                 url: "/client/game/start",
-                action: (url, info, sessionId, output) => 
+                action: (url: string, info: any, sessionId: string, output: string) => 
                 {
                     this.onGameStart(sessionId);
                     return output;
@@ -68,7 +68,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         /*dynamicRouterModService.registerDynamicRouter(`DynamicAkiRaidStart${modName}`,
             [{
                 url: "/client/location/getLocalloot",
-                action: (url, info, sessionId, output) => 
+                action: (url: string, info: any, sessionId: string, output: string) => 
                 {
                     this.updateSecureContainerRestrictions(sessionId, true);
                     return output;
@@ -80,7 +80,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         staticRouterModService.registerStaticRouter(`StaticAkiRaidStart${modName}`,
             [{
                 url: "/client/raid/configuration",
-                action: (request, sessionId, output) => 
+                action: (url: string, info: any, sessionId: string, output: string) => 
                 {
                     this.updateSecureContainerRestrictions(sessionId, true);
                     return output;
@@ -93,7 +93,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         staticRouterModService.registerStaticRouter(`StaticAkiRaidEnd${modName}`,
             [{
                 url: "/client/match/offline/end",
-                action: (url, info, sessionId, output) => 
+                action: (url: string, info: any, sessionId: string, output: string) => 
                 {
                     this.updateSecureContainerRestrictions(sessionId, false);
                     return output;
@@ -134,7 +134,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         if (modConfig.services.disable_post_raid_healing)
             this.disablePostRaidHealing();
 		
-        if (!modConfig.traders.enable_fence)
+        if (modConfig.traders.disable_fence)
             this.traderAssortGenerator.disableFence();
 		
         this.traderAssortGenerator.updateTraderAssorts();
@@ -151,7 +151,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.traderAssortGenerator.refreshRagfairOffers();
     }
 	
-    public onGameStart(sessionId): void
+    public onGameStart(sessionId: string): void
     {
         this.updateScavTimer(sessionId);
 
@@ -161,14 +161,14 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.updateSecureContainerRestrictions(sessionId, false);
     }
 	
-    public updateSecureContainerRestrictions(sessionId, inRaid: boolean): void
+    public updateSecureContainerRestrictions(sessionId: string, inRaid: boolean): void
     {
         const pmcData = this.profileHelper.getPmcProfile(sessionId);
         if (modConfig.secureContainer.more_restrictions)
             this.itemHelper.updateSecureContainerRestrictions(pmcData, inRaid);
     }
 	
-    private updateScavTimer(sessionId): void
+    private updateScavTimer(sessionId: string): void
     {
         const pmcData = this.profileHelper.getPmcProfile(sessionId);
         const scavData = this.profileHelper.getScavProfile(sessionId);
