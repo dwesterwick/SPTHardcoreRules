@@ -9,7 +9,7 @@
 		},
 		"disable_repairs": true,
 		"disable_insurance": true,
-		"disable_post_raid_healing": true,
+		"disable_post_raid_healing": false,
 		"disable_scav_raids": true
 	},
 	"traders": {
