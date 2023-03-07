@@ -108,6 +108,13 @@ export class TraderAssortGenerator
         {
             const barterID = trader.assort.items[assortItem]._id;
 			
+            // Band-aid fix for missing slotId for Jaeger assort item 634acfb4da5c23324e07ca36 in 3.5.1 release. This should be removed after the bug is fixed. 
+            if ((trader.assort.items[assortItem].slotId === null) || (trader.assort.items[assortItem].slotId === undefined))
+            {
+                if (trader.assort.items[assortItem]._id == "634acfb4da5c23324e07ca36")
+                    trader.assort.items[assortItem].slotId = "hideout";
+            }
+
             // If slotId is "hideout", the item appears in the grid of trader offers and is not a child of another item in the grid
             if (trader.assort.items[assortItem].slotId.toLowerCase() != "hideout")
             {
