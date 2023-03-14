@@ -4,6 +4,7 @@ import { ItemHelper } from "./ItemHelper";
 import modConfig from "../config/config.json";
 
 import { DependencyContainer } from "tsyringe";
+import { DataCallbacks } from "@spt-aki/callbacks/DataCallbacks";
 import { IPreAkiLoadMod } from "@spt-aki/models/external/IPreAkiLoadMod";
 import { IPostDBLoadMod } from "@spt-aki/models/external/IPostDBLoadMod";
 import { IPostAkiLoadMod } from "@spt-aki/models/external/IPostAkiLoadMod";
@@ -33,6 +34,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     private itemHelper: ItemHelper
 	
     private logger: ILogger;
+    private dataCallbacks: DataCallbacks;
     private configServer: ConfigServer;
     private databaseServer: DatabaseServer;
     private ragfairServer: RagfairServer;
@@ -51,14 +53,26 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         const dynamicRouterModService = container.resolve<DynamicRouterModService>("DynamicRouterModService");
 		
         // Game start
-        // Needed to pass sessionId for disabling Scav runs and updating container filters (to see which items have been inspected)
-        staticRouterModService.registerStaticRouter(`StaticAkiGameStart${modName}`,
+        // Needed for disabling Scav runs
+        staticRouterModService.registerStaticRouter(`StaticAkiProfileLoad${modName}`,
             [{
                 url: "/client/game/start",
                 action: (url: string, info: any, sessionId: string, output: string) => 
                 {
-                    this.onGameStart(sessionId);
+                    this.onProfileLoad(sessionId);
                     return output;
+                }
+            }], "aki"
+        );
+        
+        // Item template reload
+        // Needed for changing container filters (to see which items have been inspected)
+        staticRouterModService.registerStaticRouter(`StaticAkiGameStart${modName}`,
+            [{
+                url: "/client/items",
+                action: (url: string, info: any, sessionId: string, output: string) => 
+                {
+                    return this.onItemTemplatesLoad(url, info, sessionId);
                 }
             }], "aki"
         );
@@ -104,7 +118,8 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
 	
     public postDBLoad(container: DependencyContainer): void
     {
-        this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");		
+        this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");
+        this.dataCallbacks = container.resolve<DataCallbacks>("DataCallbacks");		
         this.configServer = container.resolve<ConfigServer>("ConfigServer");		
         this.profileHelper = container.resolve<ProfileHelper>("ProfileHelper");		
         this.ragfairServer = container.resolve<RagfairServer>("RagfairServer");
@@ -151,14 +166,22 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.traderAssortGenerator.refreshRagfairOffers();
     }
 	
-    public onGameStart(sessionId: string): void
+    public onProfileLoad(sessionId: string): void
     {
         this.updateScavTimer(sessionId);
+    }
 
+    public onItemTemplatesLoad(url: string, info: any, sessionId: string): string
+    {
         if (!modConfig.enabled)
             return;
         
+        this.commonUtils.logInfo("Reloading item templates...");
         this.updateSecureContainerRestrictions(sessionId, false);
+
+        // produce the response that /client/items returns in routers/static/DataStaticRouter.ts
+        const itemTemplateData = this.dataCallbacks.getTemplateItems(url, info, sessionId);
+        return itemTemplateData;
     }
 	
     public updateSecureContainerRestrictions(sessionId: string, inRaid: boolean): void
