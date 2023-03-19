@@ -24,14 +24,14 @@ namespace TestClientMod
         [PatchPrefix]
         private static bool PatchPrefix(MainMenuController __instance, RaidSettings ___raidSettings_0)
         {
-            Logger.LogInfo("method_66 (Prefix)");
-
             if (SPTHardcoreRulesPlugin.InsuranceEnabled)
             {
+                Logger.LogInfo("Allowing insurance screen...");
                 ___raidSettings_0.RaidMode = ERaidMode.Online;
             }
             else
             {
+                Logger.LogInfo("Disabling insurance screen...");
                 ___raidSettings_0.RaidMode = ERaidMode.Local;
             }
 
@@ -44,15 +44,11 @@ namespace TestClientMod
                 MethodInfo method_38 = typeof(MainMenuController).GetMethod("method_38", BindingFlags.NonPublic | BindingFlags.Instance);
                 method_38.Invoke(__instance, new object[] { });
 
-                Logger.LogInfo("method_66 (Finish_Online)");
-
                 return false;
             }
 
             MethodInfo method_39 = typeof(MainMenuController).GetMethod("method_39", BindingFlags.NonPublic | BindingFlags.Instance);
             method_39.Invoke(__instance, new object[] { } );
-
-            Logger.LogInfo("method_66 (Finish_Local)");
 
             return false;
         }
@@ -60,11 +56,7 @@ namespace TestClientMod
         [PatchPostfix]
         private static void PatchPostfix(MainMenuController __instance, RaidSettings ___raidSettings_0)
         {
-            Logger.LogInfo("method_66 (Postfix)");
-
             ___raidSettings_0.RaidMode = ERaidMode.Local;
-
-            Logger.LogInfo("method_66 (Finish_Postfix)");
         }
     }
 }
