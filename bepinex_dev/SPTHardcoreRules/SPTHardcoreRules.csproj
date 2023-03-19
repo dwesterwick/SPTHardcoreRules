@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Aki.Common">
       <HintPath>..\Libraries\Managed\Aki.Common.dll</HintPath>
     </Reference>
@@ -68,11 +72,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Patches\InsuranceScreenPatch.cs" />
+    <Compile Include="Patches\ShowScreenPatch.cs" />
     <Compile Include="SPTHardcoreRulesPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
