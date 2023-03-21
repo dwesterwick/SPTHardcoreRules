@@ -83,7 +83,8 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
                 url: "/client/items",
                 action: (url: string, info: any, sessionId: string, output: string) => 
                 {
-                    return this.onItemTemplatesLoad(url, info, sessionId);
+                    return output;
+                    //return this.onItemTemplatesLoad(url, info, sessionId);
                 }
             }], "aki"
         );

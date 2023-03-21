@@ -81,6 +81,8 @@
     <Compile Include="Configuration\WhitelistCollection.cs" />
     <Compile Include="Configuration\WhitelistWithInspectionState.cs" />
     <Compile Include="Controllers\ConfigController.cs" />
+    <Compile Include="Patches\GameStartedPatch.cs" />
+    <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
     <Compile Include="Patches\InsuranceScreenPatch.cs" />
     <Compile Include="Patches\ShowScreenPatch.cs" />
     <Compile Include="SPTHardcoreRulesPlugin.cs" />

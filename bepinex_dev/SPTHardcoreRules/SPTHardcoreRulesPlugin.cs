@@ -14,12 +14,15 @@ namespace SPTHardcoreRules
     {
         public static Configuration.ModConfig ModConfig { get; set; } = null;
         public static ISession CurrentSession { get; set; } = null;
+        public static bool IsInRaid { get; set; } = false;
 
         private void Awake()
         {
             Logger.LogInfo("Loading SPTHardcoreRulesPlugin...");
             new Patches.ShowScreenPatch().Enable();
             new Patches.InsuranceScreenPatch().Enable();
+            new Patches.GameStartedPatch().Enable();
+            new Patches.GameWorldOnDestroyPatch().Enable();
 
             Logger.LogInfo("Loading SPTHardcoreRulesPlugin...getting configuration data...");
             ModConfig = Controllers.ConfigController.GetConfig();
