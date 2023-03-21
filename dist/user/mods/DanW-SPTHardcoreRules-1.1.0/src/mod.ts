@@ -52,6 +52,17 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         const staticRouterModService = container.resolve<StaticRouterModService>("StaticRouterModService");
         const dynamicRouterModService = container.resolve<DynamicRouterModService>("DynamicRouterModService");
 		
+        // Get config.json settings
+        staticRouterModService.registerStaticRouter(`StaticGetConfig${modName}`,
+            [{
+                url: "/SPTHardcoreRules/GetConfig",
+                action: () => 
+                {
+                    return JSON.stringify(modConfig);
+                }
+            }], "GetConfig"
+        ); 
+
         // Game start
         // Needed for disabling Scav runs
         staticRouterModService.registerStaticRouter(`StaticAkiProfileLoad${modName}`,
@@ -72,7 +83,8 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
                 url: "/client/items",
                 action: (url: string, info: any, sessionId: string, output: string) => 
                 {
-                    return this.onItemTemplatesLoad(url, info, sessionId);
+                    return output;
+                    //return this.onItemTemplatesLoad(url, info, sessionId);
                 }
             }], "aki"
         );

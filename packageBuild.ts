@@ -1,11 +1,15 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+const csharpDevFolder = "bepinex_dev";
+const csharpBuildFolder = "Debug";
 
 // This is a simple script used to build a mod package. The script will copy necessary files to the build directory
 // and compress the build directory into a zip file that can be easily shared.
 
 const fs = require("fs-extra");
 const glob = require("glob");
-const zip = require('bestzip');
+const zip = require("bestzip");
 const path = require("path");
 
 // Load the package.json file to get some information about the package so we can name things appropriately. This is
@@ -40,16 +44,17 @@ const ignoreList = [
     "mod.code-workspace",
     "package-lock.json",
     "tsconfig.json",
-	"bepinex_dev/"
+    csharpDevFolder + "/"
 ];
 const exclude = glob.sync(`{${ignoreList.join(",")}}`, { realpath: true, dot: true });
 
 // For some reason these basic-bitch functions won't allow us to copy a directory into itself, so we have to resort to
 // using a temporary directory, like an idiot. Excuse the normalize spam; some modules cross-platform, some don't...
-fs.copySync(__dirname, path.normalize(`${__dirname}/../~${modName}`), {filter:(filePath) => 
+fs.copySync(__dirname, path.normalize(`${__dirname}/../~${modName}/user/mods/${modName}`), {filter:(filePath) => 
 {
     return !exclude.includes(filePath);
 }});
+fs.copySync(path.normalize(`${__dirname}/${csharpDevFolder}/${packageName}/bin/${csharpBuildFolder}/${packageName}.dll`), path.normalize(`${__dirname}/../~${modName}/BepInEx/plugins/${packageName}.dll`));
 fs.moveSync(path.normalize(`${__dirname}/../~${modName}`), path.normalize(`${__dirname}/${modName}`), { overwrite: true });
 fs.copySync(path.normalize(`${__dirname}/${modName}`), path.normalize(`${__dirname}/dist`));
 console.log("Build files copied.");
