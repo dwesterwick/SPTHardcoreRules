@@ -9,6 +9,9 @@ namespace SPTHardcoreRules.Configuration
 {
     public class ServicesConfig
     {
+        [JsonProperty("flea_market")]
+        public FleaMarketConfig FleaMarket { get; set; } = new FleaMarketConfig();
+
         [JsonProperty("disable_repairs")]
         public bool DisableRepairs { get; set; }
 
@@ -20,5 +23,10 @@ namespace SPTHardcoreRules.Configuration
 
         [JsonProperty("disable_scav_raids")]
         public bool DisableScavRaids { get; set; }
+
+        public ServicesConfig()
+        {
+
+        }
     }
 }

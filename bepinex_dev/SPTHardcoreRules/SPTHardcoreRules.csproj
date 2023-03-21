@@ -72,8 +72,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\FleaMarketConfig.cs" />
     <Compile Include="Configuration\ModConfig.cs" />
+    <Compile Include="Configuration\SecureContainerConfig.cs" />
     <Compile Include="Configuration\ServicesConfig.cs" />
+    <Compile Include="Configuration\TradersConfig.cs" />
+    <Compile Include="Configuration\Whitelist.cs" />
+    <Compile Include="Configuration\WhitelistCollection.cs" />
+    <Compile Include="Configuration\WhitelistWithInspectionState.cs" />
     <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Patches\InsuranceScreenPatch.cs" />
     <Compile Include="Patches\ShowScreenPatch.cs" />
