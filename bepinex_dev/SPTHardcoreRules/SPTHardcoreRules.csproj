@@ -72,6 +72,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ModConfig.cs" />
+    <Compile Include="Configuration\ServicesConfig.cs" />
+    <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Patches\InsuranceScreenPatch.cs" />
     <Compile Include="Patches\ShowScreenPatch.cs" />
     <Compile Include="SPTHardcoreRulesPlugin.cs" />
@@ -80,8 +83,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

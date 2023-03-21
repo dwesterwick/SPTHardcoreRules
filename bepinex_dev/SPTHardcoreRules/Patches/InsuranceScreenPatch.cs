@@ -12,7 +12,7 @@ using Aki.Reflection.Utils;
 using HarmonyLib;
 using SPTHardcoreRules;
 
-namespace TestClientMod
+namespace SPTHardcoreRules.Patches
 {
     public class InsuranceScreenPatch: ModulePatch
     {
@@ -24,15 +24,15 @@ namespace TestClientMod
         [PatchPrefix]
         private static bool PatchPrefix(MainMenuController __instance, RaidSettings ___raidSettings_0)
         {
-            if (SPTHardcoreRulesPlugin.InsuranceEnabled)
-            {
-                Logger.LogInfo("Allowing insurance screen...");
-                ___raidSettings_0.RaidMode = ERaidMode.Online;
-            }
-            else
+            if (SPTHardcoreRulesPlugin.ModConfig.Services.DisableInsurance)
             {
                 Logger.LogInfo("Disabling insurance screen...");
                 ___raidSettings_0.RaidMode = ERaidMode.Local;
+            }
+            else
+            {
+                Logger.LogInfo("Allowing insurance screen...");
+                ___raidSettings_0.RaidMode = ERaidMode.Online;
             }
 
             if (___raidSettings_0.SelectedLocation.Id == "laboratory")

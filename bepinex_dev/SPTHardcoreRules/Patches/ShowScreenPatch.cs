@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestClientMod
+namespace SPTHardcoreRules.Patches
 {
     public class ShowScreenPatch : ModulePatch
     {
