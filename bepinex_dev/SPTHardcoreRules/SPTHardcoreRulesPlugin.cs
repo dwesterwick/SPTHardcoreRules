@@ -23,6 +23,8 @@ namespace SPTHardcoreRules
             new Patches.InsuranceScreenPatch().Enable();
             new Patches.GameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
+            new Patches.CheckFilterPatch().Enable();
+            new Patches.ItemCheckActionPatch().Enable();
 
             Logger.LogInfo("Loading SPTHardcoreRulesPlugin...getting configuration data...");
             ModConfig = Controllers.ConfigController.GetConfig();
