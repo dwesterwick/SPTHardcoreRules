@@ -17,7 +17,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(GameWorld __instance)
+        private static void PatchPostfix()
         {
             SPTHardcoreRulesPlugin.IsInRaid = true;
         }

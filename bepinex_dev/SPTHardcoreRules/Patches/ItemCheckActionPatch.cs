@@ -35,14 +35,16 @@ namespace SPTHardcoreRules.Patches
                 return __result;
             }
 
+            // This should only be run once to generate the list of secure containers
             if (secureContainers.Count == 0)
             {
                 secureContainers = GetSecureContainerItems();
             }
 
-            bool isItemExamined = Examined(location.Container, __instance);
+            bool isItemExamined = IsExamined(location.Container, __instance);
             bool isItemWhitelisted = IsWhitelisted(__instance, isItemExamined, SPTHardcoreRulesPlugin.IsInRaid);
 
+            // See if the container is a secure container
             bool containerIsSecured = secureContainers.Any(c => c.TemplateId == containerItem.TemplateId);
             if (containerIsSecured)
             {
@@ -54,7 +56,8 @@ namespace SPTHardcoreRules.Patches
                 return __result;
             }
 
-            bool isContainerExamined = Examined(location.Container, containerItem);
+            // If the container is not a secure container, check if it can be placed into a secure container
+            bool isContainerExamined = IsExamined(location.Container, containerItem);
             bool isContainerWhitelisted = IsWhitelisted(containerItem, isContainerExamined, SPTHardcoreRulesPlugin.IsInRaid);
 
             if (!isContainerWhitelisted)
@@ -75,6 +78,7 @@ namespace SPTHardcoreRules.Patches
                 return secureContainers;
             }
 
+            // Find all possible secure containers
             foreach (Item item in itemFactory.CreateAllItemsEver())
             {
                 if (item.Template is SecureContainerTemplateClass)
@@ -86,34 +90,14 @@ namespace SPTHardcoreRules.Patches
                 }
             }
 
+            // Removed secure containers that can't be used by the player (namely the "development" and "boss" secure containers)
             secureContainers.RemoveAll(c => SPTHardcoreRulesPlugin.ModConfig.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId));
 
             return secureContainers;
         }
 
-        public static bool CanAccept(Item item, List<Item> containerItems)
-        {
-            foreach (Item containerItem in containerItems)
-            {
-                if (!containerItem.IsContainer)
-                {
-                    continue;
-                }
-
-                LootItemClass lootItemClass = containerItem as LootItemClass;
-                foreach (EFT.InventoryLogic.IContainer container in lootItemClass.Containers)
-                {
-                    if (container.Filters.CheckItemFilter(item))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public static bool Examined(EFT.InventoryLogic.IContainer container, Item item)
+        // Copied from EFT.InventoryLogic.Examined(Item item)
+        public static bool IsExamined(EFT.InventoryLogic.IContainer container, Item item)
         {
             InventoryControllerClass inventoryControllerClass = container.ParentItem.CurrentAddress.GetOwnerOrNull() as InventoryControllerClass;
             return inventoryControllerClass == null || inventoryControllerClass.Examined(item);

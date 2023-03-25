@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx;
-using EFT;
-using SPTHardcoreRules.Configuration;
 
 namespace SPTHardcoreRules
 {
@@ -13,7 +11,6 @@ namespace SPTHardcoreRules
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         public static Configuration.ModConfig ModConfig { get; set; } = null;
-        public static ISession CurrentSession { get; set; } = null;
         public static bool IsInRaid { get; set; } = false;
 
         private void Awake()

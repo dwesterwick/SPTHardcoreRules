@@ -1,11 +1,11 @@
-﻿using Aki.Reflection.Patching;
-using EFT;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Aki.Reflection.Patching;
+using EFT;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -17,7 +17,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(GameWorld __instance)
+        private static void PatchPostfix()
         {
             SPTHardcoreRulesPlugin.IsInRaid = false;
         }
