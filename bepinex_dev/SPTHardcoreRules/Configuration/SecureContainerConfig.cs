@@ -9,11 +9,11 @@ namespace SPTHardcoreRules.Configuration
 {
     public class SecureContainerConfig
     {
-        [JsonProperty("more_restrictions")]
-        public bool MoreRestrictions { get; set; }
+        [JsonProperty("only_use_whitelists_in_this_mod")]
+        public bool UseModWhitelists { get; set; }
 
-        [JsonProperty("restrict_whitelisted_items")]
-        public bool RestrictWhitelistedItems { get; set; }
+        [JsonProperty("restrict_whitelisted_containers")]
+        public bool RestrictWhitelistedContainers { get; set; }
 
         [JsonProperty("ignored_secure_containers")]
         public string[] IgnoredSecureContainers { get; set; } = new string[0];

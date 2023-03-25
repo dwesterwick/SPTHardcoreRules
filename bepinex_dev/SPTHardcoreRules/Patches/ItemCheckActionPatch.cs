@@ -36,7 +36,7 @@ namespace SPTHardcoreRules.Patches
 
             Item containerItem = location.Item ?? location.Container.ParentItem;
 
-            if (!SPTHardcoreRulesPlugin.ModConfig.SecureContainer.RestrictWhitelistedItems)
+            if (!SPTHardcoreRulesPlugin.ModConfig.SecureContainer.UseModWhitelists)
             {
                 return __result;
             }
@@ -57,7 +57,7 @@ namespace SPTHardcoreRules.Patches
                 return isItemWhitelisted;
             }
 
-            if (!SPTHardcoreRulesPlugin.ModConfig.SecureContainer.MoreRestrictions)
+            if (!SPTHardcoreRulesPlugin.ModConfig.SecureContainer.RestrictWhitelistedContainers)
             {
                 return __result;
             }
