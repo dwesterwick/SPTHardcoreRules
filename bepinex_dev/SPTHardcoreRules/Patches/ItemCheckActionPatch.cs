@@ -1,13 +1,13 @@
-﻿using Aki.Reflection.Patching;
-using Comfort.Common;
-using EFT.InventoryLogic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Aki.Reflection.Patching;
+using Comfort.Common;
+using EFT.InventoryLogic;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -23,6 +23,12 @@ namespace SPTHardcoreRules.Patches
         [PatchPostfix]
         private static bool PatchPostfix(bool __result, Item __instance, ItemAddress location)
         {
+            // Don't apply restrictions to Scavs because they don't have secure containers
+            if (SPTHardcoreRulesPlugin.SelectedSide == EFT.ESideType.Savage)
+            {
+                return __result;
+            }
+
             if ((location == null) || (location.Container == null) || (location.Container.ParentItem == null))
             {
                 return __result;

@@ -85,6 +85,8 @@
     <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
     <Compile Include="Patches\InsuranceScreenPatch.cs" />
     <Compile Include="Patches\ItemCheckActionPatch.cs" />
+    <Compile Include="Patches\ShowScreenPatch.cs" />
+    <Compile Include="Patches\UpdateSideSelectionPatch.cs" />
     <Compile Include="SPTHardcoreRulesPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

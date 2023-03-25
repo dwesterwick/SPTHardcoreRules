@@ -31,8 +31,7 @@ The following items are whitelisted for putting in your secure container by defa
 * S I C C case
 * Documents case
 
-There are currently two known issues:
+There is currently one known issue:
 * I can't figure out how to blacklist items from trader repairs, so I made them really expensive instead. I can prohibit all traders from being able to repair, but that causes issues in the repair screen.
-* **secureContainer.more_restrictions** applies the extra restrictions even if you're a Scav (assuming you've enabled Scav raids). I should be able to fix this in the next release. 
 
 Good luck!
