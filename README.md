@@ -24,7 +24,7 @@ The following items are whitelisted for trader offers by default:
 * All maps
 
 The following items are whitelisted for putting in your secure container by default:
-* All keys and keycards
+* All keys and keycards (but tey must not be examined when in raid)
 * Key tool
 * Gingy keychain
 * Keycard holder
