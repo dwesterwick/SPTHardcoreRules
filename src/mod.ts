@@ -4,7 +4,6 @@ import { ItemHelper } from "./ItemHelper";
 import modConfig from "../config/config.json";
 
 import { DependencyContainer } from "tsyringe";
-import { DataCallbacks } from "@spt-aki/callbacks/DataCallbacks";
 import { IPreAkiLoadMod } from "@spt-aki/models/external/IPreAkiLoadMod";
 import { IPostDBLoadMod } from "@spt-aki/models/external/IPostDBLoadMod";
 import { IPostAkiLoadMod } from "@spt-aki/models/external/IPostAkiLoadMod";
@@ -23,7 +22,6 @@ import { ProfileHelper } from "@spt-aki/helpers/ProfileHelper";
 import { LocaleService } from "@spt-aki/services/LocaleService";
 
 import { StaticRouterModService } from "@spt-aki/services/mod/staticRouter/StaticRouterModService";
-import { DynamicRouterModService } from "@spt-aki/services/mod/dynamicRouter/DynamicRouterModService";
 
 const modName = "SPTHardcoreRules";
 
@@ -34,7 +32,6 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     private itemHelper: ItemHelper
 	
     private logger: ILogger;
-    private dataCallbacks: DataCallbacks;
     private configServer: ConfigServer;
     private databaseServer: DatabaseServer;
     private ragfairServer: RagfairServer;
@@ -50,9 +47,8 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     {
         this.logger = container.resolve<ILogger>("WinstonLogger");
         const staticRouterModService = container.resolve<StaticRouterModService>("StaticRouterModService");
-        const dynamicRouterModService = container.resolve<DynamicRouterModService>("DynamicRouterModService");
 		
-        // Get config.json settings
+        // Get config.json settings for the bepinex plugin
         staticRouterModService.registerStaticRouter(`StaticGetConfig${modName}`,
             [{
                 url: "/SPTHardcoreRules/GetConfig",
@@ -75,63 +71,11 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
                 }
             }], "aki"
         );
-        
-        // Item template reload
-        // Needed for changing container filters (to see which items have been inspected)
-        staticRouterModService.registerStaticRouter(`StaticAkiGameStart${modName}`,
-            [{
-                url: "/client/items",
-                action: (url: string, info: any, sessionId: string, output: string) => 
-                {
-                    return output;
-                    //return this.onItemTemplatesLoad(url, info, sessionId);
-                }
-            }], "aki"
-        );
-		
-        // Tried using these to have different item properties in and out-of raid, but it doesn't seem to work
-        // Raid start
-        /*dynamicRouterModService.registerDynamicRouter(`DynamicAkiRaidStart${modName}`,
-            [{
-                url: "/client/location/getLocalloot",
-                action: (url: string, info: any, sessionId: string, output: string) => 
-                {
-                    this.updateSecureContainerRestrictions(sessionId, true);
-                    return output;
-                }
-            }], "aki"
-        );
-		
-        // Raid start
-        staticRouterModService.registerStaticRouter(`StaticAkiRaidStart${modName}`,
-            [{
-                url: "/client/raid/configuration",
-                action: (url: string, info: any, sessionId: string, output: string) => 
-                {
-                    this.updateSecureContainerRestrictions(sessionId, true);
-                    return output;
-                }
-            }], "aki"
-        );
-		
-        // Raid end
-        // Needed for updating container filters
-        staticRouterModService.registerStaticRouter(`StaticAkiRaidEnd${modName}`,
-            [{
-                url: "/client/match/offline/end",
-                action: (url: string, info: any, sessionId: string, output: string) => 
-                {
-                    this.updateSecureContainerRestrictions(sessionId, false);
-                    return output;
-                }
-            }], "aki"
-        );*/
     }
 	
     public postDBLoad(container: DependencyContainer): void
     {
         this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");
-        this.dataCallbacks = container.resolve<DataCallbacks>("DataCallbacks");		
         this.configServer = container.resolve<ConfigServer>("ConfigServer");		
         this.profileHelper = container.resolve<ProfileHelper>("ProfileHelper");		
         this.ragfairServer = container.resolve<RagfairServer>("RagfairServer");
@@ -167,7 +111,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.traderAssortGenerator.updateTraderAssorts();
     }
 	
-    public postAkiLoad(container: DependencyContainer): void
+    public postAkiLoad(): void
     {
         if (!modConfig.enabled)
         {
@@ -183,26 +127,6 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.updateScavTimer(sessionId);
     }
 
-    public onItemTemplatesLoad(url: string, info: any, sessionId: string): string
-    {
-        if (!modConfig.enabled)
-            return;
-        
-        this.commonUtils.logInfo("Reloading item templates...");
-        this.updateSecureContainerRestrictions(sessionId, false);
-
-        // produce the response that /client/items returns in routers/static/DataStaticRouter.ts
-        const itemTemplateData = this.dataCallbacks.getTemplateItems(url, info, sessionId);
-        return itemTemplateData;
-    }
-	
-    public updateSecureContainerRestrictions(sessionId: string, inRaid: boolean): void
-    {
-        const pmcData = this.profileHelper.getPmcProfile(sessionId);
-        if (modConfig.secureContainer.more_restrictions)
-            this.itemHelper.updateSecureContainerRestrictions(pmcData, inRaid);
-    }
-	
     private updateScavTimer(sessionId: string): void
     {
         const pmcData = this.profileHelper.getPmcProfile(sessionId);
@@ -235,7 +159,9 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     // Return the highest Scav cooldown factor from Fence's rep levels
     private getWorstSavageCooldownModifier(): number
     {
+        // Initialize the return value at something very low
         let worstCooldownFactor = 0.01;
+
         for (const level in this.databaseTables.globals.config.FenceSettings.Levels)
         {
             if (this.databaseTables.globals.config.FenceSettings.Levels[level].SavageCooldownModifier > worstCooldownFactor)
@@ -266,25 +192,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     {
         this.commonUtils.logInfo("Disabling insurance...");
 		
-        // This doesn't seem to work... the insurance screen still appears for Labs even with unmodified SPT
-        /*for (const map in this.databaseTables.locations)
-        {
-            // "base" is the first item returned from the collection
-            if (map.toLowerCase() === "base")
-            {
-                continue;
-            }
-			
-            this.databaseTables.locations[map].base.Insurance = false;
-        }*/
-
-        // Functionally this works, but the insurance screen still appears and looks bugged
-        /*for (const trader in this.databaseTables.traders)
-        {
-            this.databaseTables.traders[trader].base.insurance.availability = false;
-        }*/
-		
-        // This seems to be the best way of doing it because the insurance screen is shown even when disabled for all traders and maps
+        // Prevent user from insuring items from the context menu
         for (const itemID in this.databaseTables.templates.items)
         {
             this.databaseTables.templates.items[itemID]._props.InsuranceDisabled = true;

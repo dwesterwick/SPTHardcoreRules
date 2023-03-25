@@ -13,11 +13,6 @@ namespace SPTHardcoreRules.Patches
 {
     public class ItemCheckActionPatch : ModulePatch
     {
-        private const string ID_Pockets = "627a4e6b255f7527fb05a0f6";
-        private const string ID_Stash = "566abbb64bdc2d144c8b457d";
-        private const string ID_DevSecureContainer = "5c0a5a5986f77476aa30ae64";
-        private const string ID_BossSecureContrainer = "5c0a794586f77461c458f892";
-
         private static List<Item> secureContainers = new List<Item>();
 
         protected override MethodBase GetTargetMethod()
@@ -34,9 +29,6 @@ namespace SPTHardcoreRules.Patches
             }
 
             Item containerItem = location.Item ?? location.Container.ParentItem;
-            Item item = __instance;
-
-            //Logger.LogInfo("Checking " + __instance.LocalizedName() + " for container " + containerItem.LocalizedName());
 
             if (!SPTHardcoreRulesPlugin.ModConfig.SecureContainer.RestrictWhitelistedItems)
             {
@@ -48,14 +40,12 @@ namespace SPTHardcoreRules.Patches
                 secureContainers = GetSecureContainerItems();
             }
 
-            bool isItemExamined = Examined(location.Container, item);
-            bool isItemWhitelisted = IsWhitelisted(item, isItemExamined, SPTHardcoreRulesPlugin.IsInRaid);
-            Logger.LogInfo("Item " + item.LocalizedName() + " whitelisted: " + isItemWhitelisted);
+            bool isItemExamined = Examined(location.Container, __instance);
+            bool isItemWhitelisted = IsWhitelisted(__instance, isItemExamined, SPTHardcoreRulesPlugin.IsInRaid);
 
             bool containerIsSecured = secureContainers.Any(c => c.TemplateId == containerItem.TemplateId);
             if (containerIsSecured)
             {
-                Logger.LogInfo("Container " + containerItem.LocalizedName() + " (" + containerItem.TemplateId + ") is secured");
                 return isItemWhitelisted;
             }
 
@@ -64,22 +54,14 @@ namespace SPTHardcoreRules.Patches
                 return __result;
             }
 
-            //bool containerItemAllowedInSecureContainers = CanAccept(container.ParentItem, secureContainers);
-
             bool isContainerExamined = Examined(location.Container, containerItem);
             bool isContainerWhitelisted = IsWhitelisted(containerItem, isContainerExamined, SPTHardcoreRulesPlugin.IsInRaid);
-            if (isContainerWhitelisted)
-            {
-                Logger.LogInfo("Container " + containerItem.LocalizedName() + " whitelisted: " + isContainerWhitelisted);
-            }
 
             if (!isContainerWhitelisted)
             {
-                Logger.LogInfo("Returning " + __result);
                 return __result;
             }
 
-            Logger.LogInfo("Returning " + isItemWhitelisted);
             return isItemWhitelisted;
         }
 
@@ -104,13 +86,7 @@ namespace SPTHardcoreRules.Patches
                 }
             }
 
-            secureContainers.RemoveAll(c => c.TemplateId == ID_BossSecureContrainer || c.TemplateId == ID_DevSecureContainer);
-
-            Logger.LogInfo("Found " + secureContainers.Count + " secure containers...");
-            foreach (Item item in secureContainers)
-            {
-                Logger.LogInfo("Found " + secureContainers.Count + " secure containers..." + item.LocalizedName() + " (" + item.TemplateId + ")");
-            }
+            secureContainers.RemoveAll(c => SPTHardcoreRulesPlugin.ModConfig.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId));
 
             return secureContainers;
         }
@@ -129,7 +105,6 @@ namespace SPTHardcoreRules.Patches
                 {
                     if (container.Filters.CheckItemFilter(item))
                     {
-                        Logger.LogInfo("Item " + item.LocalizedName() + " can be put in " + containerItem.LocalizedName());
                         return true;
                     }
                 }
@@ -148,7 +123,6 @@ namespace SPTHardcoreRules.Patches
         {
             if (IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.Global))
             {
-                Logger.LogInfo("Global whitelist");
                 return true;
             }
 
@@ -156,13 +130,11 @@ namespace SPTHardcoreRules.Patches
             {
                 if (!isExamined && IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.InRaid.Uninspected))
                 {
-                    Logger.LogInfo("In-raid and not examined");
                     return true;
                 }
 
                 if (isExamined && IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.InRaid.Inspected))
                 {
-                    Logger.LogInfo("In-raid and examined");
                     return true;
                 }
             }
@@ -170,7 +142,6 @@ namespace SPTHardcoreRules.Patches
             {
                 if (IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.InHideout))
                 {
-                    Logger.LogInfo("In hideout");
                     return true;
                 }
             }

@@ -20,7 +20,6 @@ namespace SPTHardcoreRules.Patches
         private static void PatchPostfix(GameWorld __instance)
         {
             SPTHardcoreRulesPlugin.IsInRaid = false;
-            Logger.LogInfo("Out of raid");
         }
     }
 }

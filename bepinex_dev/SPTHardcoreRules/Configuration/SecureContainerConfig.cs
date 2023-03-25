@@ -15,6 +15,9 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("restrict_whitelisted_items")]
         public bool RestrictWhitelistedItems { get; set; }
 
+        [JsonProperty("ignored_secure_containers")]
+        public string[] IgnoredSecureContainers { get; set; } = new string[0];
+
         [JsonProperty("whitelist")]
         public WhitelistCollection Whitelists { get; set; } = new WhitelistCollection();
 

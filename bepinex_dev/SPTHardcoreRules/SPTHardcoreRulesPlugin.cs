@@ -19,17 +19,17 @@ namespace SPTHardcoreRules
         private void Awake()
         {
             Logger.LogInfo("Loading SPTHardcoreRulesPlugin...");
-            new Patches.ShowScreenPatch().Enable();
+
+            Logger.LogDebug("Loading SPTHardcoreRulesPlugin...getting configuration data...");
+            ModConfig = Controllers.ConfigController.GetConfig();
+
+            Logger.LogDebug("Loading SPTHardcoreRulesPlugin...enabling patches...");
             new Patches.InsuranceScreenPatch().Enable();
             new Patches.GameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
-            new Patches.CheckFilterPatch().Enable();
             new Patches.ItemCheckActionPatch().Enable();
 
-            Logger.LogInfo("Loading SPTHardcoreRulesPlugin...getting configuration data...");
-            ModConfig = Controllers.ConfigController.GetConfig();
-
-            Logger.LogInfo("Loading SPTHardcoreRulesPlugin...done.");
+            Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
         }
     }
 }

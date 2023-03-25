@@ -26,12 +26,12 @@ namespace SPTHardcoreRules.Patches
         {
             if (SPTHardcoreRulesPlugin.ModConfig.Services.DisableInsurance)
             {
-                Logger.LogInfo("Disabling insurance screen...");
+                Logger.LogDebug("Disabling insurance screen...");
                 ___raidSettings_0.RaidMode = ERaidMode.Local;
             }
             else
             {
-                Logger.LogInfo("Allowing insurance screen...");
+                Logger.LogDebug("Allowing insurance screen...");
                 ___raidSettings_0.RaidMode = ERaidMode.Online;
             }
 
