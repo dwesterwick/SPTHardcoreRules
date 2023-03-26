@@ -21,7 +21,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static bool PatchPostfix(bool __result, Item __instance, ItemAddress location)
+        public static bool PatchPostfix(bool __result, Item __instance, ItemAddress location)
         {
             // Don't apply restrictions to Scavs because they don't have secure containers
             if (SPTHardcoreRulesPlugin.SelectedSide == EFT.ESideType.Savage)

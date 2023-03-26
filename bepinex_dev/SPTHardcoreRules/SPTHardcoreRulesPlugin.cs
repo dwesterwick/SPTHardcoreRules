@@ -9,7 +9,7 @@ using EFT.UI;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.2.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.3.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         public static Configuration.ModConfig ModConfig { get; set; } = null;
@@ -30,6 +30,7 @@ namespace SPTHardcoreRules
             new Patches.ItemCheckActionPatch().Enable();
             new Patches.UpdateSideSelectionPatch().Enable();
             new Patches.ShowScreenPatch().Enable();
+            new Patches.GetPrioritizedGridsForLootPatch().Enable();
 
             Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
         }
