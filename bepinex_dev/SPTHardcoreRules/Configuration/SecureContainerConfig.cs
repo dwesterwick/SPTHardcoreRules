@@ -12,9 +12,6 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("only_use_whitelists_in_this_mod")]
         public bool UseModWhitelists { get; set; }
 
-        [JsonProperty("restrict_whitelisted_containers")]
-        public bool RestrictWhitelistedContainers { get; set; }
-
         [JsonProperty("ignored_secure_containers")]
         public string[] IgnoredSecureContainers { get; set; } = new string[0];
 

@@ -9,7 +9,7 @@ using EFT.UI;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.3.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.4.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         public static Configuration.ModConfig ModConfig { get; set; } = null;
@@ -23,14 +23,17 @@ namespace SPTHardcoreRules
             Logger.LogDebug("Loading SPTHardcoreRulesPlugin...getting configuration data...");
             ModConfig = Controllers.ConfigController.GetConfig();
 
-            Logger.LogDebug("Loading SPTHardcoreRulesPlugin...enabling patches...");
-            new Patches.InsuranceScreenPatch().Enable();
-            new Patches.GameStartedPatch().Enable();
-            new Patches.GameWorldOnDestroyPatch().Enable();
-            new Patches.ItemCheckActionPatch().Enable();
-            new Patches.UpdateSideSelectionPatch().Enable();
-            new Patches.ShowScreenPatch().Enable();
-            new Patches.GetPrioritizedGridsForLootPatch().Enable();
+            if (ModConfig.Enabled)
+            {
+                Logger.LogDebug("Loading SPTHardcoreRulesPlugin...enabling patches...");
+                new Patches.InsuranceScreenPatch().Enable();
+                new Patches.GameStartedPatch().Enable();
+                new Patches.GameWorldOnDestroyPatch().Enable();
+                new Patches.ItemCheckActionPatch().Enable();
+                new Patches.UpdateSideSelectionPatch().Enable();
+                new Patches.ShowScreenPatch().Enable();
+                new Patches.GetPrioritizedGridsForLootPatch().Enable();
+            }
 
             Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
         }

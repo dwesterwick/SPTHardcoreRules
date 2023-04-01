@@ -47,31 +47,27 @@ namespace SPTHardcoreRules.Patches
                 secureContainers = GetSecureContainerItems();
             }
 
-            bool isItemExamined = IsExamined(location.Container, __instance);
-            bool isItemWhitelisted = IsWhitelisted(__instance, isItemExamined, SPTHardcoreRulesPlugin.IsInRaid);
-
-            // See if the container is a secure container
-            bool containerIsSecured = secureContainers.Any(c => c.TemplateId == containerItem.TemplateId);
-            if (containerIsSecured)
+            // See if the target container is or is in a secure container
+            bool targetContainerIsSecured = false;
+            foreach (Item item in containerItem.GetAllParentItemsAndSelf())
             {
-                return isItemWhitelisted;
+                targetContainerIsSecured |= secureContainers.Any(c => c.TemplateId == item.TemplateId);
             }
-
-            if (!SPTHardcoreRulesPlugin.ModConfig.SecureContainer.RestrictWhitelistedContainers)
+            if (!targetContainerIsSecured)
             {
                 return __result;
             }
 
-            // If the container is not a secure container, check if it can be placed into a secure container
-            bool isContainerExamined = IsExamined(location.Container, containerItem);
-            bool isContainerWhitelisted = IsWhitelisted(containerItem, isContainerExamined, SPTHardcoreRulesPlugin.IsInRaid);
-
-            if (!isContainerWhitelisted)
+            // Check if the item and all items contained within it are whitelisted
+            bool allItemsWhitelisted = true;
+            foreach(Item item in __instance.GetAllItems())
             {
-                return __result;
+                bool isContainedItemExamined = IsExamined(location.Container, item);
+                bool isContainedItemWhitelisted = IsWhitelisted(item, isContainedItemExamined, SPTHardcoreRulesPlugin.IsInRaid);
+                allItemsWhitelisted &= isContainedItemWhitelisted;
             }
 
-            return isItemWhitelisted;
+            return allItemsWhitelisted;
         }
 
         public static List<Item> GetSecureContainerItems()
