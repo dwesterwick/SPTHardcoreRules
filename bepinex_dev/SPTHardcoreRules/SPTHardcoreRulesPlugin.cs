@@ -9,7 +9,7 @@ using EFT.UI;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.4.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.5.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         public static Configuration.ModConfig ModConfig { get; set; } = null;
