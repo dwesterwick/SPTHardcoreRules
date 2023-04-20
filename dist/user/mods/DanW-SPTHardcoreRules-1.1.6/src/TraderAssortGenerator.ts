@@ -167,6 +167,11 @@ export class TraderAssortGenerator
     {
         delete trader.assort.loyal_level_items[barterID];
         delete trader.assort.barter_scheme[barterID];
+
+        delete trader.assort.items[assortItemID];
+        
+        if (trader.questassort === undefined)
+            return;
         
         if (barterID in trader.questassort.started)
             delete trader.questassort.started[barterID];
@@ -174,7 +179,5 @@ export class TraderAssortGenerator
             delete trader.questassort.success[barterID];
         if (barterID in trader.questassort.fail)
             delete trader.questassort.fail[barterID];
-        
-        delete trader.assort.items[assortItemID];
     }
 }
