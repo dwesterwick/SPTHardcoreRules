@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Aki.Reflection.Patching;
 using Comfort.Common;
 using EFT.InventoryLogic;
+using SPTHardcoreRules.Models;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -24,7 +25,7 @@ namespace SPTHardcoreRules.Patches
         public static bool PatchPostfix(bool __result, Item __instance, ItemAddress location)
         {
             // Don't apply restrictions to Scavs because they don't have secure containers
-            if (SPTHardcoreRulesPlugin.SelectedSide == EFT.ESideType.Savage)
+            if (CurrentRaidSettings.SelectedSide == EFT.ESideType.Savage)
             {
                 return __result;
             }
@@ -36,7 +37,7 @@ namespace SPTHardcoreRules.Patches
 
             Item containerItem = location.Item ?? location.Container.ParentItem;
 
-            if (!SPTHardcoreRulesPlugin.ModConfig.SecureContainer.UseModWhitelists)
+            if (!Controllers.ConfigController.Config.SecureContainer.UseModWhitelists)
             {
                 return __result;
             }
@@ -63,7 +64,7 @@ namespace SPTHardcoreRules.Patches
             foreach(Item item in __instance.GetAllItems())
             {
                 bool isContainedItemExamined = IsExamined(location.Container, item);
-                bool isContainedItemWhitelisted = IsWhitelisted(item, isContainedItemExamined, SPTHardcoreRulesPlugin.IsInRaid);
+                bool isContainedItemWhitelisted = IsWhitelisted(item, isContainedItemExamined, CurrentRaidSettings.IsInRaid);
                 allItemsWhitelisted &= isContainedItemWhitelisted;
             }
 
@@ -93,7 +94,7 @@ namespace SPTHardcoreRules.Patches
             }
 
             // Removed secure containers that can't be used by the player (namely the "development" and "boss" secure containers)
-            secureContainers.RemoveAll(c => SPTHardcoreRulesPlugin.ModConfig.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId));
+            secureContainers.RemoveAll(c => Controllers.ConfigController.Config.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId));
 
             return secureContainers;
         }
@@ -107,26 +108,26 @@ namespace SPTHardcoreRules.Patches
 
         public static bool IsWhitelisted(Item item, bool isExamined, bool inRaid)
         {
-            if (IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.Global))
+            if (IsItemInWhitelist(item, Controllers.ConfigController.Config.SecureContainer.Whitelists.Global))
             {
                 return true;
             }
 
             if (inRaid)
             {
-                if (!isExamined && IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.InRaid.Uninspected))
+                if (!isExamined && IsItemInWhitelist(item, Controllers.ConfigController.Config.SecureContainer.Whitelists.InRaid.Uninspected))
                 {
                     return true;
                 }
 
-                if (isExamined && IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.InRaid.Inspected))
+                if (isExamined && IsItemInWhitelist(item, Controllers.ConfigController.Config.SecureContainer.Whitelists.InRaid.Inspected))
                 {
                     return true;
                 }
             }
             else
             {
-                if (IsItemInWhitelist(item, SPTHardcoreRulesPlugin.ModConfig.SecureContainer.Whitelists.InHideout))
+                if (IsItemInWhitelist(item, Controllers.ConfigController.Config.SecureContainer.Whitelists.InHideout))
                 {
                     return true;
                 }

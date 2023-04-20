@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Aki.Reflection.Patching;
 using EFT;
 using EFT.UI.Matchmaker;
+using SPTHardcoreRules.Models;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -20,7 +21,7 @@ namespace SPTHardcoreRules.Patches
         [PatchPostfix]
         private static void PatchPostfix(ESideType side)
         {
-            SPTHardcoreRulesPlugin.SelectedSide = side;
+            CurrentRaidSettings.SelectedSide = side;
         }
     }
 }

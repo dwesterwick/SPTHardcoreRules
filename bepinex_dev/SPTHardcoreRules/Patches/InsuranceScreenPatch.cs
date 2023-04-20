@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Aki.Reflection.Patching;
 using EFT;
+using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -19,15 +20,15 @@ namespace SPTHardcoreRules.Patches
         [PatchPrefix]
         private static bool PatchPrefix(MainMenuController __instance, RaidSettings ___raidSettings_0)
         {
-            if (SPTHardcoreRulesPlugin.ModConfig.Services.DisableInsurance)
+            if (Controllers.ConfigController.Config.Services.DisableInsurance)
             {
-                Logger.LogDebug("Disabling insurance screen...");
+                LoggingController.Logger.LogDebug("Disabling insurance screen...");
                 // The insurance screen is disabled in live Tarkov for offline raids
                 ___raidSettings_0.RaidMode = ERaidMode.Local;
             }
             else
             {
-                Logger.LogDebug("Allowing insurance screen...");
+                LoggingController.Logger.LogDebug("Allowing insurance screen...");
                 // This is done in Aki.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
                 ___raidSettings_0.RaidMode = ERaidMode.Online;
             }
@@ -54,6 +55,7 @@ namespace SPTHardcoreRules.Patches
         [PatchPostfix]
         private static void PatchPostfix(MainMenuController __instance, RaidSettings ___raidSettings_0)
         {
+            // TO DO: Is this really true?
             // This is done in Aki.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
             ___raidSettings_0.RaidMode = ERaidMode.Local;
         }

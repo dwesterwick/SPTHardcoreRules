@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Aki.Reflection.Patching;
 using EFT;
+using SPTHardcoreRules.Models;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -19,7 +20,7 @@ namespace SPTHardcoreRules.Patches
         [PatchPostfix]
         private static void PatchPostfix()
         {
-            SPTHardcoreRulesPlugin.IsInRaid = false;
+            CurrentRaidSettings.IsInRaid = false;
         }
     }
 }

@@ -6,26 +6,24 @@ using System.Threading.Tasks;
 using BepInEx;
 using EFT;
 using EFT.UI;
+using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.5.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.1.6.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
-        public static Configuration.ModConfig ModConfig { get; set; } = null;
-        public static ESideType SelectedSide { get; set; } = ESideType.Pmc;
-        public static bool IsInRaid { get; set; } = false;
-
         private void Awake()
         {
             Logger.LogInfo("Loading SPTHardcoreRulesPlugin...");
+            LoggingController.Logger = Logger;
 
-            Logger.LogDebug("Loading SPTHardcoreRulesPlugin...getting configuration data...");
-            ModConfig = Controllers.ConfigController.GetConfig();
+            LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...getting configuration data...");
+            ConfigController.GetConfig();
 
-            if (ModConfig.Enabled)
+            if (ConfigController.Config.Enabled)
             {
-                Logger.LogDebug("Loading SPTHardcoreRulesPlugin...enabling patches...");
+                LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...enabling patches...");
                 new Patches.InsuranceScreenPatch().Enable();
                 new Patches.GameStartedPatch().Enable();
                 new Patches.GameWorldOnDestroyPatch().Enable();
@@ -35,7 +33,7 @@ namespace SPTHardcoreRules
                 new Patches.GetPrioritizedGridsForLootPatch().Enable();
             }
 
-            Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
+            LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
         }
     }
 }

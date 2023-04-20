@@ -1,6 +1,7 @@
 ﻿using Aki.Reflection.Patching;
 using EFT.InventoryLogic;
 using EFT.UI;
+using SPTHardcoreRules.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace SPTHardcoreRules.Patches
             if (screen == EMenuType.Player)
             {
                 // Need to do this in case the user chooses to be a Scav in the side-selection screen but then returns to the main menu
-                SPTHardcoreRulesPlugin.SelectedSide = EFT.ESideType.Pmc;
+                CurrentRaidSettings.SelectedSide = EFT.ESideType.Pmc;
             }
         }
     }

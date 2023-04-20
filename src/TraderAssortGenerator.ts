@@ -172,7 +172,7 @@ export class TraderAssortGenerator
         
         if (trader.questassort === undefined)
             return;
-
+        
         if (barterID in trader.questassort.started)
             delete trader.questassort.started[barterID];
         if (barterID in trader.questassort.success)
