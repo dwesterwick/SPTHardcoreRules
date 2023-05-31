@@ -15,7 +15,7 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MatchMakerSideSelectionScreen.GClass2769).GetMethod("UpdateSideSelection", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(MatchMakerSideSelectionScreen.GClass2770).GetMethod("UpdateSideSelection", BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPostfix]

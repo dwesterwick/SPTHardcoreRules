@@ -14,15 +14,15 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(GClass2402).GetMethod("GetPrioritizedGridsForLoot", BindingFlags.Public | BindingFlags.Static);
+            return typeof(GClass2401).GetMethod("GetPrioritizedGridsForLoot", BindingFlags.Public | BindingFlags.Static);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref IEnumerable<GClass2166> __result, Item item)
+        private static void PatchPostfix(ref IEnumerable<GClass2165> __result, Item item)
         {
             // Remove containers in which the item is blacklisted
             List<string> blacklistedContainerTemplateIDs = new List<string>();
-            foreach (GClass2166 container in __result)
+            foreach (GClass2165 container in __result)
             {
                 bool canUse = ItemCheckActionPatch.PatchPostfix(true, item, container.ParentItem.CurrentAddress);
                 if (!canUse)

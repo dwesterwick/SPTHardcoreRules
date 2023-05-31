@@ -4,8 +4,6 @@ import { ITemplateItem } from "@spt-aki/models/eft/common/tables/ITemplateItem";
 
 export class ItemHelper
 {
-    private originalItemFilters: Record <string, string[]> = {};
-	
     constructor(private commonUtils: CommonUtils, private databaseTables: IDatabaseTables)
     {
 		
