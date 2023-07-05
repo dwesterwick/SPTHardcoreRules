@@ -21,6 +21,7 @@ The following items are whitelisted for trader offers by default:
 * All inventory containers (item cases, Scav junkboxes, etc.)
 * All special items (markers, signal jammers, etc.)
 * All maps
+* Green flares
 
 The following items are whitelisted for putting in your secure container by default:
 * All keys and keycards (but they must not be examined when in raid)
