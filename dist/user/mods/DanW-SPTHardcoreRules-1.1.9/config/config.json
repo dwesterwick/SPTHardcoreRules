@@ -5,7 +5,7 @@
 		"flea_market": {
 				"enabled": false,
 				"only_barter_offers": true,
-				"min_level": 1
+				"min_level": 15
 		},
 		"disable_repairs": true,
 		"disable_insurance": true,
