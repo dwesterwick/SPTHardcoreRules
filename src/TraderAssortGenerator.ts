@@ -131,16 +131,16 @@ export class TraderAssortGenerator
             const itemID = trader.assort.items[assortItem]._tpl;
             const item = databaseTables.templates.items[itemID];
 			
-            if (modConfig.traders.whitelist.items.includes(itemID))
-                continue;
-			
-            if (ItemHelper.hasAnyParents(item, modConfig.traders.whitelist.parents, databaseTables))
-                continue;
-			
             if (item._props.QuestItem == true)
                 continue;
-				
-            if (!modConfig.traders.barters_only || TraderAssortGenerator.isABarterOffer(trader.assort.barter_scheme[barterID][0], databaseTables))
+            
+            if (modConfig.traders.whitelist.items.includes(itemID))
+                continue;
+            
+            if (ItemHelper.hasAnyParents(item, modConfig.traders.whitelist.parents, databaseTables))
+                continue;
+            
+            if (!modConfig.traders.whitelist_only && (!modConfig.traders.barters_only || TraderAssortGenerator.isABarterOffer(trader.assort.barter_scheme[barterID][0], databaseTables)))
                 continue;
 			
             this.removeItemFromTraderAssort(assortItem, barterID, trader);

@@ -18,6 +18,9 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("barters_only")]
         public bool BartersOnly { get; set; }
 
+        [JsonProperty("whitelist_only")]
+        public bool WhitelistOnly { get; set; }
+
         [JsonProperty("whitelist")]
         public Whitelist Whitelist { get; set; } = new Whitelist();
 

@@ -16,6 +16,7 @@
 		"ID_money": "543be5dd4bdc2deb348b4569",
 		"disable_fence": true,
 		"barters_only": true,
+		"whitelist_only": false,
 		"whitelist": {
 			"parents": [
 				"543be5dd4bdc2deb348b4569",
