@@ -46,7 +46,7 @@ const ignoreList = [
     "tsconfig.json",
     csharpDevFolder + "/"
 ];
-const exclude = glob.sync(`{${ignoreList.join(",")}}`, { realpath: true, dot: true });
+const exclude = glob.sync(`{${ignoreList.join(",")}}`, { realpath: true, dot: true, absolute: true });
 
 // For some reason these basic-bitch functions won't allow us to copy a directory into itself, so we have to resort to
 // using a temporary directory, like an idiot. Excuse the normalize spam; some modules cross-platform, some don't...
