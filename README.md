@@ -32,7 +32,8 @@ The following items are whitelisted for putting in your secure container by defa
 * S I C C case
 * Documents case
 
-There is currently one known issue:
+Known issues:
+* If used with Late to the Party 1.2.0 or later, Fence will always sell items even if **traders.disable_fence=false** in *config.json*.
 * I can't figure out how to blacklist items from trader repairs, so I made them really expensive instead. I can prohibit all traders from being able to repair, but that causes issues in the repair screen.
 
 Good luck!
