@@ -48,6 +48,11 @@ export class TraderAssortGenerator
         this.commonUtils.logInfo("Refreshing Ragfair offers...");		
         this.ragfairOfferGenerator.generateDynamicOffers();
 		
+        this.removeBannedRagairOffers();
+    }
+
+    public removeBannedRagairOffers(): void
+    {
         // getUpdateableTraders() is protected but seems to work. I build this list manually just to be safe. 
         //const updateableTraders = this.ragfairServer.getUpdateableTraders();
 
@@ -73,9 +78,10 @@ export class TraderAssortGenerator
             }
         }
 
+        this.commonUtils.logInfo("Refreshing Ragfair offers for traders...");
         for (const i in updateableTraders)
         {
-            this.commonUtils.logInfo(`Refreshing Ragfair offers for ${this.commonUtils.getTraderName(updateableTraders[i])}...`);
+            //this.commonUtils.logInfo(`Refreshing Ragfair offers for ${this.commonUtils.getTraderName(updateableTraders[i])}...`);
             this.ragfairOfferGenerator.generateFleaOffersForTrader(updateableTraders[i]);
         }
     }

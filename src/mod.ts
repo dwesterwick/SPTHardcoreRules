@@ -71,6 +71,19 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
                 }
             }], "aki"
         );
+
+        // Flea market search
+        // Needed to removed banned offers from the flea market
+        staticRouterModService.registerStaticRouter(`StaticAkiRagfairFind${modName}`,
+            [{
+                url: "/client/ragfair/find",
+                action: (url: string, info: any, sessionId: string, output: string) => 
+                {
+                    this.traderAssortGenerator.removeBannedRagairOffers();
+                    return output;
+                }
+            }], "aki"
+        );
     }
 	
     public postDBLoad(container: DependencyContainer): void
