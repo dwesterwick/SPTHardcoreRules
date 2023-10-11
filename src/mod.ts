@@ -17,9 +17,11 @@ import { RagfairServer } from "@spt-aki/servers/RagfairServer";
 import { IRagfairConfig  } from "@spt-aki/models/spt/config/IRagfairConfig";
 import { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGenerator";
 import { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
+import { RagfairController } from "@spt-aki/controllers/RagfairController";
 import { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
 import { ProfileHelper } from "@spt-aki/helpers/ProfileHelper";
 import { LocaleService } from "@spt-aki/services/LocaleService";
+import { HttpResponseUtil } from "@spt-aki/utils/HttpResponseUtil";
 
 import { StaticRouterModService } from "@spt-aki/services/mod/staticRouter/StaticRouterModService";
 
@@ -38,10 +40,12 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     private ragfairConfig: IRagfairConfig;
     private ragfairOfferGenerator: RagfairOfferGenerator;
     private ragfairOfferService: RagfairOfferService;
+    private ragfairController: RagfairController;
     private traderConfig: ITraderConfig;	
     private databaseTables: IDatabaseTables;
     private profileHelper: ProfileHelper;
     private localeService: LocaleService;
+    private httpResponseUtil: HttpResponseUtil;
 	
     public preAkiLoad(container: DependencyContainer): void 
     {
@@ -84,8 +88,16 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
                 url: "/client/ragfair/find",
                 action: (url: string, info: any, sessionId: string, output: string) => 
                 {
-                    this.traderAssortGenerator.removeBannedRagairOffers();
-                    return output;
+                    let offers = this.ragfairController.getOffers(sessionId, info);
+
+                    if (modConfig.services.flea_market.only_barter_offers && this.traderAssortGenerator.hasCashOffers(offers))
+                    {
+                        this.commonUtils.logInfo("Found cash offers in flea market search result. Refreshing offers...");
+                        this.traderAssortGenerator.refreshRagfairOffers();
+                        offers = this.ragfairController.getOffers(sessionId, info);
+                    }
+
+                    return this.httpResponseUtil.getBody(offers);
                 }
             }], "aki"
         );
@@ -99,7 +111,9 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.ragfairServer = container.resolve<RagfairServer>("RagfairServer");
         this.ragfairOfferGenerator = container.resolve<RagfairOfferGenerator>("RagfairOfferGenerator");
         this.ragfairOfferService = container.resolve<RagfairOfferService>("RagfairOfferService");
+        this.ragfairController = container.resolve<RagfairController>("RagfairController");
         this.localeService = container.resolve<LocaleService>("LocaleService");
+        this.httpResponseUtil = container.resolve<HttpResponseUtil>("HttpResponseUtil");
 		
         this.databaseTables = this.databaseServer.getTables();
         this.ragfairConfig = this.configServer.getConfig<IRagfairConfig>(ConfigTypes.RAGFAIR);

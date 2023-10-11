@@ -9,6 +9,7 @@ import modConfig from "../config/config.json";
 
 import { ItemHelper } from "./ItemHelper";
 import { ITrader, ITraderAssort, IBarterScheme } from "@spt-aki/models/eft/common/tables/ITrader";
+import { IGetOffersResult } from "@spt-aki/models/eft/ragfair/IGetOffersResult";
 
 export class TraderAssortGenerator
 {
@@ -53,12 +54,12 @@ export class TraderAssortGenerator
 
     public removeBannedRagairOffers(): void
     {
-        // getUpdateableTraders() is protected but seems to work. I build this list manually just to be safe. 
-        //const updateableTraders = this.ragfairServer.getUpdateableTraders();
-
-        const updateableTraders = [];
         const offers = this.ragfairOfferService.getOffers();
 
+        // getUpdateableTraders() is protected but seems to work. I build this list manually just to be safe. 
+        //const updateableTraders = this.ragfairServer.getUpdateableTraders();
+        const updateableTraders = [];
+        
         // Review all offers and generate an array of ID's for traders who appear in them
         for (const offer in offers)
         {
@@ -74,7 +75,9 @@ export class TraderAssortGenerator
             for (const offer in offers)
             {
                 if (!TraderAssortGenerator.isABarterOffer(offers[offer].requirements, this.databaseTables))
+                {
                     this.ragfairOfferService.removeOfferById(offers[offer]._id);
+                }
             }
         }
 
@@ -84,6 +87,19 @@ export class TraderAssortGenerator
             //this.commonUtils.logInfo(`Refreshing Ragfair offers for ${this.commonUtils.getTraderName(updateableTraders[i])}...`);
             this.ragfairOfferGenerator.generateFleaOffersForTrader(updateableTraders[i]);
         }
+    }
+
+    public hasCashOffers(offerData: IGetOffersResult): boolean
+    {
+        for (const offer in offerData.offers)
+        {
+            if (!TraderAssortGenerator.isABarterOffer(offerData.offers[offer].requirements, this.databaseTables))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 	
     public updateTraderAssorts(): void
