@@ -1,14 +1,12 @@
-﻿using Aki.Reflection.Patching;
-using EFT.InventoryLogic;
-using EFT.UI;
-using SPTHardcoreRules.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Aki.Reflection.Patching;
+using EFT.UI;
+using SPTHardcoreRules.Models;
 
 namespace SPTHardcoreRules.Patches
 {

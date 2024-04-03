@@ -14,7 +14,7 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuController).GetMethod("method_69", BindingFlags.NonPublic | BindingFlags.Instance);
+            return typeof(MainMenuController).GetMethod("method_72", BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPrefix]
@@ -40,15 +40,11 @@ namespace SPTHardcoreRules.Patches
             }
             if (___raidSettings_0.RaidMode == ERaidMode.Online)
             {
-                MethodInfo method_41 = typeof(MainMenuController).GetMethod("method_41", BindingFlags.NonPublic | BindingFlags.Instance);
-                method_41.Invoke(__instance, new object[] { });
-
+                __instance.method_42();
                 return false;
             }
 
-            MethodInfo method_42 = typeof(MainMenuController).GetMethod("method_42", BindingFlags.NonPublic | BindingFlags.Instance);
-            method_42.Invoke(__instance, new object[] { } );
-
+            __instance.method_43();
             return false;
         }
 

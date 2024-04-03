@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx;
-using EFT;
-using EFT.UI;
 using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.2.2.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.3.0.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         private void Awake()

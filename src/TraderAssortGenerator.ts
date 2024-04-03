@@ -1,15 +1,15 @@
-import { CommonUtils } from "./CommonUtils";
-import { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
-import { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
-import { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGenerator";
-import { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
-import { RagfairServer } from "@spt-aki/servers/RagfairServer";
+import type { CommonUtils } from "./CommonUtils";
+import type { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
+import type { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
+import type { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGenerator";
+import type { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
+import type { RagfairServer } from "@spt-aki/servers/RagfairServer";
 import { MemberCategory } from "@spt-aki/models/enums/MemberCategory"
 import modConfig from "../config/config.json";
 
 import { ItemHelper } from "./ItemHelper";
-import { ITrader, ITraderAssort, IBarterScheme } from "@spt-aki/models/eft/common/tables/ITrader";
-import { IGetOffersResult } from "@spt-aki/models/eft/ragfair/IGetOffersResult";
+import type { ITrader, ITraderAssort, IBarterScheme } from "@spt-aki/models/eft/common/tables/ITrader";
+import type { IGetOffersResult } from "@spt-aki/models/eft/ragfair/IGetOffersResult";
 
 export class TraderAssortGenerator
 {
@@ -22,10 +22,9 @@ export class TraderAssortGenerator
         private ragfairServer: RagfairServer,
         private ragfairOfferService: RagfairOfferService
     )
-    {
-		
-    }
+    { }
 	
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     public static rebuildArray(array: any[]): any[]
     {
         const newArray = [];
@@ -63,7 +62,7 @@ export class TraderAssortGenerator
         // Review all offers and generate an array of ID's for traders who appear in them
         for (const offer in offers)
         {
-            if (offers[offer].user.memberType == MemberCategory.TRADER)
+            if (offers[offer].user.memberType === MemberCategory.TRADER)
                 if (!updateableTraders.includes(offers[offer].user.id))
                     updateableTraders.push(offers[offer].user.id);
         }
@@ -134,16 +133,16 @@ export class TraderAssortGenerator
             // needs to remain compatible with that version.
             if ((trader.assort.items[assortItem].slotId === null) || (trader.assort.items[assortItem].slotId === undefined))
             {
-                if (trader.assort.items[assortItem]._id == "634acfb4da5c23324e07ca36")
+                if (trader.assort.items[assortItem]._id === "634acfb4da5c23324e07ca36")
                     trader.assort.items[assortItem].slotId = "hideout";
             }
 
             // If slotId is "hideout", the item appears in the grid of trader offers and is not a child of another item in the grid
-            if (trader.assort.items[assortItem].slotId.toLowerCase() != "hideout")
+            if (trader.assort.items[assortItem].slotId.toLowerCase() !== "hideout")
             {
                 // ASSuming child items appear immediately afterward in the assort item array, they should be removed if the parent item is removed
                 if (lastItemRemoved)
-                    this.removeItemFromTraderAssort(assortItem, barterID, trader);
+                    TraderAssortGenerator.removeItemFromTraderAssort(assortItem, barterID, trader);
 				
                 continue;
             }
@@ -153,7 +152,7 @@ export class TraderAssortGenerator
             const itemID = trader.assort.items[assortItem]._tpl;
             const item = databaseTables.templates.items[itemID];
 			
-            if (item._props.QuestItem == true)
+            if (item._props.QuestItem === true)
                 continue;
             
             if (modConfig.traders.whitelist.items.includes(itemID))
@@ -165,7 +164,7 @@ export class TraderAssortGenerator
             if (!modConfig.traders.whitelist_only && (!modConfig.traders.barters_only || TraderAssortGenerator.isABarterOffer(trader.assort.barter_scheme[barterID][0], databaseTables)))
                 continue;
 			
-            this.removeItemFromTraderAssort(assortItem, barterID, trader);
+            TraderAssortGenerator.removeItemFromTraderAssort(assortItem, barterID, trader);
             lastItemRemoved = true;
         }
 		
@@ -178,7 +177,7 @@ export class TraderAssortGenerator
         {
             const buyReqItem = databaseTables.templates.items[barterScheme[buyReq]._tpl];
 			
-            if (buyReqItem._parent != modConfig.traders.ID_money)
+            if (buyReqItem._parent !== modConfig.traders.ID_money)
                 return true;
         }
 		

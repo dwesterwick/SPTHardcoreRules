@@ -1,6 +1,6 @@
-import { CommonUtils } from "./CommonUtils";
-import { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
-import { ITemplateItem } from "@spt-aki/models/eft/common/tables/ITemplateItem";
+import type { CommonUtils } from "./CommonUtils";
+import type { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
+import type { ITemplateItem } from "@spt-aki/models/eft/common/tables/ITemplateItem";
 
 export class ItemHelper
 {
@@ -34,7 +34,7 @@ export class ItemHelper
 	
     public static getAllParents(item: ITemplateItem, databaseTables: IDatabaseTables): string[]
     {
-        if ((item._parent === null) || (item._parent === undefined) || (item._parent == ""))
+        if ((item._parent === null) || (item._parent === undefined) || (item._parent === ""))
             return [];
 		
         const allParents = ItemHelper.getAllParents(databaseTables.templates.items[item._parent], databaseTables);

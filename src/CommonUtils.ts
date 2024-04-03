@@ -1,8 +1,8 @@
 import modConfig from "../config/config.json";
 
-import { ILogger } from "@spt-aki/models/spt/utils/ILogger";
-import { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
-import { LocaleService } from "@spt-aki/services/LocaleService";
+import type { ILogger } from "@spt-aki/models/spt/utils/ILogger";
+import type { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
+import type { LocaleService } from "@spt-aki/services/LocaleService";
 
 export class CommonUtils
 {
@@ -23,7 +23,7 @@ export class CommonUtils
 	
     public getTraderName(traderID: string): string
     {
-        const translationKey = traderID + " Nickname";
+        const translationKey = `${traderID} Nickname`;
         if (translationKey in this.translations)
             return this.translations[translationKey];
 		
@@ -34,7 +34,7 @@ export class CommonUtils
 	
     public getItemName(itemID: string): string
     {
-        const translationKey = itemID + " Name";
+        const translationKey = `${itemID} Name`;
         if (translationKey in this.translations)
             return this.translations[translationKey];
 		

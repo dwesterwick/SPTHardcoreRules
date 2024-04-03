@@ -3,27 +3,27 @@ import { TraderAssortGenerator } from "./TraderAssortGenerator";
 import { ItemHelper } from "./ItemHelper";
 import modConfig from "../config/config.json";
 
-import { DependencyContainer } from "tsyringe";
-import { IPreAkiLoadMod } from "@spt-aki/models/external/IPreAkiLoadMod";
-import { IPostDBLoadMod } from "@spt-aki/models/external/IPostDBLoadMod";
-import { IPostAkiLoadMod } from "@spt-aki/models/external/IPostAkiLoadMod";
+import type { DependencyContainer } from "tsyringe";
+import type { IPreAkiLoadMod } from "@spt-aki/models/external/IPreAkiLoadMod";
+import type { IPostDBLoadMod } from "@spt-aki/models/external/IPostDBLoadMod";
+import type { IPostAkiLoadMod } from "@spt-aki/models/external/IPostAkiLoadMod";
 
-import { ILogger } from "@spt-aki/models/spt/utils/ILogger";
-import { DatabaseServer } from "@spt-aki/servers/DatabaseServer";
-import { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
-import { ConfigServer } from "@spt-aki/servers/ConfigServer";
+import type { ILogger } from "@spt-aki/models/spt/utils/ILogger";
+import type { DatabaseServer } from "@spt-aki/servers/DatabaseServer";
+import type { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
+import type { ConfigServer } from "@spt-aki/servers/ConfigServer";
 import { ConfigTypes } from "@spt-aki/models/enums/ConfigTypes";
-import { RagfairServer } from "@spt-aki/servers/RagfairServer";
-import { IRagfairConfig  } from "@spt-aki/models/spt/config/IRagfairConfig";
-import { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGenerator";
-import { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
-import { RagfairController } from "@spt-aki/controllers/RagfairController";
-import { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
-import { ProfileHelper } from "@spt-aki/helpers/ProfileHelper";
-import { LocaleService } from "@spt-aki/services/LocaleService";
-import { HttpResponseUtil } from "@spt-aki/utils/HttpResponseUtil";
+import type { RagfairServer } from "@spt-aki/servers/RagfairServer";
+import type { IRagfairConfig  } from "@spt-aki/models/spt/config/IRagfairConfig";
+import type { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGenerator";
+import type { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
+import type { RagfairController } from "@spt-aki/controllers/RagfairController";
+import type { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
+import type { ProfileHelper } from "@spt-aki/helpers/ProfileHelper";
+import type { LocaleService } from "@spt-aki/services/LocaleService";
+import type { HttpResponseUtil } from "@spt-aki/utils/HttpResponseUtil";
 
-import { StaticRouterModService } from "@spt-aki/services/mod/staticRouter/StaticRouterModService";
+import type { StaticRouterModService } from "@spt-aki/services/mod/staticRouter/StaticRouterModService";
 
 const modName = "SPTHardcoreRules";
 
@@ -68,6 +68,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         staticRouterModService.registerStaticRouter(`StaticAkiProfileLoad${modName}`,
             [{
                 url: "/client/game/start",
+                // biome-ignore lint/suspicious/noExplicitAny: <explanation>
                 action: (url: string, info: any, sessionId: string, output: string) => 
                 {
                     this.onProfileLoad(sessionId);
@@ -86,6 +87,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         staticRouterModService.registerStaticRouter(`StaticAkiRagfairFind${modName}`,
             [{
                 url: "/client/ragfair/find",
+                // biome-ignore lint/suspicious/noExplicitAny: <explanation>
                 action: (url: string, info: any, sessionId: string, output: string) => 
                 {
                     let offers = this.ragfairController.getOffers(sessionId, info);
