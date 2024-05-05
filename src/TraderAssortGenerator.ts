@@ -41,6 +41,16 @@ export class TraderAssortGenerator
         this.commonUtils.logInfo("Disabling Fence...");		
         this.traderConfig.fence.assortSize = 0;
         this.traderConfig.fence.discountOptions.assortSize = 0;
+
+        this.traderConfig.fence.equipmentPresetMinMax.min = 0;
+        this.traderConfig.fence.equipmentPresetMinMax.max = 0;
+        this.traderConfig.fence.discountOptions.equipmentPresetMinMax.min = 0;
+        this.traderConfig.fence.discountOptions.equipmentPresetMinMax.max = 0;
+
+        this.traderConfig.fence.weaponPresetMinMax.min = 0;
+        this.traderConfig.fence.weaponPresetMinMax.max = 0;
+        this.traderConfig.fence.discountOptions.weaponPresetMinMax.min = 0;
+        this.traderConfig.fence.discountOptions.weaponPresetMinMax.max = 0;
     }
 	
     public refreshRagfairOffers(): void
