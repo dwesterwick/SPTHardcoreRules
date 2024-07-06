@@ -9,6 +9,7 @@ This mod is highly customizable, so you can change the configuration to match th
 * **services.disable_post_raid_healing**: Disables Therapist's post-raid healing.
 * **services.disable_scav_raids**: Disables Scav raids.
 * **traders.disable_fence**: Allows you to remove all of Fence's offers. You can still sell items to Fence. 
+* **traders.disable_prapor_starting_gifts**: Prapor no longer gives you starting gifts. 
 * **traders.barters_only**: Removes all trader offers using currency unless they're explicitly whitelisted below.
 * **traders.whitelist_only**: Removes all trader offers unless they're explicitly whitelisted in this mod.
 * **traders.whitelist**: If only barters are allowed, use this to whitelist items even if they're not barters. You can whitelist individual items in the **items** array or whitelist an item and all of its child items using the **parents** array. For example, if you have the ID for currency (543be5dd4bdc2deb348b4569) in the **parents** array, all three currencies (RUB, USD, and EUR) will be whitelisted. You can find ID's for items using https://db.sp-tarkov.com/search/ or find them in *[SPT-AKI install directory]\Aki_Data\Server\database\templates\items.json*.

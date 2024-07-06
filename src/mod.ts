@@ -19,6 +19,7 @@ import type { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGene
 import type { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
 import type { RagfairController } from "@spt-aki/controllers/RagfairController";
 import type { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
+import type { IGiftsConfig  } from "@spt-aki/models/spt/config/IGiftsConfig";
 import type { ProfileHelper } from "@spt-aki/helpers/ProfileHelper";
 import type { LocaleService } from "@spt-aki/services/LocaleService";
 import type { HttpResponseUtil } from "@spt-aki/utils/HttpResponseUtil";
@@ -41,7 +42,8 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     private ragfairOfferGenerator: RagfairOfferGenerator;
     private ragfairOfferService: RagfairOfferService;
     private ragfairController: RagfairController;
-    private traderConfig: ITraderConfig;	
+    private traderConfig: ITraderConfig;
+    private giftsConfig: IGiftsConfig;
     private databaseTables: IDatabaseTables;
     private profileHelper: ProfileHelper;
     private localeService: LocaleService;
@@ -120,6 +122,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.databaseTables = this.databaseServer.getTables();
         this.ragfairConfig = this.configServer.getConfig<IRagfairConfig>(ConfigTypes.RAGFAIR);
         this.traderConfig = this.configServer.getConfig<ITraderConfig>(ConfigTypes.TRADER);
+        this.giftsConfig = this.configServer.getConfig<IGiftsConfig>(ConfigTypes.GIFTS);
 		
         this.commonUtils = new CommonUtils(this.logger, this.databaseTables, this.localeService);
         this.traderAssortGenerator = new TraderAssortGenerator(this.commonUtils, this.traderConfig, this.databaseTables, this.ragfairOfferGenerator, this.ragfairServer, this.ragfairOfferService);
@@ -141,6 +144,9 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
 		
         if (modConfig.traders.disable_fence)
             this.traderAssortGenerator.disableFence();
+
+        if (modConfig.traders.disable_prapor_starting_gifts)
+            this.disablePraporStartingGifts();
 		
         this.traderAssortGenerator.updateTraderAssorts();
     }
@@ -256,6 +262,14 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         {
             this.databaseTables.traders[trader].base.medic = false;
         }
+    }
+
+    private disablePraporStartingGifts(): void
+    {
+        this.commonUtils.logInfo("Disabling Prapor's starting gifts...");
+
+        this.giftsConfig.gifts.PraporGiftDay1.items = [];
+        this.giftsConfig.gifts.PraporGiftDay2.items = [];
     }
 }
 
