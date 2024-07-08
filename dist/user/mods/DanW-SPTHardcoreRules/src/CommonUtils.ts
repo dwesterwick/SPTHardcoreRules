@@ -20,6 +20,16 @@ export class CommonUtils
         if (modConfig.debug)
             this.logger.info(this.debugMessagePrefix + message);
     }
+
+    public logWarning(message: string): void
+    {
+        this.logger.warning(this.debugMessagePrefix + message);
+    }
+
+    public logError(message: string): void
+    {
+        this.logger.error(this.debugMessagePrefix + message);
+    }
 	
     public getTraderName(traderID: string): string
     {

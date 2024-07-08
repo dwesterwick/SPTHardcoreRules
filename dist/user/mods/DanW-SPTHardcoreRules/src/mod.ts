@@ -23,6 +23,7 @@ import type { IGiftsConfig  } from "@spt/models/spt/config/IGiftsConfig";
 import type { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import type { LocaleService } from "@spt/services/LocaleService";
 import type { HttpResponseUtil } from "@spt/utils/HttpResponseUtil";
+import type { VFS } from "@spt/utils/VFS";
 
 import type { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
 
@@ -48,6 +49,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     private profileHelper: ProfileHelper;
     private localeService: LocaleService;
     private httpResponseUtil: HttpResponseUtil;
+    private vfs: VFS;
 	
     public preSptLoad(container: DependencyContainer): void 
     {
@@ -118,6 +120,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.ragfairController = container.resolve<RagfairController>("RagfairController");
         this.localeService = container.resolve<LocaleService>("LocaleService");
         this.httpResponseUtil = container.resolve<HttpResponseUtil>("HttpResponseUtil");
+        this.vfs = container.resolve<VFS>("VFS");
 		
         this.databaseTables = this.databaseServer.getTables();
         this.ragfairConfig = this.configServer.getConfig<IRagfairConfig>(ConfigTypes.RAGFAIR);
@@ -131,6 +134,12 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         if (!modConfig.enabled)
             return;
         
+        if (!this.doesFileIntegrityCheckPass())
+        {
+            modConfig.enabled = false;
+            return;
+        }
+
         this.databaseTables.globals.config.RagFair.minUserLevel = modConfig.services.flea_market.min_level;
         if (!modConfig.services.flea_market.enabled)
             this.disableFleaMarket();
@@ -275,6 +284,20 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
         this.giftsConfig.gifts.PraporGiftDay1.items = [];
         this.giftsConfig.gifts.PraporGiftDay2.items = [];
+    }
+
+    private doesFileIntegrityCheckPass(): boolean
+    {
+        const path = `${__dirname}/..`;
+
+        if (modConfig.secureContainer.only_use_whitelists_in_this_mod && !this.vfs.exists(`${path}/../../../BepInEx/plugins/SPTHardcoreRules.dll`))
+        {
+            this.commonUtils.logError("Cannot find BepInEx/plugins/SPTHardcoreRules.dll. Without it, this mod will NOT work correctly.");
+        
+            return false;
+        }
+
+        return true;
     }
 }
 
