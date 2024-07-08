@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Reflection.Patching;
+using SPT.Reflection.Patching;
 using EFT;
 using SPTHardcoreRules.Controllers;
 
@@ -14,7 +14,7 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuController).GetMethod("method_72", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(MainMenuController).GetMethod("method_74", BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPrefix]
@@ -29,7 +29,7 @@ namespace SPTHardcoreRules.Patches
             else
             {
                 LoggingController.Logger.LogDebug("Allowing insurance screen...");
-                // This is done in Aki.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
+                // This is done in SPT.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
                 ___raidSettings_0.RaidMode = ERaidMode.Online;
             }
 
@@ -40,11 +40,11 @@ namespace SPTHardcoreRules.Patches
             }
             if (___raidSettings_0.RaidMode == ERaidMode.Online)
             {
-                __instance.method_42();
+                __instance.method_43();
                 return false;
             }
 
-            __instance.method_43();
+            __instance.method_44();
             return false;
         }
 
@@ -52,7 +52,7 @@ namespace SPTHardcoreRules.Patches
         private static void PatchPostfix(MainMenuController __instance, RaidSettings ___raidSettings_0)
         {
             // TO DO: Is this really true?
-            // This is done in Aki.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
+            // This is done in SPT.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
             ___raidSettings_0.RaidMode = ERaidMode.Local;
         }
     }

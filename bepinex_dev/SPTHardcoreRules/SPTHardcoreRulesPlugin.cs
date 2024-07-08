@@ -8,7 +8,7 @@ using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.3.2.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.4.0.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         private void Awake()
@@ -28,7 +28,7 @@ namespace SPTHardcoreRules
                 new Patches.ItemCheckActionPatch().Enable();
                 new Patches.UpdateSideSelectionPatch().Enable();
                 new Patches.ShowScreenPatch().Enable();
-                new Patches.GetPrioritizedGridsForLootPatch().Enable();
+                new Patches.GetPrioritizedContainersForLootPatch().Enable();
             }
 
             LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");

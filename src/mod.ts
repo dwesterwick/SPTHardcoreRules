@@ -4,31 +4,31 @@ import { ItemHelper } from "./ItemHelper";
 import modConfig from "../config/config.json";
 
 import type { DependencyContainer } from "tsyringe";
-import type { IPreAkiLoadMod } from "@spt-aki/models/external/IPreAkiLoadMod";
-import type { IPostDBLoadMod } from "@spt-aki/models/external/IPostDBLoadMod";
-import type { IPostAkiLoadMod } from "@spt-aki/models/external/IPostAkiLoadMod";
+import type { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
+import type { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
+import type { IPostSptLoadMod } from "@spt/models/external/IPostSptLoadMod";
 
-import type { ILogger } from "@spt-aki/models/spt/utils/ILogger";
-import type { DatabaseServer } from "@spt-aki/servers/DatabaseServer";
-import type { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
-import type { ConfigServer } from "@spt-aki/servers/ConfigServer";
-import { ConfigTypes } from "@spt-aki/models/enums/ConfigTypes";
-import type { RagfairServer } from "@spt-aki/servers/RagfairServer";
-import type { IRagfairConfig  } from "@spt-aki/models/spt/config/IRagfairConfig";
-import type { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGenerator";
-import type { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
-import type { RagfairController } from "@spt-aki/controllers/RagfairController";
-import type { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
-import type { IGiftsConfig  } from "@spt-aki/models/spt/config/IGiftsConfig";
-import type { ProfileHelper } from "@spt-aki/helpers/ProfileHelper";
-import type { LocaleService } from "@spt-aki/services/LocaleService";
-import type { HttpResponseUtil } from "@spt-aki/utils/HttpResponseUtil";
+import type { ILogger } from "@spt/models/spt/utils/ILogger";
+import type { DatabaseServer } from "@spt/servers/DatabaseServer";
+import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
+import type { ConfigServer } from "@spt/servers/ConfigServer";
+import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
+import type { RagfairServer } from "@spt/servers/RagfairServer";
+import type { IRagfairConfig  } from "@spt/models/spt/config/IRagfairConfig";
+import type { RagfairOfferGenerator } from "@spt/generators/RagfairOfferGenerator";
+import type { RagfairOfferService } from "@spt/services/RagfairOfferService";
+import type { RagfairController } from "@spt/controllers/RagfairController";
+import type { ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
+import type { IGiftsConfig  } from "@spt/models/spt/config/IGiftsConfig";
+import type { ProfileHelper } from "@spt/helpers/ProfileHelper";
+import type { LocaleService } from "@spt/services/LocaleService";
+import type { HttpResponseUtil } from "@spt/utils/HttpResponseUtil";
 
-import type { StaticRouterModService } from "@spt-aki/services/mod/staticRouter/StaticRouterModService";
+import type { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
 
 const modName = "SPTHardcoreRules";
 
-class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
+class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 {
     private commonUtils: CommonUtils
     private traderAssortGenerator: TraderAssortGenerator
@@ -49,7 +49,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
     private localeService: LocaleService;
     private httpResponseUtil: HttpResponseUtil;
 	
-    public preAkiLoad(container: DependencyContainer): void 
+    public preSptLoad(container: DependencyContainer): void 
     {
         this.logger = container.resolve<ILogger>("WinstonLogger");
         const staticRouterModService = container.resolve<StaticRouterModService>("StaticRouterModService");
@@ -58,7 +58,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         staticRouterModService.registerStaticRouter(`StaticGetConfig${modName}`,
             [{
                 url: "/SPTHardcoreRules/GetConfig",
-                action: () => 
+                action: async () => 
                 {
                     return JSON.stringify(modConfig);
                 }
@@ -71,7 +71,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
             [{
                 url: "/client/game/start",
                 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                action: (url: string, info: any, sessionId: string, output: string) => 
+                action: async (url: string, info: any, sessionId: string, output: string) => 
                 {
                     this.onProfileLoad(sessionId);
                     return output;
@@ -90,7 +90,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
             [{
                 url: "/client/ragfair/find",
                 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                action: (url: string, info: any, sessionId: string, output: string) => 
+                action: async (url: string, info: any, sessionId: string, output: string) => 
                 {
                     let offers = this.ragfairController.getOffers(sessionId, info);
 
@@ -151,7 +151,7 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         this.traderAssortGenerator.updateTraderAssorts();
     }
 	
-    public postAkiLoad(): void
+    public postSptLoad(): void
     {
         if (!modConfig.enabled)
         {
@@ -169,6 +169,12 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
 
     private updateScavTimer(sessionId: string): void
     {
+        if (modConfig.enabled && modConfig.services.disable_scav_raids)
+        {
+            this.commonUtils.logInfo("Increasing scav cooldown timer...");
+            this.databaseTables.globals.config.SavagePlayCooldown = 2147483647;
+        }
+
         const pmcData = this.profileHelper.getPmcProfile(sessionId);
         const scavData = this.profileHelper.getScavProfile(sessionId);
 		
@@ -181,7 +187,6 @@ class HardcoreRules implements IPreAkiLoadMod, IPostAkiLoadMod, IPostDBLoadMod
         if (modConfig.enabled && modConfig.services.disable_scav_raids)
         {
             this.commonUtils.logInfo(`Increasing scav timer for sessionId=${sessionId}...`);
-            this.databaseTables.globals.config.SavagePlayCooldown = 2147483647;
             scavData.Info.SavageLockTime = 2147483647;
         }
         else

@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SPTHardcoreRules</RootNamespace>
     <AssemblyName>SPTHardcoreRules</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,12 +36,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Aki.Common">
-      <HintPath>..\..\..\..\EscapeFromTarkov_Data\Managed\Aki.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Aki.Reflection">
-      <HintPath>..\..\..\..\EscapeFromTarkov_Data\Managed\Aki.Reflection.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
@@ -58,6 +53,12 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="spt-common">
+      <HintPath>..\..\..\..\BepInEx\plugins\spt\spt-common.dll</HintPath>
+    </Reference>
+    <Reference Include="spt-reflection">
+      <HintPath>..\..\..\..\BepInEx\plugins\spt\spt-reflection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -89,7 +90,7 @@
     <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Controllers\LoggingController.cs" />
     <Compile Include="Models\CurrentRaidSettings.cs" />
-    <Compile Include="Patches\GetPrioritizedGridsForLootPatch.cs" />
+    <Compile Include="Patches\GetPrioritizedContainersForLootPatch.cs" />
     <Compile Include="Patches\GameStartedPatch.cs" />
     <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
     <Compile Include="Patches\InsuranceScreenPatch.cs" />
