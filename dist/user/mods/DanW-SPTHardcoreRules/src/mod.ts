@@ -169,6 +169,12 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
     private updateScavTimer(sessionId: string): void
     {
+        if (modConfig.enabled && modConfig.services.disable_scav_raids)
+        {
+            this.commonUtils.logInfo("Increasing scav cooldown timer...");
+            this.databaseTables.globals.config.SavagePlayCooldown = 2147483647;
+        }
+
         const pmcData = this.profileHelper.getPmcProfile(sessionId);
         const scavData = this.profileHelper.getScavProfile(sessionId);
 		
@@ -181,7 +187,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         if (modConfig.enabled && modConfig.services.disable_scav_raids)
         {
             this.commonUtils.logInfo(`Increasing scav timer for sessionId=${sessionId}...`);
-            this.databaseTables.globals.config.SavagePlayCooldown = 2147483647;
             scavData.Info.SavageLockTime = 2147483647;
         }
         else

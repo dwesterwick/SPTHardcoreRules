@@ -10,33 +10,33 @@ using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules.Patches
 {
-    public class GetPrioritizedGridsForLootPatch : ModulePatch
+    public class GetPrioritizedContainersForLootPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            string methodName = "GetPrioritizedGridsForLoot";
+            string methodName = "GetPrioritizedContainersForLoot";
 
             Type targetType = FindTargetType(methodName);
-            LoggingController.LogInfo("Found type for GetPrioritizedGridsForLootPatch: " + targetType.FullName);
+            LoggingController.LogInfo("Found type for GetPrioritizedContainersForLootPatch: " + targetType.FullName);
 
             return targetType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref IEnumerable<StashGridClass> __result, Item item)
+        private static void PatchPostfix(ref IEnumerable<EFT.InventoryLogic.IContainer> __result, Item item)
         {
             // Remove containers in which the item is blacklisted
-            List<string> blacklistedContainerTemplateIDs = new List<string>();
-            foreach (StashGridClass container in __result)
+            List<EFT.InventoryLogic.IContainer> blacklistedContainers = new List<EFT.InventoryLogic.IContainer>();
+            foreach (EFT.InventoryLogic.IContainer container in __result)
             {
                 bool canUse = ItemCheckActionPatch.PatchPostfix(true, item, container.ParentItem.CurrentAddress);
                 if (!canUse)
                 {
-                    blacklistedContainerTemplateIDs.Add(container.ParentItem.TemplateId);
+                    blacklistedContainers.Add(container);
                 }
             }
 
-            __result = __result.Where(i => !blacklistedContainerTemplateIDs.Contains(i.ParentItem.TemplateId));
+            __result = __result.Where(i => !blacklistedContainers.Contains(i));
         }
 
         public static Type FindTargetType(string methodName)

@@ -28,7 +28,7 @@ namespace SPTHardcoreRules
                 new Patches.ItemCheckActionPatch().Enable();
                 new Patches.UpdateSideSelectionPatch().Enable();
                 new Patches.ShowScreenPatch().Enable();
-                new Patches.GetPrioritizedGridsForLootPatch().Enable();
+                new Patches.GetPrioritizedContainersForLootPatch().Enable();
             }
 
             LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
