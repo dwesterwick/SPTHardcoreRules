@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Reflection.Patching;
+using SPT.Reflection.Patching;
 using EFT.InventoryLogic;
 using SPTHardcoreRules.Controllers;
 
@@ -41,7 +41,7 @@ namespace SPTHardcoreRules.Patches
 
         public static Type FindTargetType(string methodName)
         {
-            List<Type> targetTypeOptions = Aki.Reflection.Utils.PatchConstants.EftTypes
+            List<Type> targetTypeOptions = SPT.Reflection.Utils.PatchConstants.EftTypes
                 .Where(t => t.GetMethods().Any(m => m.Name.Contains(methodName)))
                 .ToList();
 
