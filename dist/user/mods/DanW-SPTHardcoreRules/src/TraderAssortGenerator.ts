@@ -1,15 +1,15 @@
 import type { CommonUtils } from "./CommonUtils";
-import type { ITraderConfig  } from "@spt-aki/models/spt/config/ITraderConfig";
-import type { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
-import type { RagfairOfferGenerator } from "@spt-aki/generators/RagfairOfferGenerator";
-import type { RagfairOfferService } from "@spt-aki/services/RagfairOfferService";
-import type { RagfairServer } from "@spt-aki/servers/RagfairServer";
-import { MemberCategory } from "@spt-aki/models/enums/MemberCategory"
+import type { ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
+import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
+import type { RagfairOfferGenerator } from "@spt/generators/RagfairOfferGenerator";
+import type { RagfairOfferService } from "@spt/services/RagfairOfferService";
+import type { RagfairServer } from "@spt/servers/RagfairServer";
+import { MemberCategory } from "@spt/models/enums/MemberCategory"
 import modConfig from "../config/config.json";
 
 import { ItemHelper } from "./ItemHelper";
-import type { ITrader, ITraderAssort, IBarterScheme } from "@spt-aki/models/eft/common/tables/ITrader";
-import type { IGetOffersResult } from "@spt-aki/models/eft/ragfair/IGetOffersResult";
+import type { ITrader, ITraderAssort, IBarterScheme } from "@spt/models/eft/common/tables/ITrader";
+import type { IGetOffersResult } from "@spt/models/eft/ragfair/IGetOffersResult";
 
 export class TraderAssortGenerator
 {

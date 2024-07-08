@@ -1,6 +1,6 @@
 import type { CommonUtils } from "./CommonUtils";
-import type { IDatabaseTables } from "@spt-aki/models/spt/server/IDatabaseTables";
-import type { ITemplateItem } from "@spt-aki/models/eft/common/tables/ITemplateItem";
+import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
+import type { ITemplateItem } from "@spt/models/eft/common/tables/ITemplateItem";
 
 export class ItemHelper
 {
