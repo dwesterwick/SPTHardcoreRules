@@ -12,6 +12,9 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("ID_money")]
         public string ID_money { get; set; }
 
+        [JsonProperty("ID_GPCoins")]
+        public string ID_GPCoins { get; set; }
+
         [JsonProperty("disable_fence")]
         public bool DisableFence { get; set; }
 
@@ -20,6 +23,9 @@ namespace SPTHardcoreRules.Configuration
 
         [JsonProperty("barters_only")]
         public bool BartersOnly { get; set; }
+
+        [JsonProperty("allow_GPCoins")]
+        public bool AllowGPCoins { get; set; }
 
         [JsonProperty("whitelist_only")]
         public bool WhitelistOnly { get; set; }

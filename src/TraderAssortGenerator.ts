@@ -186,6 +186,9 @@ export class TraderAssortGenerator
         for (const buyReq in barterScheme)
         {
             const buyReqItem = databaseTables.templates.items[barterScheme[buyReq]._tpl];
+
+            if (modConfig.traders.allow_GPCoins && (buyReqItem._id === modConfig.traders.ID_GPCoins))
+                return true;
 			
             if (buyReqItem._parent !== modConfig.traders.ID_money)
                 return true;
