@@ -20,7 +20,7 @@ namespace SPTHardcoreRules.Patches
 
             IEnumerable<Type> matchMakerSideSelectionScreenTypes = typeof(MatchMakerSideSelectionScreen).GetNestedTypes();
             Type targetType = FindTargetType(matchMakerSideSelectionScreenTypes, methodName);
-            LoggingController.LogInfo("Found type for GetPrioritizedGridsForLootPatch: " + targetType.FullName);
+            LoggingController.LogInfo("Found type for UpdateSideSelectionPatch: " + targetType.FullName);
 
             return targetType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
         }

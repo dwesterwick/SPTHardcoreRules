@@ -8,7 +8,7 @@ using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "1.4.1.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "2.0.0.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         private void Awake()
@@ -29,6 +29,16 @@ namespace SPTHardcoreRules
                 new Patches.UpdateSideSelectionPatch().Enable();
                 new Patches.ShowScreenPatch().Enable();
                 new Patches.GetPrioritizedContainersForLootPatch().Enable();
+
+                if (ConfigController.Config.Services.DisableScavRaids)
+                {
+                    new Patches.SideSelectionAwakePatch().Enable();
+                }
+
+                if (ConfigController.Config.Services.DisableRepairs)
+                {
+                    new Patches.RemoveRepairOptionPatch().Enable();
+                }
             }
 
             LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
