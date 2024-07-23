@@ -33,6 +33,7 @@ namespace SPTHardcoreRules
                 if (ConfigController.Config.Services.DisableScavRaids)
                 {
                     new Patches.SideSelectionAwakePatch().Enable();
+                    new Patches.SideSelectionUpdatePatch().Enable();
                 }
 
                 if (ConfigController.Config.Services.DisableRepairs)
