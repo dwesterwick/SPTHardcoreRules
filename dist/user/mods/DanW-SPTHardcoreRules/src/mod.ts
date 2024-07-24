@@ -129,12 +129,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.databaseTables.globals.config.RagFair.minUserLevel = modConfig.services.flea_market.min_level;
         if (!modConfig.services.flea_market.enabled)
             this.disableFleaMarket();
-	
-        if (modConfig.services.disable_insurance)
-            this.disableInsurance();
-        if (modConfig.services.disable_post_raid_healing)
-            this.disablePostRaidHealing();
-		
+        
         if (modConfig.traders.disable_fence)
             this.traderAssortGenerator.disableFence();
 
@@ -170,27 +165,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         for (const i in this.databaseTables.globals.config.RagFair.maxActiveOfferCount)
         {
             this.databaseTables.globals.config.RagFair.maxActiveOfferCount[i].count = 0;
-        }
-    }
-	
-    private disableInsurance(): void
-    {
-        this.commonUtils.logInfo("Disabling insurance...");
-		
-        // Prevent user from insuring items from the context menu
-        for (const itemID in this.databaseTables.templates.items)
-        {
-            this.databaseTables.templates.items[itemID]._props.InsuranceDisabled = true;
-        }
-    }
-	
-    private disablePostRaidHealing(): void
-    {
-        this.commonUtils.logInfo("Disabling post-raid healing...");
-		
-        for (const trader in this.databaseTables.traders)
-        {
-            this.databaseTables.traders[trader].base.medic = false;
         }
     }
 

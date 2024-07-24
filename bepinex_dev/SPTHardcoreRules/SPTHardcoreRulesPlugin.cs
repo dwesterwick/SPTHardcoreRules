@@ -35,9 +35,14 @@ namespace SPTHardcoreRules
                     new Patches.SideSelectionUpdatePatch().Enable();
                 }
 
-                if (ConfigController.Config.Services.DisableRepairs)
+                if (ConfigController.Config.Services.DisableRepairs || ConfigController.Config.Services.DisableInsurance)
                 {
-                    new Patches.RemoveRepairOptionPatch().Enable();
+                    new Patches.RemoveContextMenuOptionsPatch().Enable();
+                }
+
+                if (ConfigController.Config.Services.DisablePostRaidHealing)
+                {
+                    new Patches.HealthTreatmentScreenIsAvailablePatch().Enable();
                 }
             }
 

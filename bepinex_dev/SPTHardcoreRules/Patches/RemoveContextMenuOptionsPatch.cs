@@ -13,7 +13,7 @@ using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules.Patches
 {
-    public class RemoveRepairOptionPatch : ModulePatch
+    public class RemoveContextMenuOptionsPatch : ModulePatch
     {
         private static Type _repairerInfoInterface = null;
         private static Type _repairerInfoArmor = null;
@@ -25,14 +25,14 @@ namespace SPTHardcoreRules.Patches
             string methodName = "IsInteractive";
             Type targetType = findTargetType(methodName, typeof(EItemInfoButton), "IsOwnedByPlayer");
 
-            LoggingController.LogInfo("Found target type for RemoveRepairOptionPatch: " + targetType);
+            LoggingController.LogInfo("Found target type for RemoveContextMenuOptionsPatch: " + targetType);
 
             findRepairerTypes("AddRepairKitToRepairers");
             _repairersField = AccessTools.Property(_repairerInfoInterface, "Repairers");
 
-            LoggingController.LogInfo("Found repairer-info interface type for RemoveRepairOptionPatch: " + _repairerInfoInterface);
-            LoggingController.LogInfo("Found armor repairer info type for RemoveRepairOptionPatch: " + _repairerInfoArmor);
-            LoggingController.LogInfo("Found weapon repairer info type for RemoveRepairOptionPatch: " + _repairerInfoWeapon);
+            LoggingController.LogInfo("Found repairer-info interface type for RemoveContextMenuOptionsPatch: " + _repairerInfoInterface);
+            LoggingController.LogInfo("Found armor repairer info type for RemoveContextMenuOptionsPatch: " + _repairerInfoArmor);
+            LoggingController.LogInfo("Found weapon repairer info type for RemoveContextMenuOptionsPatch: " + _repairerInfoWeapon);
 
             return targetType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
         }
@@ -40,36 +40,47 @@ namespace SPTHardcoreRules.Patches
         [PatchPostfix]
         private static void PatchPostfix(ref IResult __result, EItemInfoButton button, ItemUiContext ___itemUiContext_0, Item ___item_0)
         {
-            if (button != EItemInfoButton.Repair)
-            {
-                return;
-            }
-
-            //LoggingController.LogInfo("Repair IsInteractive: " + __result.Succeed);
-            //LoggingController.LogInfo("Item: " + ___item_0.LocalizedName());
-
-            // No need to continue if the item can't be repaired
+            // No need to continue if the option is already disabled
             if (!__result.Succeed)
             {
                 return;
             }
 
+            //LoggingController.LogInfo("Item: " + ___item_0.LocalizedName());
+
+            if (ConfigController.Config.Services.DisableInsurance && (button == EItemInfoButton.Insure))
+            {
+                __result = new FailedResult("Insurance disabled per hardcore rules");
+                return;
+            }
+
+            if (ConfigController.Config.Services.DisableRepairs && (button == EItemInfoButton.Repair) && !isRepairAllowed(___item_0, ___itemUiContext_0.Session))
+            {
+                __result = new FailedResult("Could not find a suitable repair kit");
+                return;
+            }
+        }
+
+        private static bool isRepairAllowed(Item item, ISession session)
+        {
             // Do not allow traders to perform repairs
-            foreach (TraderClass trader in ___itemUiContext_0.Session.Traders)
+            foreach (TraderClass trader in session.Traders)
             {
                 trader.Settings.Repair.Availability = false;
             }
 
             // Build a collection of available repairers for the item
-            object repairerInfo = getRepairerInfo(___item_0, ___itemUiContext_0.Session.RepairController);
+            object repairerInfo = getRepairerInfo(item, session.RepairController);
             IEnumerable<IRepairer> repairers = (IEnumerable<IRepairer>)_repairersField.GetValue(repairerInfo);
 
             //LoggingController.LogInfo("Repairers: " + string.Join(", ", repairers.Select(r => r.LocalizedName)));
 
             if (!repairers.Any())
             {
-                __result = new FailedResult("Could not find a suitable repair kit");
+                return false;
             }
+
+            return true;
         }
 
         private static object getRepairerInfo(Item item, RepairControllerClass repairController)
