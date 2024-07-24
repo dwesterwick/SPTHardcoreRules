@@ -67,20 +67,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
             }], "GetConfig"
         ); 
 
-        // Game start
-        // Needed for disabling Scav runs
-        staticRouterModService.registerStaticRouter(`StaticAkiProfileLoad${modName}`,
-            [{
-                url: "/client/game/start",
-                // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-                action: async (url: string, info: any, sessionId: string, output: string) => 
-                {
-                    this.onProfileLoad(sessionId);
-                    return output;
-                }
-            }], "aki"
-        );
-
         if (!modConfig.enabled)
         {
             return;
@@ -146,8 +132,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 	
         if (modConfig.services.disable_insurance)
             this.disableInsurance();
-        if (modConfig.services.disable_repairs)
-            this.disableTraderRepairs();
         if (modConfig.services.disable_post_raid_healing)
             this.disablePostRaidHealing();
 		
@@ -170,60 +154,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 		
         this.traderAssortGenerator.refreshRagfairOffers();
     }
-	
-    public onProfileLoad(sessionId: string): void
-    {
-        this.updateScavTimer(sessionId);
-    }
-
-    private updateScavTimer(sessionId: string): void
-    {
-        if (modConfig.enabled && modConfig.services.disable_scav_raids)
-        {
-            this.commonUtils.logInfo("Increasing scav cooldown timer...");
-            this.databaseTables.globals.config.SavagePlayCooldown = 2147483647;
-        }
-
-        const pmcData = this.profileHelper.getPmcProfile(sessionId);
-        const scavData = this.profileHelper.getScavProfile(sessionId);
-		
-        if ((scavData.Info === null) || (scavData.Info === undefined))
-        {
-            this.commonUtils.logInfo("Scav profile hasn't been created yet.");
-            return;
-        }
-		
-        if (modConfig.enabled && modConfig.services.disable_scav_raids)
-        {
-            this.commonUtils.logInfo(`Increasing scav timer for sessionId=${sessionId}...`);
-            scavData.Info.SavageLockTime = 2147483647;
-        }
-        else
-        {
-            // In case somebody disables scav runs and later wants to enable them, we need to reset their Scav timer unless it's plausible
-            const worstCooldownFactor = this.getWorstSavageCooldownModifier();
-            if (scavData.Info.SavageLockTime - pmcData.Info.LastTimePlayedAsSavage > this.databaseTables.globals.config.SavagePlayCooldown * worstCooldownFactor * 1.1)
-            {
-                this.commonUtils.logInfo(`Resetting scav timer for sessionId=${sessionId}...`);
-                scavData.Info.SavageLockTime = 0;
-            }
-        }
-    }
-	
-    // Return the highest Scav cooldown factor from Fence's rep levels
-    private getWorstSavageCooldownModifier(): number
-    {
-        // Initialize the return value at something very low
-        let worstCooldownFactor = 0.01;
-
-        for (const level in this.databaseTables.globals.config.FenceSettings.Levels)
-        {
-            if (this.databaseTables.globals.config.FenceSettings.Levels[level].SavageCooldownModifier > worstCooldownFactor)
-                worstCooldownFactor = this.databaseTables.globals.config.FenceSettings.Levels[level].SavageCooldownModifier;
-        }
-        return worstCooldownFactor;
-    }
-	
+    
     private disableFleaMarket(): void
     {
         this.commonUtils.logInfo("Disabling flea market...");
@@ -250,21 +181,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         for (const itemID in this.databaseTables.templates.items)
         {
             this.databaseTables.templates.items[itemID]._props.InsuranceDisabled = true;
-        }
-    }
-	
-    private disableTraderRepairs(): void
-    {
-        this.commonUtils.logInfo("Disabling trader repairs...");
-		
-        for (const trader in this.databaseTables.traders)
-        {
-            // Functionally this works, but the repair screen can still open and looks bugged
-            //this.databaseTables.traders[trader].base.repair.availability = false;
-			
-            // this isn't exactly what I wanted, but... good enough for now. If I can't totally disable traders repairs, at least make them prohibitively expensive
-            this.databaseTables.traders[trader].base.repair.currency_coefficient = 666;
-            this.databaseTables.traders[trader].base.repair.quality = 0;
         }
     }
 	

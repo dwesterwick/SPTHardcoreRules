@@ -113,7 +113,6 @@
     <Compile Include="Patches\ItemCheckActionPatch.cs" />
     <Compile Include="Patches\RemoveRepairOptionPatch.cs" />
     <Compile Include="Patches\ShowScreenPatch.cs" />
-    <Compile Include="Patches\SideSelectionAwakePatch.cs" />
     <Compile Include="Patches\SideSelectionUpdatePatch.cs" />
     <Compile Include="Patches\UpdateSideSelectionPatch.cs" />
     <Compile Include="SPTHardcoreRulesPlugin.cs" />

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Comfort.Common;
 using EFT.InventoryLogic;
 using EFT.UI;
+using HarmonyLib;
 using SPT.Reflection.Patching;
 using SPTHardcoreRules.Controllers;
 
@@ -14,12 +15,24 @@ namespace SPTHardcoreRules.Patches
 {
     public class RemoveRepairOptionPatch : ModulePatch
     {
+        private static Type _repairerInfoInterface = null;
+        private static Type _repairerInfoArmor = null;
+        private static Type _repairerInfoWeapon = null;
+        private static PropertyInfo _repairersField = null;
+
         protected override MethodBase GetTargetMethod()
         {
             string methodName = "IsInteractive";
             Type targetType = findTargetType(methodName, typeof(EItemInfoButton), "IsOwnedByPlayer");
 
-            LoggingController.LogInfo("Found type for RemoveRepairOptionPatch: " + targetType);
+            LoggingController.LogInfo("Found target type for RemoveRepairOptionPatch: " + targetType);
+
+            findRepairerTypes("AddRepairKitToRepairers");
+            _repairersField = AccessTools.Property(_repairerInfoInterface, "Repairers");
+
+            LoggingController.LogInfo("Found repairer-info interface type for RemoveRepairOptionPatch: " + _repairerInfoInterface);
+            LoggingController.LogInfo("Found armor repairer info type for RemoveRepairOptionPatch: " + _repairerInfoArmor);
+            LoggingController.LogInfo("Found weapon repairer info type for RemoveRepairOptionPatch: " + _repairerInfoWeapon);
 
             return targetType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
         }
@@ -32,8 +45,8 @@ namespace SPTHardcoreRules.Patches
                 return;
             }
 
-            LoggingController.LogInfo("Repair IsInteractive: " + __result.Succeed);
-            LoggingController.LogInfo("Item: " + ___item_0.LocalizedName());
+            //LoggingController.LogInfo("Repair IsInteractive: " + __result.Succeed);
+            //LoggingController.LogInfo("Item: " + ___item_0.LocalizedName());
 
             // No need to continue if the item can't be repaired
             if (!__result.Succeed)
@@ -47,40 +60,67 @@ namespace SPTHardcoreRules.Patches
                 trader.Settings.Repair.Availability = false;
             }
 
-            GInterface34 repairData = RepairWindow_method_2(___item_0, ___itemUiContext_0.Session.RepairController);
-            LoggingController.LogInfo("Repairers: " + string.Join(", ", repairData.Repairers.Select(r => r.LocalizedName)));
+            // Build a collection of available repairers for the item
+            object repairerInfo = getRepairerInfo(___item_0, ___itemUiContext_0.Session.RepairController);
+            IEnumerable<IRepairer> repairers = (IEnumerable<IRepairer>)_repairersField.GetValue(repairerInfo);
 
-            if (!repairData.Repairers.Any())
+            //LoggingController.LogInfo("Repairers: " + string.Join(", ", repairers.Select(r => r.LocalizedName)));
+
+            if (!repairers.Any())
             {
                 __result = new FailedResult("Could not find a suitable repair kit");
             }
         }
 
-        public static GInterface34 RepairWindow_method_2(Item item, RepairControllerClass repairController)
+        private static object getRepairerInfo(Item item, RepairControllerClass repairController)
         {
             if (item.GetItemComponent<ArmorHolderComponent>() != null)
             {
-                return new GClass805(item, repairController);
+                return Activator.CreateInstance(_repairerInfoArmor, item, repairController);
             }
 
-            return new GClass804(item, repairController);
+            return Activator.CreateInstance(_repairerInfoWeapon, item, repairController);
         }
 
         private static Type findTargetType(string methodName, Type methodParameterType, string requiredPropertyNameInType)
         {
-            List<Type> targetTypeOptions = SPT.Reflection.Utils.PatchConstants.EftTypes
+            Type[] targetTypeOptions = SPT.Reflection.Utils.PatchConstants.EftTypes
                 .Where(t => t.GetProperties().Any(p => p.Name.Contains(requiredPropertyNameInType)))
                 .Where(t => t
                     .GetMethods()
                     .Any(m => m.Name.Contains(methodName) && m.GetParameters().All(p => p.ParameterType == methodParameterType)))
-                .ToList();
+                .ToArray();
 
-            if (targetTypeOptions.Count != 1)
+            if (targetTypeOptions.Length != 1)
             {
-                throw new TypeLoadException("Found " + targetTypeOptions.Count + " types containing method " + methodName + ", parameter type " + methodParameterType + ", and property " + requiredPropertyNameInType + ": " + string.Join(", ", targetTypeOptions));
+                throw new TypeLoadException("Found " + targetTypeOptions.Length + " types containing method " + methodName + ", parameter type " + methodParameterType + ", and property " + requiredPropertyNameInType + ": " + string.Join(", ", targetTypeOptions.Select(t => t.Name)));
             }
 
             return targetTypeOptions[0];
+        }
+
+        private static void findRepairerTypes(string methodName)
+        {
+            Type[] repairerInfoTypes = SPT.Reflection.Utils.PatchConstants.EftTypes
+                .Where(t => t.GetMethods().Any(m => m.Name.Contains(methodName)))
+                .ToArray();
+
+            int expectedMatches = 3;
+            if (repairerInfoTypes.Length != expectedMatches)
+            {
+                throw new TypeLoadException("Found " + repairerInfoTypes.Length + " types containing method " + methodName + " but expected " + expectedMatches);
+            }
+
+            IEnumerable<Type> repairerInfoInterfaceMatches = repairerInfoTypes.Where(t => t.IsInterface);
+            if (repairerInfoInterfaceMatches.Count() != 1)
+            {
+                throw new TypeLoadException("Could not find repairer info interface");
+            }
+            _repairerInfoInterface = repairerInfoInterfaceMatches.First();
+
+            int maxMethodCount = repairerInfoTypes.Max(t => t.GetMethods().Count());
+            _repairerInfoArmor = repairerInfoTypes.Single(t => t.GetMethods().Count() == maxMethodCount);
+            _repairerInfoWeapon = repairerInfoTypes.Single(t => (t != _repairerInfoInterface) && (t != _repairerInfoArmor));
         }
     }
 }
