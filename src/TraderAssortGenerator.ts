@@ -1,9 +1,11 @@
 import type { CommonUtils } from "./CommonUtils";
-import type { ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
+import type { FenceConfig, ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
+import type { TraderController } from "@spt/controllers/TraderController";
 import type { RagfairOfferGenerator } from "@spt/generators/RagfairOfferGenerator";
 import type { RagfairOfferService } from "@spt/services/RagfairOfferService";
 import type { RagfairServer } from "@spt/servers/RagfairServer";
+import type { JsonCloner } from "@spt/utils/cloners/JsonCloner";
 import { MemberCategory } from "@spt/models/enums/MemberCategory"
 import modConfig from "../config/config.json";
 
@@ -13,14 +15,20 @@ import type { IGetOffersResult } from "@spt/models/eft/ragfair/IGetOffersResult"
 
 export class TraderAssortGenerator
 {
+    private originalFenceConfig : FenceConfig
+    private originalTraderAssorts: Record<string, ITraderAssort> = {}
+    private orginalTraderQuestAssorts: Record<string, Record<string, Record<string, string>>> = {}
+
     constructor
     (
         private commonUtils: CommonUtils,
         private traderConfig: ITraderConfig,
         private databaseTables: IDatabaseTables,
+        private traderController : TraderController,
         private ragfairOfferGenerator: RagfairOfferGenerator,
         private ragfairServer: RagfairServer,
-        private ragfairOfferService: RagfairOfferService
+        private ragfairOfferService: RagfairOfferService,
+        private jsonCloner: JsonCloner
     )
     { }
 	
@@ -38,7 +46,13 @@ export class TraderAssortGenerator
 	
     public disableFence(): void
     {
-        this.commonUtils.logInfo("Disabling Fence...");		
+        if (this.originalFenceConfig === undefined)
+        {
+            this.originalFenceConfig = this.jsonCloner.clone(this.traderConfig.fence);
+        }
+
+        this.commonUtils.logInfo("Disabling Fence...");
+
         this.traderConfig.fence.assortSize = 0;
         this.traderConfig.fence.discountOptions.assortSize = 0;
 
@@ -52,13 +66,26 @@ export class TraderAssortGenerator
         this.traderConfig.fence.discountOptions.weaponPresetMinMax.min = 0;
         this.traderConfig.fence.discountOptions.weaponPresetMinMax.max = 0;
     }
+
+    public enableFence(): void
+    {
+        this.commonUtils.logInfo("Enabling Fence...");
+
+        if (this.originalFenceConfig !== undefined)
+        {
+            this.traderConfig.fence = this.originalFenceConfig;
+        }
+    }
 	
-    public refreshRagfairOffers(): void
+    public refreshRagfairOffers(useHardcoreRules: boolean): void
     {
         this.commonUtils.logInfo("Refreshing Ragfair offers...");		
         this.ragfairOfferGenerator.generateDynamicOffers();
 		
-        this.removeBannedRagairOffers();
+        if (useHardcoreRules)
+        {
+            this.removeBannedRagairOffers();
+        }
     }
 
     public removeBannedRagairOffers(): void
@@ -111,9 +138,21 @@ export class TraderAssortGenerator
         return false;
     }
 	
-    public updateTraderAssorts(): void
+    public updateTraderAssorts(sessionId: string, useHardcoreRules: boolean): void
     {
-        this.commonUtils.logInfo("Updating trader assorts...");
+        if (useHardcoreRules)
+        {
+            this.modifyTraderAssorts();
+        }
+        else
+        {
+            this.restoreOriginalTraderAssorts(sessionId);
+        }
+    }
+
+    private modifyTraderAssorts(): void
+    {
+        this.commonUtils.logInfo("Modifying trader assorts...");
 		
         for (const trader in this.databaseTables.traders)
         {
@@ -123,12 +162,40 @@ export class TraderAssortGenerator
             if ((assort === null) || (assort === undefined))
                 continue;
 			
-            this.commonUtils.logInfo(`Updating trader assorts for ${this.commonUtils.getTraderName(trader)}...`);
+            if (this.originalTraderAssorts[trader] === undefined)
+            {
+                this.originalTraderAssorts[trader] = this.jsonCloner.clone(this.databaseTables.traders[trader].assort);
+            }
+            if (this.orginalTraderQuestAssorts[trader] === undefined)
+            {
+                this.orginalTraderQuestAssorts[trader] = this.jsonCloner.clone(this.databaseTables.traders[trader].questassort);
+            }
+
+            this.commonUtils.logInfo(`Modifying trader assorts for ${this.commonUtils.getTraderName(trader)}...`);
 			
             const newAssort = TraderAssortGenerator.getNewTraderAssort(this.databaseTables.traders[trader], this.databaseTables);
 
             // need to do this or generateFleaOffersForTrader() will complain about undefined slotID's.
             this.databaseTables.traders[trader].assort.items = TraderAssortGenerator.rebuildArray(newAssort.items);
+        }
+    }
+
+    private restoreOriginalTraderAssorts(sessionId: string): void
+    {
+        this.commonUtils.logInfo("Restoring trader assorts...");
+
+        for (const trader in this.databaseTables.traders)
+        {
+            if (this.originalTraderAssorts[trader] !== undefined)
+            {
+                //this.databaseTables.traders[trader].assort = this.traderController.getAssort(sessionId, trader);
+                this.databaseTables.traders[trader].assort = this.originalTraderAssorts[trader];
+            }
+
+            if (this.orginalTraderQuestAssorts[trader] !== undefined)
+            {
+                this.databaseTables.traders[trader].questassort = this.orginalTraderQuestAssorts[trader];
+            }
         }
     }
 	

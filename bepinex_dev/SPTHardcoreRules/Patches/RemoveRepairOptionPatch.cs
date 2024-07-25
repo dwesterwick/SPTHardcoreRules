@@ -13,7 +13,7 @@ using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules.Patches
 {
-    public class RemoveContextMenuOptionsPatch : ModulePatch
+    public class RemoveRepairOptionPatch : ModulePatch
     {
         private static Type _repairerInfoInterface = null;
         private static Type _repairerInfoArmor = null;
@@ -25,14 +25,14 @@ namespace SPTHardcoreRules.Patches
             string methodName = "IsInteractive";
             Type targetType = findTargetType(methodName, typeof(EItemInfoButton), "IsOwnedByPlayer");
 
-            LoggingController.LogInfo("Found target type for RemoveContextMenuOptionsPatch: " + targetType);
+            LoggingController.LogInfo("Found target type for RemoveRepairOptionPatch: " + targetType);
 
             findRepairerTypes("AddRepairKitToRepairers");
             _repairersField = AccessTools.Property(_repairerInfoInterface, "Repairers");
 
-            LoggingController.LogInfo("Found repairer-info interface type for RemoveContextMenuOptionsPatch: " + _repairerInfoInterface);
-            LoggingController.LogInfo("Found armor repairer info type for RemoveContextMenuOptionsPatch: " + _repairerInfoArmor);
-            LoggingController.LogInfo("Found weapon repairer info type for RemoveContextMenuOptionsPatch: " + _repairerInfoWeapon);
+            LoggingController.LogInfo("Found repairer-info interface type for RemoveRepairOptionPatch: " + _repairerInfoInterface);
+            LoggingController.LogInfo("Found armor repairer info type for RemoveRepairOptionPatch: " + _repairerInfoArmor);
+            LoggingController.LogInfo("Found weapon repairer info type for RemoveRepairOptionPatch: " + _repairerInfoWeapon);
 
             return targetType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
         }
@@ -48,16 +48,9 @@ namespace SPTHardcoreRules.Patches
 
             //LoggingController.LogInfo("Item: " + ___item_0.LocalizedName());
 
-            if (ConfigController.Config.Services.DisableInsurance && (button == EItemInfoButton.Insure))
-            {
-                __result = new FailedResult("Insurance disabled per hardcore rules");
-                return;
-            }
-
-            if (ConfigController.Config.Services.DisableRepairs && (button == EItemInfoButton.Repair) && !isRepairAllowed(___item_0, ___itemUiContext_0.Session))
+            if ((button == EItemInfoButton.Repair) && !isRepairAllowed(___item_0, ___itemUiContext_0.Session))
             {
                 __result = new FailedResult("Could not find a suitable repair kit");
-                return;
             }
         }
 
