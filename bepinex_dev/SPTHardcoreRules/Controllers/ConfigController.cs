@@ -11,12 +11,16 @@ namespace SPTHardcoreRules.Controllers
 {
     public class ConfigController : MonoBehaviour
     {
-        public static Configuration.ModConfig Config { get; set; } = null;
+        public static Configuration.ModConfig Config { get; private set; } = null;
+        public static bool UsingHardcoreProfile { get; private set; } = false;
 
         public static Configuration.ModConfig GetConfig()
         {
             string json = RequestHandler.GetJson("/SPTHardcoreRules/GetConfig");
-            Config = JsonConvert.DeserializeObject<Configuration.ModConfig>(json);
+            Configuration.ConfigResponse response = JsonConvert.DeserializeObject<Configuration.ConfigResponse>(json);
+            Config = response.Config;
+            UsingHardcoreProfile = response.UsingHardcoreProfile;
+
             return Config;
         }
     }

@@ -16,37 +16,48 @@ namespace SPTHardcoreRules
             Logger.LogInfo("Loading SPTHardcoreRulesPlugin...");
             LoggingController.Logger = Logger;
 
-            LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...getting configuration data...");
+            LoggingController.Logger.LogInfo("Loading SPTHardcoreRulesPlugin...getting configuration data...");
             ConfigController.GetConfig();
 
-            if (ConfigController.Config.Enabled)
+            if (ConfigController.UsingHardcoreProfile)
             {
-                LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...enabling patches...");
-                new Patches.InsuranceScreenPatch().Enable();
-                new Patches.GameStartedPatch().Enable();
-                new Patches.GameWorldOnDestroyPatch().Enable();
-                new Patches.ItemCheckActionPatch().Enable();
-                new Patches.UpdateSideSelectionPatch().Enable();
-                new Patches.ShowScreenPatch().Enable();
-                new Patches.GetPrioritizedContainersForLootPatch().Enable();
-
-                if (ConfigController.Config.Services.DisableScavRaids)
+                if (ConfigController.Config.Enabled)
                 {
-                    new Patches.SideSelectionUpdatePatch().Enable();
+                    LoggingController.Logger.LogInfo("Loading SPTHardcoreRulesPlugin...enabling patches...");
+                    new Patches.InsuranceScreenPatch().Enable();
+                    new Patches.GameStartedPatch().Enable();
+                    new Patches.GameWorldOnDestroyPatch().Enable();
+                    new Patches.ItemCheckActionPatch().Enable();
+                    new Patches.UpdateSideSelectionPatch().Enable();
+                    new Patches.ShowScreenPatch().Enable();
+                    new Patches.GetPrioritizedContainersForLootPatch().Enable();
+
+                    if (ConfigController.Config.Services.DisableScavRaids)
+                    {
+                        new Patches.SideSelectionUpdatePatch().Enable();
+                    }
+
+                    if (ConfigController.Config.Services.DisableRepairs || ConfigController.Config.Services.DisableInsurance)
+                    {
+                        new Patches.RemoveContextMenuOptionsPatch().Enable();
+                    }
+
+                    if (ConfigController.Config.Services.DisablePostRaidHealing)
+                    {
+                        new Patches.HealthTreatmentScreenIsAvailablePatch().Enable();
+                    }
                 }
-
-                if (ConfigController.Config.Services.DisableRepairs || ConfigController.Config.Services.DisableInsurance)
+                else
                 {
-                    new Patches.RemoveContextMenuOptionsPatch().Enable();
-                }
-
-                if (ConfigController.Config.Services.DisablePostRaidHealing)
-                {
-                    new Patches.HealthTreatmentScreenIsAvailablePatch().Enable();
+                    LoggingController.Logger.LogWarning("Loading SPTHardcoreRulesPlugin...using a hardcore profile but mod is disabled");
                 }
             }
+            else
+            {
+                LoggingController.Logger.LogWarning("Loading SPTHardcoreRulesPlugin...not using a hardcore profile");
+            }
 
-            LoggingController.Logger.LogDebug("Loading SPTHardcoreRulesPlugin...done.");
+            LoggingController.Logger.LogInfo("Loading SPTHardcoreRulesPlugin...done.");
         }
     }
 }

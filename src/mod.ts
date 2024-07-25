@@ -1,6 +1,5 @@
 import { CommonUtils } from "./CommonUtils";
 import { TraderAssortGenerator } from "./TraderAssortGenerator";
-import { ItemHelper } from "./ItemHelper";
 import modConfig from "../config/config.json";
 
 import type { DependencyContainer } from "tsyringe";
@@ -13,6 +12,7 @@ import type { DatabaseServer } from "@spt/servers/DatabaseServer";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
 import type { ConfigServer } from "@spt/servers/ConfigServer";
 import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
+import type { FenceService } from "@spt/services/FenceService";
 import type { RagfairServer } from "@spt/servers/RagfairServer";
 import type { IRagfairConfig  } from "@spt/models/spt/config/IRagfairConfig";
 import type { RagfairOfferGenerator } from "@spt/generators/RagfairOfferGenerator";
@@ -24,20 +24,23 @@ import type { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import type { LocaleService } from "@spt/services/LocaleService";
 import type { HttpResponseUtil } from "@spt/utils/HttpResponseUtil";
 import type { VFS } from "@spt/utils/VFS";
+import type { JsonCloner } from "@spt/utils/cloners/JsonCloner";
 
 import type { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
 
 const modName = "SPTHardcoreRules";
+const profileName = "Hardcore Playthrough";
 
 class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 {
     private commonUtils: CommonUtils
     private traderAssortGenerator: TraderAssortGenerator
-    private itemHelper: ItemHelper
+    private usingHardcoreProfile = false;
 	
     private logger: ILogger;
     private configServer: ConfigServer;
     private databaseServer: DatabaseServer;
+    private fenceService: FenceService;
     private ragfairServer: RagfairServer;
     private ragfairConfig: IRagfairConfig;
     private ragfairOfferGenerator: RagfairOfferGenerator;
@@ -50,19 +53,58 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     private localeService: LocaleService;
     private httpResponseUtil: HttpResponseUtil;
     private vfs: VFS;
-	
+    private jsonCloner: JsonCloner;
+    
     public preSptLoad(container: DependencyContainer): void 
     {
         this.logger = container.resolve<ILogger>("WinstonLogger");
+        this.profileHelper = container.resolve<ProfileHelper>("ProfileHelper");
         const staticRouterModService = container.resolve<StaticRouterModService>("StaticRouterModService");
-		
+
+        // Profile Loaded Server Mods
+        // Needed to determine if a hardcore profile is being used
+        staticRouterModService.registerStaticRouter(`StaticAkiProfileGet${modName}`,
+            [{
+                url: "/launcher/server/loadedServerMods",
+                // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+                action: async (url: string, info: any, sessionId: string, output: string) => 
+                {
+                    const profile = this.profileHelper.getFullProfile(sessionId);
+                    this.usingHardcoreProfile = true;
+
+                    this.commonUtils.logInfo(`Profile edition: ${profile.info.edition}`);
+
+                    if (modConfig.enabled)
+                    {
+                        if (this.usingHardcoreProfile)
+                        {
+                            this.applyHardcoreRules();
+                        }
+                        else
+                        {
+                            this.commonUtils.logInfo("Not using a hardcore profile");
+                        }
+
+                        this.regenerateTraderOffers();
+                    }
+
+                    return output;
+                }
+            }], "aki"
+        );
+
         // Get config.json settings for the bepinex plugin
         staticRouterModService.registerStaticRouter(`StaticGetConfig${modName}`,
             [{
                 url: "/SPTHardcoreRules/GetConfig",
                 action: async () => 
                 {
-                    return JSON.stringify(modConfig);
+                    return JSON.stringify(
+                        {
+                            config: modConfig,
+                            usingHardcoreProfile : this.usingHardcoreProfile
+                        }
+                    );
                 }
             }], "GetConfig"
         ); 
@@ -98,8 +140,8 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     public postDBLoad(container: DependencyContainer): void
     {
         this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");
-        this.configServer = container.resolve<ConfigServer>("ConfigServer");		
-        this.profileHelper = container.resolve<ProfileHelper>("ProfileHelper");		
+        this.configServer = container.resolve<ConfigServer>("ConfigServer");
+        this.fenceService = container.resolve<FenceService>("FenceService");
         this.ragfairServer = container.resolve<RagfairServer>("RagfairServer");
         this.ragfairOfferGenerator = container.resolve<RagfairOfferGenerator>("RagfairOfferGenerator");
         this.ragfairOfferService = container.resolve<RagfairOfferService>("RagfairOfferService");
@@ -107,6 +149,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.localeService = container.resolve<LocaleService>("LocaleService");
         this.httpResponseUtil = container.resolve<HttpResponseUtil>("HttpResponseUtil");
         this.vfs = container.resolve<VFS>("VFS");
+        this.jsonCloner = container.resolve<JsonCloner>("JsonCloner");
 		
         this.databaseTables = this.databaseServer.getTables();
         this.ragfairConfig = this.configServer.getConfig<IRagfairConfig>(ConfigTypes.RAGFAIR);
@@ -115,7 +158,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 		
         this.commonUtils = new CommonUtils(this.logger, this.databaseTables, this.localeService);
         this.traderAssortGenerator = new TraderAssortGenerator(this.commonUtils, this.traderConfig, this.databaseTables, this.ragfairOfferGenerator, this.ragfairServer, this.ragfairOfferService);
-        this.itemHelper = new ItemHelper(this.commonUtils, this.databaseTables);
 		
         if (!modConfig.enabled)
             return;
@@ -125,6 +167,37 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
             modConfig.enabled = false;
             return;
         }
+
+        this.addHardcoreProfile();
+    }
+	
+    public postSptLoad(): void
+    {
+        
+    }
+
+    private addHardcoreProfile(): void
+    {
+        // Clone the SPT "zero to hero" profile type
+        const hardcoreProfileType = this.jsonCloner.clone(this.databaseTables.templates.profiles["SPT Zero to hero"]);
+        
+        // Remove the knife
+        hardcoreProfileType.bear.character.Inventory.items.pop();
+
+        // Add new profile type
+        hardcoreProfileType.descriptionLocaleKey = "launcher-profile_hardcoreplaythrough";
+        this.databaseTables.templates.profiles[profileName] = hardcoreProfileType;
+
+        // Add new profile description for all locales
+        for (const locale in this.databaseTables.locales.server)
+        {
+            this.databaseTables.locales.server[locale][hardcoreProfileType.descriptionLocaleKey] = "Hardcore Rules playthrough";
+        }
+    }
+
+    private applyHardcoreRules(): void
+    {
+        this.commonUtils.logInfo("Applying hardcore rules...");
 
         this.databaseTables.globals.config.RagFair.minUserLevel = modConfig.services.flea_market.min_level;
         if (!modConfig.services.flea_market.enabled)
@@ -136,17 +209,13 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         if (modConfig.traders.disable_prapor_starting_gifts)
             this.disablePraporStartingGifts();
 		
-        this.traderAssortGenerator.updateTraderAssorts();
+        this.commonUtils.logInfo("Applying hardcore rules...done.");
     }
-	
-    public postSptLoad(): void
+
+    private regenerateTraderOffers(): void
     {
-        if (!modConfig.enabled)
-        {
-            this.commonUtils.logInfo("Mod disabled in config.json.");
-            return;
-        }
-		
+        this.traderAssortGenerator.updateTraderAssorts();
+        this.fenceService.generateFenceAssorts();
         this.traderAssortGenerator.refreshRagfairOffers();
     }
     
