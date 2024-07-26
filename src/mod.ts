@@ -12,7 +12,6 @@ import type { DatabaseServer } from "@spt/servers/DatabaseServer";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
 import type { ConfigServer } from "@spt/servers/ConfigServer";
 import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
-import type { TraderController } from "@spt/controllers/TraderController";
 import type { FenceService } from "@spt/services/FenceService";
 import type { RagfairServer } from "@spt/servers/RagfairServer";
 import type { IRagfairConfig  } from "@spt/models/spt/config/IRagfairConfig";
@@ -45,7 +44,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     private configServer: ConfigServer;
     private databaseServer: DatabaseServer;
     private fenceService: FenceService;
-    private traderController: TraderController;
     private ragfairServer: RagfairServer;
     private ragfairConfig: IRagfairConfig;
     private ragfairOfferGenerator: RagfairOfferGenerator;
@@ -83,9 +81,9 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
                 action: async (url: string, info: any, sessionId: string, output: string) => 
                 {
                     const profile = this.profileHelper.getFullProfile(sessionId);
-                    this.usingHardcoreProfile = profile.info.edition === hardcoreProfileTypeName;
+                    this.usingHardcoreProfile = modConfig.use_for_all_profiles || (profile.info.edition === hardcoreProfileTypeName);
 
-                    this.commonUtils.logInfo(`Profile edition for ${profile.info.username}: ${profile.info.edition}`);
+                    this.commonUtils.logInfo(`Profile edition for ${profile.info.username} is ${profile.info.edition}. Using hardcore rules = ${this.usingHardcoreProfile}`);
 
                     if (modConfig.enabled)
                     {
@@ -103,7 +101,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
                         if (mustRegenerateTraderOffers)
                         {
-                            this.regenerateTraderOffers(sessionId);
+                            this.regenerateTraderOffers();
                         }
                     }
 
@@ -159,7 +157,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     {
         this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");
         this.configServer = container.resolve<ConfigServer>("ConfigServer");
-        this.traderController = container.resolve<TraderController>("TraderController");
         this.fenceService = container.resolve<FenceService>("FenceService");
         this.ragfairServer = container.resolve<RagfairServer>("RagfairServer");
         this.ragfairOfferGenerator = container.resolve<RagfairOfferGenerator>("RagfairOfferGenerator");
@@ -180,7 +177,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
             this.commonUtils,
             this.traderConfig,
             this.databaseTables,
-            this.traderController,
             this.ragfairOfferGenerator,
             this.ragfairServer,
             this.ragfairOfferService,
@@ -188,7 +184,10 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         );
 		
         if (!modConfig.enabled)
+        {
+            this.commonUtils.logInfo("Mod disabled in config.json", true);
             return;
+        }
         
         if (!this.doesFileIntegrityCheckPass())
         {
@@ -198,7 +197,10 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
         this.addHardcoreProfile();
 
-        this.databaseTables.globals.config.RagFair.minUserLevel = modConfig.services.flea_market.min_level;
+        if (modConfig.debug.enabled)
+        {
+            this.databaseTables.globals.config.RagFair.minUserLevel = modConfig.debug.flea_market_min_level;
+        }
     }
 	
     public postSptLoad(): void
@@ -213,8 +215,9 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         // Clone the SPT "zero to hero" profile type
         const hardcoreProfileType = this.jsonCloner.clone(this.databaseTables.templates.profiles["SPT Zero to hero"]);
         
-        // Remove the knife
+        // Remove the knife from both BEAR and USEC profiles
         hardcoreProfileType.bear.character.Inventory.items.pop();
+        hardcoreProfileType.usec.character.Inventory.items.pop();
 
         // Add new profile type
         hardcoreProfileType.descriptionLocaleKey = "launcher-profile_hardcoreplaythrough";
@@ -271,9 +274,9 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.hardcoreRulesApplied = false;
     }
 
-    private regenerateTraderOffers(sessionId: string): void
+    private regenerateTraderOffers(): void
     {
-        this.traderAssortGenerator.updateTraderAssorts(sessionId, this.usingHardcoreProfile);
+        this.traderAssortGenerator.updateTraderAssorts(this.usingHardcoreProfile);
         this.fenceService.generateFenceAssorts();
         this.traderAssortGenerator.refreshRagfairOffers(this.usingHardcoreProfile);
     }
@@ -309,12 +312,12 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
         if (this.originalRagfairOfferCount !== undefined)
         {
-            this.ragfairConfig.dynamic.offerItemCount = this.originalRagfairOfferCount;
+            this.ragfairConfig.dynamic.offerItemCount = this.jsonCloner.clone(this.originalRagfairOfferCount);
         }
 
         if (this.originalMaxActiveOfferCount !== undefined)
         {
-            this.databaseTables.globals.config.RagFair.maxActiveOfferCount = this.originalMaxActiveOfferCount;
+            this.databaseTables.globals.config.RagFair.maxActiveOfferCount = this.jsonCloner.clone(this.originalMaxActiveOfferCount);
         }
     }
 
@@ -342,12 +345,12 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
         if (this.originalPraporGiftDay1Items !== undefined)
         {
-            this.giftsConfig.gifts.PraporGiftDay1.items = this.originalPraporGiftDay1Items;
+            this.giftsConfig.gifts.PraporGiftDay1.items = this.jsonCloner.clone(this.originalPraporGiftDay1Items);
         }
 
         if (this.originalPraporGiftDay2Items !== undefined)
         {
-            this.giftsConfig.gifts.PraporGiftDay2.items = this.originalPraporGiftDay2Items;
+            this.giftsConfig.gifts.PraporGiftDay2.items = this.jsonCloner.clone(this.originalPraporGiftDay2Items);
         }
     }
 

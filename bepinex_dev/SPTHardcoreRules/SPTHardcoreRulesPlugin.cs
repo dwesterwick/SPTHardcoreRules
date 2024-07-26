@@ -21,17 +21,17 @@ namespace SPTHardcoreRules
 
             if (ConfigController.UsingHardcoreProfile)
             {
+                new Patches.MenuShowPatch().Enable();
+
                 if (ConfigController.Config.Enabled)
                 {
                     LoggingController.Logger.LogInfo("Loading SPTHardcoreRulesPlugin...enabling patches...");
-                    new Patches.InsuranceScreenPatch().Enable();
+                    
                     new Patches.GameStartedPatch().Enable();
                     new Patches.GameWorldOnDestroyPatch().Enable();
-                    new Patches.ItemCheckActionPatch().Enable();
                     new Patches.UpdateSideSelectionPatch().Enable();
                     new Patches.ShowScreenPatch().Enable();
-                    new Patches.GetPrioritizedContainersForLootPatch().Enable();
-
+                    
                     if (ConfigController.Config.Services.DisableScavRaids)
                     {
                         new Patches.SideSelectionUpdatePatch().Enable();
@@ -39,11 +39,12 @@ namespace SPTHardcoreRules
 
                     if (ConfigController.Config.Services.DisableInsurance)
                     {
+                        new Patches.InsuranceScreenPatch().Enable();
                         new Patches.DisableInsuranceForItemPatch().Enable();
                         new Patches.DisableInsuranceForItemClassPatch().Enable();
                     }
 
-                    if (ConfigController.Config.Services.DisableRepairs)
+                    if (ConfigController.Config.Services.DisableTraderRepairs)
                     {
                         new Patches.RemoveRepairOptionPatch().Enable();
                     }
@@ -51,6 +52,12 @@ namespace SPTHardcoreRules
                     if (ConfigController.Config.Services.DisablePostRaidHealing)
                     {
                         new Patches.HealthTreatmentScreenIsAvailablePatch().Enable();
+                    }
+
+                    if (ConfigController.Config.SecureContainer.UseModWhitelists)
+                    {
+                        new Patches.ItemCheckActionPatch().Enable();
+                        new Patches.GetPrioritizedContainersForLootPatch().Enable();
                     }
                 }
                 else

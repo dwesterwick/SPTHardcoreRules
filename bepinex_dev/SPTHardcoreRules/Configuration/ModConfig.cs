@@ -12,8 +12,11 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("enabled")]
         public bool Enabled { get; set; }
 
+        [JsonProperty("use_for_all_profiles")]
+        public bool UseForAllProfiles { get; set; }
+
         [JsonProperty("debug")]
-        public bool Debug { get; set; }
+        public DebugConfig Debug { get; set; } = new DebugConfig();
 
         [JsonProperty("services")]
         public ServicesConfig Services { get; set; } = new ServicesConfig();

@@ -12,8 +12,8 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("flea_market")]
         public FleaMarketConfig FleaMarket { get; set; } = new FleaMarketConfig();
 
-        [JsonProperty("disable_repairs")]
-        public bool DisableRepairs { get; set; }
+        [JsonProperty("disable_trader_repairs")]
+        public bool DisableTraderRepairs { get; set; }
 
         [JsonProperty("disable_insurance")]
         public bool DisableInsurance { get; set; }

@@ -9,11 +9,12 @@ namespace SPTHardcoreRules.Controllers
 {
     public static class LoggingController
     {
+        public const string ServerLogMessageSource = "Hardcore Rules";
         public static ManualLogSource Logger { get; set; } = null;
 
         public static void LogInfo(string message)
         {
-            if (!ConfigController.Config.Debug)
+            if (!ConfigController.Config.Debug.Enabled)
             {
                 return;
             }
@@ -23,7 +24,7 @@ namespace SPTHardcoreRules.Controllers
 
         public static void LogWarning(string message, bool onlyForDebug = false)
         {
-            if (onlyForDebug && !ConfigController.Config.Debug)
+            if (onlyForDebug && !ConfigController.Config.Debug.Enabled)
             {
                 return;
             }
@@ -33,7 +34,7 @@ namespace SPTHardcoreRules.Controllers
 
         public static void LogError(string message, bool onlyForDebug = false)
         {
-            if (onlyForDebug && !ConfigController.Config.Debug)
+            if (onlyForDebug && !ConfigController.Config.Debug.Enabled)
             {
                 return;
             }

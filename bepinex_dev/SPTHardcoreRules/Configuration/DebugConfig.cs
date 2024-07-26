@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace SPTHardcoreRules.Configuration
 {
-    public class FleaMarketConfig
+    public class DebugConfig
     {
         [JsonProperty("enabled")]
         public bool Enabled { get; set; }
 
-        [JsonProperty("only_barter_offers")]
-        public bool OnlyBarterOffers { get; set; }
+        [JsonProperty("flea_market_min_level")]
+        public int FleaMarketMinLevel { get; set; }
 
-        public FleaMarketConfig()
+        public DebugConfig()
         {
 
         }

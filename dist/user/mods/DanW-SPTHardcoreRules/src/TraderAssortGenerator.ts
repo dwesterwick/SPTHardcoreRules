@@ -1,7 +1,6 @@
 import type { CommonUtils } from "./CommonUtils";
 import type { FenceConfig, ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
-import type { TraderController } from "@spt/controllers/TraderController";
 import type { RagfairOfferGenerator } from "@spt/generators/RagfairOfferGenerator";
 import type { RagfairOfferService } from "@spt/services/RagfairOfferService";
 import type { RagfairServer } from "@spt/servers/RagfairServer";
@@ -24,7 +23,6 @@ export class TraderAssortGenerator
         private commonUtils: CommonUtils,
         private traderConfig: ITraderConfig,
         private databaseTables: IDatabaseTables,
-        private traderController : TraderController,
         private ragfairOfferGenerator: RagfairOfferGenerator,
         private ragfairServer: RagfairServer,
         private ragfairOfferService: RagfairOfferService,
@@ -73,7 +71,7 @@ export class TraderAssortGenerator
 
         if (this.originalFenceConfig !== undefined)
         {
-            this.traderConfig.fence = this.originalFenceConfig;
+            this.traderConfig.fence = this.jsonCloner.clone(this.originalFenceConfig);
         }
     }
 	
@@ -138,7 +136,7 @@ export class TraderAssortGenerator
         return false;
     }
 	
-    public updateTraderAssorts(sessionId: string, useHardcoreRules: boolean): void
+    public updateTraderAssorts(useHardcoreRules: boolean): void
     {
         if (useHardcoreRules)
         {
@@ -146,7 +144,7 @@ export class TraderAssortGenerator
         }
         else
         {
-            this.restoreOriginalTraderAssorts(sessionId);
+            this.restoreOriginalTraderAssorts();
         }
     }
 
@@ -180,7 +178,7 @@ export class TraderAssortGenerator
         }
     }
 
-    private restoreOriginalTraderAssorts(sessionId: string): void
+    private restoreOriginalTraderAssorts(): void
     {
         this.commonUtils.logInfo("Restoring trader assorts...");
 
@@ -188,13 +186,12 @@ export class TraderAssortGenerator
         {
             if (this.originalTraderAssorts[trader] !== undefined)
             {
-                //this.databaseTables.traders[trader].assort = this.traderController.getAssort(sessionId, trader);
-                this.databaseTables.traders[trader].assort = this.originalTraderAssorts[trader];
+                this.databaseTables.traders[trader].assort = this.jsonCloner.clone(this.originalTraderAssorts[trader]);
             }
 
             if (this.orginalTraderQuestAssorts[trader] !== undefined)
             {
-                this.databaseTables.traders[trader].questassort = this.orginalTraderQuestAssorts[trader];
+                this.databaseTables.traders[trader].questassort = this.jsonCloner.clone(this.orginalTraderQuestAssorts[trader]);
             }
         }
     }

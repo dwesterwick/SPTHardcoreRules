@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConfigResponse.cs" />
+    <Compile Include="Configuration\DebugConfig.cs" />
     <Compile Include="Configuration\FleaMarketConfig.cs" />
     <Compile Include="Configuration\ModConfig.cs" />
     <Compile Include="Configuration\SecureContainerConfig.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Patches\HealthTreatmentScreenIsAvailablePatch.cs" />
     <Compile Include="Patches\InsuranceScreenPatch.cs" />
     <Compile Include="Patches\ItemCheckActionPatch.cs" />
+    <Compile Include="Patches\MenuShowPatch.cs" />
     <Compile Include="Patches\RemoveRepairOptionPatch.cs" />
     <Compile Include="Patches\ShowScreenPatch.cs" />
     <Compile Include="Patches\SideSelectionUpdatePatch.cs" />

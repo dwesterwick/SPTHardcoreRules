@@ -1,13 +1,16 @@
 {
 	"enabled": true,
-	"debug": false,
+	"use_for_all_profiles": false,
+	"debug": {
+		"enabled": true,
+		"flea_market_min_level": 15
+	},
 	"services": {
 		"flea_market": {
-				"enabled": false,
-				"only_barter_offers": true,
-				"min_level": 15
+			"enabled": false,
+			"only_barter_offers": true
 		},
-		"disable_repairs": true,
+		"disable_trader_repairs": true,
 		"disable_insurance": true,
 		"disable_post_raid_healing": false,
 		"disable_scav_raids": true
