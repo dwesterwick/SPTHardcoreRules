@@ -2,7 +2,7 @@
 	"enabled": true,
 	"use_for_all_profiles": false,
 	"debug": {
-		"enabled": true,
+		"enabled": false,
 		"flea_market_min_level": 15
 	},
 	"services": {

@@ -83,26 +83,10 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
                     const profile = this.profileHelper.getFullProfile(sessionId);
                     this.usingHardcoreProfile = modConfig.use_for_all_profiles || (profile.info.edition === hardcoreProfileTypeName);
 
-                    this.commonUtils.logInfo(`Profile edition for ${profile.info.username} is ${profile.info.edition}. Using hardcore rules = ${this.usingHardcoreProfile}`);
-
                     if (modConfig.enabled)
                     {
-                        const mustRegenerateTraderOffers = this.usingHardcoreProfile !== this.hardcoreRulesApplied;
-
-                        if (this.usingHardcoreProfile)
-                        {
-                            this.applyHardcoreRules();
-                        }
-                        else
-                        {
-                            this.commonUtils.logWarning("Not using a hardcore profile");
-                            this.removeHardcoreRules();
-                        }
-
-                        if (mustRegenerateTraderOffers)
-                        {
-                            this.regenerateTraderOffers();
-                        }
+                        this.commonUtils.logInfo(`Profile edition for ${profile.info.username} is ${profile.info.edition}. Using hardcore rules = ${this.usingHardcoreProfile}`);
+                        this.toggleHardcoreRules();
                     }
 
                     return output;
@@ -218,15 +202,35 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         // Remove the knife from both BEAR and USEC profiles
         hardcoreProfileType.bear.character.Inventory.items.pop();
         hardcoreProfileType.usec.character.Inventory.items.pop();
-
+        
         // Add new profile type
         hardcoreProfileType.descriptionLocaleKey = "launcher-profile_hardcoreplaythrough";
-        this.databaseTables.templates.profiles[hardcoreProfileTypeName] = hardcoreProfileType;
-
-        // Add new profile description for all locales
-        for (const locale in this.databaseTables.locales.server)
+        const locale = this.localeService.getDesiredServerLocale();
+        if (locale === "en")
         {
-            this.databaseTables.locales.server[locale][hardcoreProfileType.descriptionLocaleKey] = "Hardcore Rules playthrough";
+            hardcoreProfileType.descriptionLocaleKey = "Hardcore Rules playthrough";
+        }
+
+        this.databaseTables.templates.profiles[hardcoreProfileTypeName] = hardcoreProfileType;
+    }
+
+    private toggleHardcoreRules(): void
+    {
+        const mustRegenerateTraderOffers = this.usingHardcoreProfile !== this.hardcoreRulesApplied;
+
+        if (this.usingHardcoreProfile)
+        {
+            this.applyHardcoreRules();
+        }
+        else
+        {
+            this.commonUtils.logWarning("Not using a hardcore profile");
+            this.removeHardcoreRules();
+        }
+
+        if (mustRegenerateTraderOffers)
+        {
+            this.regenerateTraderOffers();
         }
     }
 
