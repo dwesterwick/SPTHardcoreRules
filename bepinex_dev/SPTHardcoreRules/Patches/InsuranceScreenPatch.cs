@@ -20,18 +20,9 @@ namespace SPTHardcoreRules.Patches
         [PatchPrefix]
         private static bool PatchPrefix(MainMenuController __instance, RaidSettings ___raidSettings_0)
         {
-            if (Controllers.ConfigController.Config.Services.DisableInsurance)
-            {
-                LoggingController.Logger.LogDebug("Disabling insurance screen...");
-                // The insurance screen is disabled in live Tarkov for offline raids
-                ___raidSettings_0.RaidMode = ERaidMode.Local;
-            }
-            else
-            {
-                LoggingController.Logger.LogDebug("Allowing insurance screen...");
-                // This is done in SPT.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
-                ___raidSettings_0.RaidMode = ERaidMode.Online;
-            }
+            LoggingController.Logger.LogDebug("Disabling insurance screen...");
+            // The insurance screen is disabled in live Tarkov for offline raids
+            ___raidSettings_0.RaidMode = ERaidMode.Local;
 
             // The rest of the code was copied from the original method (except for invoking other private methods in MainMenuController)
             if (___raidSettings_0.SelectedLocation.Id == "laboratory")

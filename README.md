@@ -1,10 +1,15 @@
 Is SPT getting too easy? Too much nice gear collecting dust in your stash? Fix that problem with a hardcore playthrough similar to DeadlySlob's hardcore rules for live Tarkov (https://www.twitlonger.com/show/n_1sr500b). I was inspired by Fin's Hardcore Options (https://hub.sp-tarkov.com/files/file/232-fin-s-hardcore-options/) and made a new version that simply implements the hardcore rulesets by DeadlySlob and other streamers. 
 
+To start a new hardcore playthrough, create a new profile in the SPT launcher using the "Hardcore Playthrough" edition this mod adds. By default, this mod will be active when a profile using the "Hardcore Playthrough" edition is loaded, and it will be deactivated when any other profile edition is loaded. 
+
+If you're using an existing hardcore profile from a previous version of this mod (that was compatible with SPT 3.9.x), you can still use it if you do one of the following:
+* Set **use_for_all_profiles=true** in _config.json_ to apply the hardcore ruleset to all profiles, regardless of their edition
+* Change **info.edition** to **"Hardcore Playthrough"** (case-sensitive) in the JSON data for your profile. **Always make a backup before manually changing your profile!**
+
 This mod is highly customizable, so you can change the configuration to match the level of difficulty you want. Here are the settings you can change in the **config.json** file in this mod:
 * **services.flea_market.enabled**: if this is *false*, you can't list new offers, and there won't be any player offers. You can only use the flea-market interface to browse trader offers.
 * **services.flea_market.only_barter_offers**: if you've enabled the flea market, you can set this to *false* to disable all offers using currency.
-* **services.flea_market.min_level**: the minimum level you have to be in order to use the flea market. If you set this to *1* but disable the flea market, you can use the flea-market interface to browse trader offers, which is convenient. 
-* **services.disable_repairs**: this is a misnomer because it doesn't truly disable trader repairs, but it makes them prohibitively expensive. Repair kits are unaffected. 
+* **services.disable_trader_repairs**: Only repair kits can be used for repairs. 
 * **services.disable_insurance**: All items will be blacklisted from insurance, and the insurance screen will not be displayed when loading into a raid. In case you want to turn this off and on during a playthrough, this will not remove insurance for any items that were previously insured. 
 * **services.disable_post_raid_healing**: Disables Therapist's post-raid healing.
 * **services.disable_scav_raids**: Disables Scav raids.
@@ -33,9 +38,5 @@ The following items are whitelisted for putting in your secure container by defa
 * Keycard holder
 * S I C C case
 * Documents case
-
-Known issues:
-* If used with Late to the Party 1.2.0 or later, Fence will always sell items even if **traders.disable_fence=false** in *config.json*.
-* I can't figure out how to blacklist items from trader repairs, so I made them really expensive instead. I can prohibit all traders from being able to repair, but that causes issues in the repair screen.
 
 Good luck!
