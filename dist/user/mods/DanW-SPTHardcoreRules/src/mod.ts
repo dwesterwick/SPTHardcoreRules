@@ -33,7 +33,8 @@ import type { Item } from "@spt/models/eft/common/tables/IItem";
 import type { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
 
 const modName = "SPTHardcoreRules";
-const hardcoreProfileTypeName = "Hardcore Playthrough";
+const hardcoreProfileEditionName = "Hardcore Playthrough";
+const hardcoreProfileDescriptionLocaleKey = "launcher-profile_hardcoreplaythrough";
 
 class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 {
@@ -71,17 +72,16 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.logger = container.resolve<ILogger>("WinstonLogger");
         this.profileHelper = container.resolve<ProfileHelper>("ProfileHelper");
         const staticRouterModService = container.resolve<StaticRouterModService>("StaticRouterModService");
-
-        // Get Profile Server Mods
-        // Needed to determine if a hardcore profile is being used
-        staticRouterModService.registerStaticRouter(`StaticAkiProfileGet${modName}`,
+        
+        // Get config.json settings for the bepinex plugin
+        staticRouterModService.registerStaticRouter(`StaticGetConfig${modName}`,
             [{
-                url: "/launcher/server/serverModsUsedByProfile",
+                url: "/SPTHardcoreRules/GetConfig",
                 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
                 action: async (url: string, info: any, sessionId: string, output: string) => 
                 {
                     const profile = this.profileHelper.getFullProfile(sessionId);
-                    this.usingHardcoreProfile = modConfig.use_for_all_profiles || (profile.info.edition === hardcoreProfileTypeName);
+                    this.usingHardcoreProfile = modConfig.use_for_all_profiles || (profile.info.edition === hardcoreProfileEditionName);
 
                     if (modConfig.enabled)
                     {
@@ -89,17 +89,6 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
                         this.toggleHardcoreRules();
                     }
 
-                    return output;
-                }
-            }], "aki"
-        );
-
-        // Get config.json settings for the bepinex plugin
-        staticRouterModService.registerStaticRouter(`StaticGetConfig${modName}`,
-            [{
-                url: "/SPTHardcoreRules/GetConfig",
-                action: async () => 
-                {
                     return JSON.stringify({
                         config: modConfig,
                         usingHardcoreProfile : this.usingHardcoreProfile
@@ -194,24 +183,21 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
     private addHardcoreProfile(): void
     {
-        this.commonUtils.logInfo(`Adding "${hardcoreProfileTypeName}" profile type...`);
+        this.commonUtils.logInfo(`Adding "${hardcoreProfileEditionName}" profile type...`);
 
         // Clone the SPT "zero to hero" profile type
         const hardcoreProfileType = this.jsonCloner.clone(this.databaseTables.templates.profiles["SPT Zero to hero"]);
         
-        // Remove the knife from both BEAR and USEC profiles
+        // Remove the knife from both BEAR and USEC profiles, which should be the last item added to the "Zero to hero" profile templates
         hardcoreProfileType.bear.character.Inventory.items.pop();
         hardcoreProfileType.usec.character.Inventory.items.pop();
         
+        // Get the translated profile description.
+        // NOTE: This approach is needed because server translations are loaded directly from JSON files, not the database tables.
+        hardcoreProfileType.descriptionLocaleKey = this.commonUtils.getModTranslation(hardcoreProfileDescriptionLocaleKey);
+        
         // Add new profile type
-        hardcoreProfileType.descriptionLocaleKey = "launcher-profile_hardcoreplaythrough";
-        const locale = this.localeService.getDesiredServerLocale();
-        if (locale === "en")
-        {
-            hardcoreProfileType.descriptionLocaleKey = "Hardcore Rules playthrough";
-        }
-
-        this.databaseTables.templates.profiles[hardcoreProfileTypeName] = hardcoreProfileType;
+        this.databaseTables.templates.profiles[hardcoreProfileEditionName] = hardcoreProfileType;
     }
 
     private toggleHardcoreRules(): void

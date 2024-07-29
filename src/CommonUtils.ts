@@ -1,4 +1,5 @@
 import modConfig from "../config/config.json";
+import modTranslations from "../config/translations.json";
 
 import type { ILogger } from "@spt/models/spt/utils/ILogger";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
@@ -8,10 +9,12 @@ export class CommonUtils
 {
     private debugMessagePrefix = "[Hardcore Rules] ";
     private translations: Record<string, string>;
+    private locale: string;
 	
     constructor (private logger: ILogger, private databaseTables: IDatabaseTables, private localeService: LocaleService)
     {
         // Get all translations for the current locale
+        this.locale = this.localeService.getDesiredServerLocale();
         this.translations = this.localeService.getLocaleDb();
     }
 	
@@ -51,5 +54,36 @@ export class CommonUtils
         // If a key can't be found in the translations dictionary, fall back to the template data
         const item = this.databaseTables.templates.items[itemID];
         return item._name;
+    }
+
+    public getModTranslation(textKey: string): string
+    {
+        if (modTranslations[textKey] === undefined)
+        {
+            this.logError(`Cannot find any translations for ${textKey}`);
+            return textKey;
+        }
+
+        if (modTranslations[textKey][this.locale] !== undefined)
+        {
+            return modTranslations[textKey][this.locale];
+        }
+        
+        if (modTranslations[textKey].en !== undefined)
+        {
+            this.logWarning(`Cannot find ${this.locale} translation for ${textKey}. Using English (en) translation instead.`);
+            return modTranslations[textKey].en;
+        }
+        
+        if (this.locale === "en")
+        {
+            this.logError(`Cannot find English (en) translations for ${textKey}`);
+        }
+        else
+        {
+            this.logError(`Cannot find English (en) or ${this.locale} translations for ${textKey}`);
+        }
+
+        return textKey;
     }
 }
