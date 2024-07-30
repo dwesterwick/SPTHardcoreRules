@@ -51,7 +51,8 @@ namespace SPTHardcoreRules
 
                     if (ConfigController.Config.Services.DisablePostRaidHealing)
                     {
-                        new Patches.HealthTreatmentScreenIsAvailablePatch().Enable();
+                        new Patches.HealthTreatmentScreenShowPatch().Enable();
+                        new Patches.HealthTreatmentScreenAddTreatmentPatch().Enable();
                     }
 
                     if (ConfigController.Config.SecureContainer.UseModWhitelists)
