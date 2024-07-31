@@ -1,6 +1,7 @@
 import type { CommonUtils } from "./CommonUtils";
 import type { FenceConfig, ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
+import type { TraderAssortService } from "@spt/services/TraderAssortService";
 import type { RagfairOfferGenerator } from "@spt/generators/RagfairOfferGenerator";
 import type { RagfairOfferService } from "@spt/services/RagfairOfferService";
 import type { RagfairServer } from "@spt/servers/RagfairServer";
@@ -23,6 +24,7 @@ export class TraderAssortGenerator
         private commonUtils: CommonUtils,
         private traderConfig: ITraderConfig,
         private databaseTables: IDatabaseTables,
+        private traderAssortService: TraderAssortService,
         private ragfairOfferGenerator: RagfairOfferGenerator,
         private ragfairServer: RagfairServer,
         private ragfairOfferService: RagfairOfferService,
@@ -175,6 +177,10 @@ export class TraderAssortGenerator
 
             // need to do this or generateFleaOffersForTrader() will complain about undefined slotID's.
             this.databaseTables.traders[trader].assort.items = TraderAssortGenerator.rebuildArray(newAssort.items);
+
+            // Needed to avoid "cannot find barter_scheme" warnings when SPT refreshes expired traders
+            const newAssortClone = this.jsonCloner.clone(this.databaseTables.traders[trader].assort);
+            this.traderAssortService.setPristineTraderAssort(trader, newAssortClone);
         }
     }
 

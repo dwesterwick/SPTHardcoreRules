@@ -12,6 +12,7 @@ import type { DatabaseServer } from "@spt/servers/DatabaseServer";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
 import type { ConfigServer } from "@spt/servers/ConfigServer";
 import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
+import type { TraderAssortService } from "@spt/services/TraderAssortService";
 import type { FenceService } from "@spt/services/FenceService";
 import type { RagfairServer } from "@spt/servers/RagfairServer";
 import type { IRagfairConfig  } from "@spt/models/spt/config/IRagfairConfig";
@@ -44,6 +45,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     private logger: ILogger;
     private configServer: ConfigServer;
     private databaseServer: DatabaseServer;
+    private traderAssortService: TraderAssortService;
     private fenceService: FenceService;
     private ragfairServer: RagfairServer;
     private ragfairConfig: IRagfairConfig;
@@ -130,6 +132,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     {
         this.databaseServer = container.resolve<DatabaseServer>("DatabaseServer");
         this.configServer = container.resolve<ConfigServer>("ConfigServer");
+        this.traderAssortService = container.resolve<TraderAssortService>("TraderAssortService");
         this.fenceService = container.resolve<FenceService>("FenceService");
         this.ragfairServer = container.resolve<RagfairServer>("RagfairServer");
         this.ragfairOfferGenerator = container.resolve<RagfairOfferGenerator>("RagfairOfferGenerator");
@@ -150,6 +153,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
             this.commonUtils,
             this.traderConfig,
             this.databaseTables,
+            this.traderAssortService,
             this.ragfairOfferGenerator,
             this.ragfairServer,
             this.ragfairOfferService,

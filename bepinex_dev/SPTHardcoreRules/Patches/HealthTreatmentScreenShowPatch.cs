@@ -19,14 +19,14 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(DefaultUIButton ____applyButton, TextMeshProUGUI ____treatAllField, TextMeshProUGUI ____quickHealNote, TextMeshProUGUI ____costTotalField)
+        private static void PatchPostfix(DefaultUIButton ____applyButton, UpdatableToggle ____selectAllToggle, TextMeshProUGUI ____quickHealNote, TextMeshProUGUI ____costTotalField, TextMeshProUGUI ____cashInStashField)
         {
             ____applyButton.GameObject.SetActive(false);
-            ____treatAllField.gameObject.SetActive(false);
-            
+            ____selectAllToggle.gameObject.SetActive(false);
+
             ____quickHealNote.SetText("Post-raid healing disabled per Hardcore Rules");
 
-            //____costTotalField.gameObject.SetActive(false);
+            ____costTotalField.fontSize = ____cashInStashField.fontSize;
             ____costTotalField.SetText("N/A");
         }
     }

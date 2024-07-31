@@ -11,7 +11,7 @@ This mod is highly customizable, so you can change the configuration to match th
 * **services.flea_market.only_barter_offers**: if you've enabled the flea market, you can set this to *false* to disable all offers using currency.
 * **services.disable_trader_repairs**: Only repair kits can be used for repairs. 
 * **services.disable_insurance**: All items will be blacklisted from insurance, and the insurance screen will not be displayed when loading into a raid. In case you want to turn this off and on during a playthrough, this will not remove insurance for any items that were previously insured. 
-* **services.disable_post_raid_healing**: Disables Therapist's post-raid healing.
+* **services.disable_post_raid_healing**: Disables Therapist's post-raid healing, but the screen will still be shown so you can review the damage you received during the raid.
 * **services.disable_scav_raids**: Disables Scav raids.
 * **traders.disable_fence**: Allows you to remove all of Fence's offers. You can still sell items to Fence. 
 * **traders.disable_prapor_starting_gifts**: Prapor no longer gives you starting gifts. 
