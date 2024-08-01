@@ -159,7 +159,7 @@ export class TraderAssortGenerator
             const assort = this.databaseTables.traders[trader].assort;
 
             // Ignore traders who don't sell anything (i.e. Lightkeeper)
-            if ((assort === null) || (assort === undefined))
+            if ((assort === null) || (assort === undefined) || (assort.items.length === 0))
                 continue;
 			
             if (this.originalTraderAssorts[trader] === undefined)
@@ -169,6 +169,12 @@ export class TraderAssortGenerator
             if (this.orginalTraderQuestAssorts[trader] === undefined)
             {
                 this.orginalTraderQuestAssorts[trader] = this.jsonCloner.clone(this.databaseTables.traders[trader].questassort);
+            }
+
+            if (modConfig.traders.whitelist_traders.includes(trader))
+            {
+                this.commonUtils.logInfo(`Skipping whitelisted trader ${this.commonUtils.getTraderName(trader)}...`);
+                continue;
             }
 
             this.commonUtils.logInfo(`Modifying trader assorts for ${this.commonUtils.getTraderName(trader)}...`);
@@ -235,10 +241,10 @@ export class TraderAssortGenerator
             if (item._props.QuestItem === true)
                 continue;
             
-            if (modConfig.traders.whitelist.items.includes(itemID))
+            if (modConfig.traders.whitelist_items.items.includes(itemID))
                 continue;
             
-            if (ItemHelper.hasAnyParents(item, modConfig.traders.whitelist.parents, databaseTables))
+            if (ItemHelper.hasAnyParents(item, modConfig.traders.whitelist_items.parents, databaseTables))
                 continue;
             
             if (!modConfig.traders.whitelist_only && (!modConfig.traders.barters_only || TraderAssortGenerator.isABarterOffer(trader.assort.barter_scheme[barterID][0], databaseTables)))

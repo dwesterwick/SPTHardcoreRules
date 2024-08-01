@@ -30,8 +30,11 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("whitelist_only")]
         public bool WhitelistOnly { get; set; }
 
-        [JsonProperty("whitelist")]
-        public Whitelist Whitelist { get; set; } = new Whitelist();
+        [JsonProperty("whitelist_items")]
+        public Whitelist WhitelistItems { get; set; } = new Whitelist();
+
+        [JsonProperty("whitelist_traders")]
+        public string[] WhitelistTraders { get; set; } = new string[0];
 
         public TradersConfig()
         {

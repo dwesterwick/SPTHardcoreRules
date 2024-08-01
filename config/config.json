@@ -23,7 +23,7 @@
 		"barters_only": true,
 		"allow_GPCoins": true,
 		"whitelist_only": false,
-		"whitelist": {
+		"whitelist_items": {
 			"parents": [
 				"543be5dd4bdc2deb348b4569",
 				"5795f317245977243854e041",
@@ -35,7 +35,8 @@
 				"6217726288ed9f0845317459",
 				"624c0b3340357b5f566e8766"
 			]
-		}
+		},
+		"whitelist_traders" : []
 	},
 	"secureContainer": {
 		"only_use_whitelists_in_this_mod": true,

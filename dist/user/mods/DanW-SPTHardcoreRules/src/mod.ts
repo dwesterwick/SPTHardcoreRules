@@ -182,7 +182,33 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 	
     public postSptLoad(): void
     {
-        
+        if (!modConfig.enabled)
+        {
+            return;
+        }
+
+        this.showTraderIDs();
+    }
+
+    private showTraderIDs(): void
+    {
+        // No need to show any messages if trader offers won't be modified
+        if (!modConfig.traders.barters_only && !modConfig.traders.whitelist_only)
+        {
+            return;
+        }
+
+        for (const trader in this.databaseTables.traders)
+        {
+            const assort = this.databaseTables.traders[trader].assort;
+
+            // Ignore traders who don't sell anything (i.e. Lightkeeper)
+            if ((assort === null) || (assort === undefined) || (assort.items.length === 0))
+                continue;
+
+            const whitelisted = modConfig.traders.whitelist_traders.includes(trader);
+            this.commonUtils.logInfo(`Found trader: ${this.commonUtils.getTraderName(trader)} (ID=${trader}, Whitelisted=${whitelisted})`);
+        }
     }
 
     private addHardcoreProfile(): void
