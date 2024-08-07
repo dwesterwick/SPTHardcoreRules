@@ -104,16 +104,20 @@ export class TraderAssortGenerator
                     updateableTraders.push(offers[offer].user.id);
         }
 
-        if (modConfig.services.flea_market.only_barter_offers)
+        const playersOffersText = modConfig.services.flea_market.only_barter_offers ? "cash " : "";
+        this.commonUtils.logInfo(`Removing ${playersOffersText}offers from players...`);
+        
+        for (const offer in offers)
         {
-            this.commonUtils.logInfo("Removing cash offers from players...");
-			
-            for (const offer in offers)
+            if (updateableTraders.includes(offers[offer].user.id))
             {
-                if (!TraderAssortGenerator.isABarterOffer(offers[offer].requirements, this.databaseTables))
-                {
-                    this.ragfairOfferService.removeOfferById(offers[offer]._id);
-                }
+                continue;
+            }
+
+            const isBarterOffer = TraderAssortGenerator.isABarterOffer(offers[offer].requirements, this.databaseTables);
+            if (!modConfig.services.flea_market.enabled || (!isBarterOffer && modConfig.services.flea_market.only_barter_offers))
+            {
+                this.ragfairOfferService.removeOfferById(offers[offer]._id);
             }
         }
 
