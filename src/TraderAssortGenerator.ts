@@ -160,6 +160,12 @@ export class TraderAssortGenerator
 		
         for (const trader in this.databaseTables.traders)
         {
+            // Ignore Fence because his offers are handled separately
+            if (trader === "579dc571d53a0658a154fbec")
+            {
+                continue;
+            }
+
             const assort = this.databaseTables.traders[trader].assort;
 
             // Ignore traders who don't sell anything (i.e. Lightkeeper)
