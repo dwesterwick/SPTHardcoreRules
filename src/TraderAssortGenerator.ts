@@ -1,5 +1,5 @@
 import type { CommonUtils } from "./CommonUtils";
-import type { FenceConfig, ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
+import type { IFenceConfig, ITraderConfig  } from "@spt/models/spt/config/ITraderConfig";
 import type { IDatabaseTables } from "@spt/models/spt/server/IDatabaseTables";
 import type { TraderAssortService } from "@spt/services/TraderAssortService";
 import type { RagfairOfferGenerator } from "@spt/generators/RagfairOfferGenerator";
@@ -15,7 +15,7 @@ import type { IGetOffersResult } from "@spt/models/eft/ragfair/IGetOffersResult"
 
 export class TraderAssortGenerator
 {
-    private originalFenceConfig : FenceConfig
+    private originalFenceConfig : IFenceConfig
     private originalTraderAssorts: Record<string, ITraderAssort> = {}
     private orginalTraderQuestAssorts: Record<string, Record<string, Record<string, string>>> = {}
 

@@ -20,7 +20,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(UIAnimatedToggleSpawner ____savagesButton, TMP_Text ____savageBlockMessage, CanvasGroup ____savageBlocker, PlayerModelView ____savageModelView)
+        protected static void PatchPostfix(UIAnimatedToggleSpawner ____savagesButton, TMP_Text ____savageBlockMessage, CanvasGroup ____savageBlocker, PlayerModelView ____savageModelView)
         {
             ____savagesButton.GameObject.SetActive(false);
             ____savageModelView.GameObject.SetActive(false);

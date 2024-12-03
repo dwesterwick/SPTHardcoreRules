@@ -38,7 +38,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref IResult __result, EItemInfoButton button, ItemUiContext ___itemUiContext_0, Item ___item_0)
+        protected static void PatchPostfix(ref IResult __result, EItemInfoButton button, ItemUiContext ___itemUiContext_0, Item ___item_0)
         {
             // No need to continue if the option is already disabled
             if (!__result.Succeed)

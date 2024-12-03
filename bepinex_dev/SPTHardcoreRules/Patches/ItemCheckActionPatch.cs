@@ -9,6 +9,7 @@ using SPT.Reflection.Patching;
 using Comfort.Common;
 using EFT.InventoryLogic;
 using SPTHardcoreRules.Models;
+using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -21,25 +22,33 @@ namespace SPTHardcoreRules.Patches
             return typeof(Item).GetMethod("CheckAction", BindingFlags.Public | BindingFlags.Instance);
         }
 
-        [PatchPostfix]
-        public static bool PatchPostfix(bool __result, Item __instance, ItemAddress location)
+        internal static GStruct447 GetCheckActionResult(Item __instance, ItemAddress location)
+        {
+            GStruct447 result = default(GStruct447);
+            PatchPrefix(ref result, __instance, location);
+
+            return result;
+        }
+
+        [PatchPrefix]
+        public static bool PatchPrefix(ref GStruct447 __result, Item __instance, ItemAddress location)
         {
             // Don't apply restrictions to Scavs because they don't have secure containers
             if (CurrentRaidSettings.SelectedSide == EFT.ESideType.Savage)
             {
-                return __result;
+                return true;
             }
 
             if ((location == null) || (location.Container == null) || (location.Container.ParentItem == null))
             {
-                return __result;
+                return true;
             }
 
-            Item containerItem = location.Item ?? location.Container.ParentItem;
+            Item containerItem = location.Container.ParentItem;
 
             if (!Controllers.ConfigController.Config.SecureContainer.UseModWhitelists)
             {
-                return __result;
+                return true;
             }
 
             // This should only be run once to generate the list of secure containers
@@ -56,7 +65,7 @@ namespace SPTHardcoreRules.Patches
             }
             if (!targetContainerIsSecured)
             {
-                return __result;
+                return true;
             }
 
             // Check if the item and all items contained within it are whitelisted
@@ -68,14 +77,24 @@ namespace SPTHardcoreRules.Patches
                 allItemsWhitelisted &= isContainedItemWhitelisted;
             }
 
-            return allItemsWhitelisted;
+            if (allItemsWhitelisted)
+            {
+                LoggingController.LogInfo("Result for putting " + __instance.LocalizedName() + " in " + containerItem.LocalizedName() + ": " + __result.Succeeded);
+
+                return true;
+            }
+
+            __result = new SecureContainerRestrictionError(__instance);
+            LoggingController.LogInfo("Result for putting " + __instance.LocalizedName() + " in " + containerItem.LocalizedName() + ": " + __result.Succeeded);
+
+            return false;
         }
 
         public static List<Item> GetSecureContainerItems()
         {
             List<Item> secureContainers = new List<Item>();
 
-            ItemFactory itemFactory = Singleton<ItemFactory>.Instance;
+            ItemFactoryClass itemFactory = Singleton<ItemFactoryClass>.Instance;
             if (itemFactory == null)
             {
                 return secureContainers;
@@ -84,17 +103,16 @@ namespace SPTHardcoreRules.Patches
             // Find all possible secure containers
             foreach (Item item in itemFactory.CreateAllItemsEver())
             {
-                if (item.Template is SecureContainerTemplateClass)
+                if (!EFT.UI.DragAndDrop.ItemViewFactory.IsSecureContainer(item))
                 {
-                    if ((item.Template as SecureContainerTemplateClass).isSecured)
-                    {
-                        secureContainers.Add(item);
-                    }
+                    continue;
                 }
+
+                secureContainers.Add(item);
             }
 
             // Removed secure containers that can't be used by the player (namely the "development" and "boss" secure containers)
-            secureContainers.RemoveAll(c => Controllers.ConfigController.Config.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId));
+            secureContainers.RemoveAll(c => Controllers.ConfigController.Config.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId.ToString()));
 
             return secureContainers;
         }
@@ -102,7 +120,7 @@ namespace SPTHardcoreRules.Patches
         // Copied from EFT.InventoryLogic.Examined(Item item)
         public static bool IsExamined(EFT.InventoryLogic.IContainer container, Item item)
         {
-            InventoryControllerClass inventoryControllerClass = container.ParentItem.CurrentAddress.GetOwnerOrNull() as InventoryControllerClass;
+            InventoryController inventoryControllerClass = container.ParentItem.CurrentAddress.GetOwnerOrNull() as InventoryController;
             return inventoryControllerClass == null || inventoryControllerClass.Examined(item);
         }
 
@@ -138,7 +156,7 @@ namespace SPTHardcoreRules.Patches
 
         public static bool IsItemInWhitelist(Item item, Configuration.Whitelist whitelist)
         {
-            if (whitelist.ID_Items.Contains(item.TemplateId))
+            if (whitelist.ID_Items.Contains(item.TemplateId.ToString()))
             {
                 return true;
             }

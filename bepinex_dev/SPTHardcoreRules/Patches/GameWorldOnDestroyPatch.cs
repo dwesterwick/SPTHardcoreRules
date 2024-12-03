@@ -18,7 +18,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix()
+        protected static void PatchPostfix()
         {
             CurrentRaidSettings.IsInRaid = false;
         }

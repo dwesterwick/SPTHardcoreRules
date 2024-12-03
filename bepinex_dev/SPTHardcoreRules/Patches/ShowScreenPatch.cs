@@ -18,7 +18,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(EMenuType screen)
+        protected static void PatchPostfix(EMenuType screen)
         {
             if (screen == EMenuType.Player)
             {

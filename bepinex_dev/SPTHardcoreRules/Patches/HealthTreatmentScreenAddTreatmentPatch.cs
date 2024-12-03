@@ -17,7 +17,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPrefix]
-        private static bool PatchPrefix(HealthTreatmentServiceView __instance, ref bool ___bool_0)
+        protected static bool PatchPrefix(HealthTreatmentServiceView __instance, ref bool ___bool_0)
         {
             __instance.method_10();
             ___bool_0 = false;

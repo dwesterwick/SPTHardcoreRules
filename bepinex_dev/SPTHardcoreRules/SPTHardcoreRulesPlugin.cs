@@ -8,10 +8,10 @@ using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "2.0.0.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "2.1.0.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
-        private void Awake()
+        protected void Awake()
         {
             Logger.LogInfo("Loading SPTHardcoreRulesPlugin...");
             LoggingController.Logger = Logger;

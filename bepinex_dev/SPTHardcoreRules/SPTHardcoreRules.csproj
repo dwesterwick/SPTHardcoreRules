@@ -112,6 +112,7 @@
     <Compile Include="Controllers\ConfigController.cs" />
     <Compile Include="Controllers\LoggingController.cs" />
     <Compile Include="Models\CurrentRaidSettings.cs" />
+    <Compile Include="Models\SecureContainerRestrictionError.cs" />
     <Compile Include="Patches\DisableInsuranceForItemClassPatch.cs" />
     <Compile Include="Patches\DisableInsuranceForItemPatch.cs" />
     <Compile Include="Patches\GetPrioritizedContainersForLootPatch.cs" />

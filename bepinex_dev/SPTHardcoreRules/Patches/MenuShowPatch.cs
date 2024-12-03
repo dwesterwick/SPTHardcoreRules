@@ -21,7 +21,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix()
+        protected static void PatchPostfix()
         {
             if (!_displayedProfileWarning && !ConfigController.Config.Enabled && ConfigController.UsingHardcoreProfile)
             {

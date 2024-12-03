@@ -23,15 +23,18 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref IEnumerable<EFT.InventoryLogic.IContainer> __result, Item item)
+        protected static void PatchPostfix(ref IEnumerable<EFT.InventoryLogic.IContainer> __result, Item item)
         {
             // Remove containers in which the item is blacklisted
             List<EFT.InventoryLogic.IContainer> blacklistedContainers = new List<EFT.InventoryLogic.IContainer>();
             foreach (EFT.InventoryLogic.IContainer container in __result)
             {
-                bool canUse = ItemCheckActionPatch.PatchPostfix(true, item, container.ParentItem.CurrentAddress);
-                if (!canUse)
+                GStruct447 canUseResult = ItemCheckActionPatch.GetCheckActionResult(item, container.ParentItem.CurrentAddress);
+                LoggingController.LogInfo("Able to place " + item.LocalizedName() + " in " + container.ParentItem.LocalizedName() + ": " + !canUseResult.Failed);
+                if (canUseResult.Failed)
                 {
+                    LoggingController.LogInfo("Cannot place " + item.LocalizedName() + " in " + container.ParentItem.LocalizedName());
+
                     blacklistedContainers.Add(container);
                 }
             }

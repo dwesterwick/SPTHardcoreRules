@@ -19,7 +19,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(DefaultUIButton ____applyButton, UpdatableToggle ____selectAllToggle, TextMeshProUGUI ____quickHealNote, TextMeshProUGUI ____costTotalField, TextMeshProUGUI ____cashInStashField)
+        protected static void PatchPostfix(DefaultUIButton ____applyButton, UpdatableToggle ____selectAllToggle, TextMeshProUGUI ____quickHealNote, TextMeshProUGUI ____costTotalField, TextMeshProUGUI ____cashInStashField)
         {
             ____applyButton.GameObject.SetActive(false);
             ____selectAllToggle.gameObject.SetActive(false);

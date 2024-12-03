@@ -22,7 +22,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPrefix]
-        private static bool PatchPrefix(ref bool __result)
+        protected static bool PatchPrefix(ref bool __result)
         {
             __result = false;
             return false;

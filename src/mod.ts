@@ -29,7 +29,7 @@ import type { JsonCloner } from "@spt/utils/cloners/JsonCloner";
 
 import type { MinMax } from "@spt/models/common/MinMax";
 import type { IMaxActiveOfferCount } from "@spt/models/eft/common/IGlobals";
-import type { Item } from "@spt/models/eft/common/tables/IItem";
+import type { IItem } from "@spt/models/eft/common/tables/IItem";
 
 import type { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
 
@@ -63,8 +63,8 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
 
     private originalRagfairOfferCount: MinMax;
     private originalMaxActiveOfferCount : IMaxActiveOfferCount[];
-    private originalPraporGiftDay1Items: Item[];
-    private originalPraporGiftDay2Items: Item[];
+    private originalPraporGiftDay1Items: IItem[];
+    private originalPraporGiftDay2Items: IItem[];
 
     private usingHardcoreProfile = false;
     private hardcoreRulesApplied = false;

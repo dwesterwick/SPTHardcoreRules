@@ -26,7 +26,7 @@ namespace SPTHardcoreRules.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ESideType side)
+        protected static void PatchPostfix(ESideType side)
         {
             CurrentRaidSettings.SelectedSide = side;
         }
