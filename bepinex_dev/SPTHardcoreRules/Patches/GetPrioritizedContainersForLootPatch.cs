@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SPT.Reflection.Patching;
 using EFT.InventoryLogic;
 using SPTHardcoreRules.Controllers;
+using SPTHardcoreRules.Helpers;
 
 namespace SPTHardcoreRules.Patches
 {
@@ -25,21 +26,7 @@ namespace SPTHardcoreRules.Patches
         [PatchPostfix]
         protected static void PatchPostfix(ref IEnumerable<EFT.InventoryLogic.IContainer> __result, Item item)
         {
-            // Remove containers in which the item is blacklisted
-            List<EFT.InventoryLogic.IContainer> blacklistedContainers = new List<EFT.InventoryLogic.IContainer>();
-            foreach (EFT.InventoryLogic.IContainer container in __result)
-            {
-                GStruct447 canUseResult = ItemCheckActionPatch.GetCheckActionResult(item, container.ParentItem.CurrentAddress);
-                LoggingController.LogInfo("Able to place " + item.LocalizedName() + " in " + container.ParentItem.LocalizedName() + ": " + !canUseResult.Failed);
-                if (canUseResult.Failed)
-                {
-                    LoggingController.LogInfo("Cannot place " + item.LocalizedName() + " in " + container.ParentItem.LocalizedName());
-
-                    blacklistedContainers.Add(container);
-                }
-            }
-
-            __result = __result.Where(i => !blacklistedContainers.Contains(i));
+            __result = __result.Where(container => item.IsAllowedToBePlacedIn(container));
         }
 
         public static Type FindTargetType(string methodName)
