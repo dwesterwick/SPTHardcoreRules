@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EFT.InventoryLogic;
+using SPTHardcoreRules.Controllers;
 using SPTHardcoreRules.Models;
 
 namespace SPTHardcoreRules.Helpers
@@ -27,7 +28,8 @@ namespace SPTHardcoreRules.Helpers
                 return true;
             }
 
-            if (item.AreAllContainedItemsWhitelisted())
+            InventoryController inventoryController = container.GetInventoryController();
+            if (item.AreAllContainedItemsWhitelisted(inventoryController))
             {
                 return true;
             }
@@ -35,11 +37,20 @@ namespace SPTHardcoreRules.Helpers
             return false;
         }
 
-        // Adapted from EFT.InventoryLogic.Examined(Item item)
-        public static bool IsExamined(this Item item)
+        public static InventoryController GetInventoryController(this EFT.InventoryLogic.IContainer container)
         {
-            InventoryController inventoryControllerClass = item.CurrentAddress.GetOwnerOrNull() as InventoryController;
-            return inventoryControllerClass == null || inventoryControllerClass.Examined(item);
+            InventoryController inventoryController = container.ParentItem.Owner as InventoryController;
+            if (inventoryController == null)
+            {
+                LoggingController.LogWarning("Could not retrieve InventoryController for " + container.ParentItem.LocalizedName());
+            }
+
+            return inventoryController;
+        }
+
+        public static bool IsExamined(this Item item, InventoryController inventoryController)
+        {
+            return inventoryController == null || inventoryController.Examined(item);
         }
 
         public static bool IsWhitelisted(this Item item, bool isExamined)
@@ -95,11 +106,11 @@ namespace SPTHardcoreRules.Helpers
             return false;
         }
 
-        public static bool AreAllContainedItemsWhitelisted(this Item item)
+        public static bool AreAllContainedItemsWhitelisted(this Item item, InventoryController inventoryController)
         {
             foreach (Item childItem in item.GetAllItems())
             {
-                bool isContainedItemExamined = childItem.IsExamined();
+                bool isContainedItemExamined = childItem.IsExamined(inventoryController);
                 if (!childItem.IsWhitelisted(isContainedItemExamined))
                 {
                     return false;
