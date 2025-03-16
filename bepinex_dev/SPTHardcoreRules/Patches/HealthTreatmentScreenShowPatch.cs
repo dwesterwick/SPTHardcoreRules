@@ -15,7 +15,7 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(HealthTreatmentServiceView).GetMethod("Show", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(HealthTreatmentServiceView).GetMethod(nameof(HealthTreatmentServiceView.Show), BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPostfix]

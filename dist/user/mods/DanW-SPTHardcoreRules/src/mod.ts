@@ -24,7 +24,7 @@ import type { IGiftsConfig  } from "@spt/models/spt/config/IGiftsConfig";
 import type { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import type { LocaleService } from "@spt/services/LocaleService";
 import type { HttpResponseUtil } from "@spt/utils/HttpResponseUtil";
-import type { VFS } from "@spt/utils/VFS";
+import type { FileSystem } from "@spt/utils/FileSystem";
 import type { JsonCloner } from "@spt/utils/cloners/JsonCloner";
 
 import type { MinMax } from "@spt/models/common/MinMax";
@@ -58,13 +58,14 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     private profileHelper: ProfileHelper;
     private localeService: LocaleService;
     private httpResponseUtil: HttpResponseUtil;
-    private vfs: VFS;
+    private fileSystem: FileSystem;
     private jsonCloner: JsonCloner;
 
     private originalRagfairOfferCount: MinMax;
     private originalMaxActiveOfferCount : IMaxActiveOfferCount[];
     private originalPraporGiftDay1Items: IItem[];
     private originalPraporGiftDay2Items: IItem[];
+    private originalMechanicGiftDay1Items: IItem[];
 
     private usingHardcoreProfile = false;
     private hardcoreRulesApplied = false;
@@ -140,7 +141,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.ragfairController = container.resolve<RagfairController>("RagfairController");
         this.localeService = container.resolve<LocaleService>("LocaleService");
         this.httpResponseUtil = container.resolve<HttpResponseUtil>("HttpResponseUtil");
-        this.vfs = container.resolve<VFS>("VFS");
+        this.fileSystem = container.resolve<FileSystem>("FileSystem");
         this.jsonCloner = container.resolve<JsonCloner>("JsonCloner");
 		
         this.databaseTables = this.databaseServer.getTables();
@@ -265,7 +266,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         if (modConfig.traders.disable_fence)
             this.traderAssortGenerator.disableFence();
 
-        if (modConfig.traders.disable_prapor_starting_gifts)
+        if (modConfig.traders.disable_starting_gifts)
             this.disablePraporStartingGifts();
 		
         this.hardcoreRulesApplied = true;
@@ -288,7 +289,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         if (modConfig.traders.disable_fence)
             this.traderAssortGenerator.enableFence();
         
-        if (modConfig.traders.disable_prapor_starting_gifts)
+        if (modConfig.traders.disable_starting_gifts)
             this.enablePraporStartingGifts();
 
         this.hardcoreRulesApplied = false;
@@ -353,15 +354,21 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
             this.originalPraporGiftDay2Items = this.jsonCloner.clone(this.giftsConfig.gifts.PraporGiftDay2.items);
         }
 
-        this.commonUtils.logInfo("Disabling Prapor's starting gifts...");
+        if (this.originalMechanicGiftDay1Items === undefined)
+        {
+            this.originalMechanicGiftDay1Items = this.jsonCloner.clone(this.giftsConfig.gifts.MechanicGiftDay1.items);
+        }
+
+        this.commonUtils.logInfo("Disabling starting gifts...");
 
         this.giftsConfig.gifts.PraporGiftDay1.items = [];
         this.giftsConfig.gifts.PraporGiftDay2.items = [];
+        this.giftsConfig.gifts.MechanicGiftDay1.items = [];
     }
 
     private enablePraporStartingGifts(): void
     {
-        this.commonUtils.logInfo("Enabling Prapor's starting gifts...");
+        this.commonUtils.logInfo("Enabling starting gifts...");
 
         if (this.originalPraporGiftDay1Items !== undefined)
         {
@@ -372,13 +379,18 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         {
             this.giftsConfig.gifts.PraporGiftDay2.items = this.jsonCloner.clone(this.originalPraporGiftDay2Items);
         }
+
+        if (this.originalPraporGiftDay2Items !== undefined)
+        {
+            this.giftsConfig.gifts.MechanicGiftDay1.items = this.jsonCloner.clone(this.originalMechanicGiftDay1Items);
+        }
     }
 
     private doesFileIntegrityCheckPass(): boolean
     {
         const path = `${__dirname}/..`;
 
-        if (modConfig.secureContainer.only_use_whitelists_in_this_mod && !this.vfs.exists(`${path}/../../../BepInEx/plugins/SPTHardcoreRules.dll`))
+        if (modConfig.secureContainer.only_use_whitelists_in_this_mod && !this.fileSystem.exists(`${path}/../../../BepInEx/plugins/SPTHardcoreRules.dll`))
         {
             this.commonUtils.logError("Cannot find BepInEx/plugins/SPTHardcoreRules.dll. Without it, this mod will NOT work correctly.");
         

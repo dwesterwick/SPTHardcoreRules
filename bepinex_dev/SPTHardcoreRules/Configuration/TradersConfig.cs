@@ -18,8 +18,8 @@ namespace SPTHardcoreRules.Configuration
         [JsonProperty("disable_fence")]
         public bool DisableFence { get; set; }
 
-        [JsonProperty("disable_prapor_starting_gifts")]
-        public bool DisablePraporStartingGifts { get; set; }
+        [JsonProperty("disable_starting_gifts")]
+        public bool DisableStartingGifts { get; set; }
 
         [JsonProperty("barters_only")]
         public bool BartersOnly { get; set; }

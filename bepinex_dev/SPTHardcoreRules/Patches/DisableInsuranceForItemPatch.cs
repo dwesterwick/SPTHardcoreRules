@@ -14,7 +14,7 @@ namespace SPTHardcoreRules.Patches
         protected override MethodBase GetTargetMethod()
         {
             return typeof(InsuranceCompanyClass).GetMethod(
-                "ItemTypeAvailableForInsurance",
+                nameof(InsuranceCompanyClass.ItemTypeAvailableForInsurance),
                 BindingFlags.Public | BindingFlags.Instance,
                 null,
                 new Type[] { typeof(Item) },

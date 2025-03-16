@@ -19,7 +19,7 @@
 		"ID_money": "543be5dd4bdc2deb348b4569",
 		"ID_GPCoins": "5d235b4d86f7742e017bc88a",
 		"disable_fence": true,
-		"disable_prapor_starting_gifts": true,
+		"disable_starting_gifts": true,
 		"barters_only": true,
 		"allow_GPCoins": true,
 		"whitelist_only": false,

@@ -13,11 +13,11 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Item).GetMethod("CheckAction", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(Item).GetMethod(nameof(Item.CheckAction), BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPrefix]
-        public static bool PatchPrefix(ref GStruct447 __result, Item __instance, ItemAddress location)
+        public static bool PatchPrefix(ref GStruct456 __result, Item __instance, ItemAddress location)
         {
             // Don't apply restrictions to Scavs because they don't have secure containers
             if (CurrentRaidSettings.SelectedSide == EFT.ESideType.Savage)

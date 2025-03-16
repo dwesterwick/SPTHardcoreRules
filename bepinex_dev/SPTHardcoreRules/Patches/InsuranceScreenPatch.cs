@@ -14,11 +14,11 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuController).GetMethod("method_76", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(MainMenuControllerClass).GetMethod("method_79", BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPrefix]
-        protected static bool PatchPrefix(MainMenuController __instance, RaidSettings ___raidSettings_0, RaidSettings ___raidSettings_1)
+        protected static bool PatchPrefix(MainMenuControllerClass __instance, RaidSettings ___raidSettings_0, RaidSettings ___raidSettings_1)
         {
             LoggingController.Logger.LogDebug("Disabling insurance screen...");
             // The insurance screen is disabled in live Tarkov for offline raids
@@ -32,16 +32,16 @@ namespace SPTHardcoreRules.Patches
             }
             if (___raidSettings_0.RaidMode == ERaidMode.Online)
             {
-                __instance.method_45();
+                __instance.method_48();
                 return false;
             }
 
-            __instance.method_46();
+            __instance.method_49();
             return false;
         }
 
         [PatchPostfix]
-        protected static void PatchPostfix(MainMenuController __instance, RaidSettings ___raidSettings_0)
+        protected static void PatchPostfix(MainMenuControllerClass __instance, RaidSettings ___raidSettings_0)
         {
             // TO DO: Is this really true?
             // This is done in SPT.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here

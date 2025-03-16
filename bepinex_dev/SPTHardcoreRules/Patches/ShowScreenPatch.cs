@@ -14,7 +14,7 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuController).GetMethod("ShowScreen", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(MainMenuControllerClass).GetMethod(nameof(MainMenuControllerClass.ShowScreen), BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPostfix]

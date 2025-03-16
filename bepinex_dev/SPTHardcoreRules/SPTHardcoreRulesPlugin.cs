@@ -8,7 +8,7 @@ using SPTHardcoreRules.Controllers;
 
 namespace SPTHardcoreRules
 {
-    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "2.1.1.0")]
+    [BepInPlugin("com.DanW.SPTHardcoreRules", "SPTHardcoreRulesPlugin", "2.2.0.0")]
     public class SPTHardcoreRulesPlugin : BaseUnityPlugin
     {
         protected void Awake()

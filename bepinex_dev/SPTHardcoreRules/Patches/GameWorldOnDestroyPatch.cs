@@ -14,7 +14,7 @@ namespace SPTHardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(GameWorld).GetMethod("OnDestroy", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(GameWorld).GetMethod(nameof(GameWorld.OnDestroy), BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPostfix]
