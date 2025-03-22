@@ -24,7 +24,7 @@ import type { IGiftsConfig  } from "@spt/models/spt/config/IGiftsConfig";
 import type { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import type { LocaleService } from "@spt/services/LocaleService";
 import type { HttpResponseUtil } from "@spt/utils/HttpResponseUtil";
-import type { FileSystem } from "@spt/utils/FileSystem";
+import type { FileSystemSync } from "@spt/utils/FileSystemSync";
 import type { JsonCloner } from "@spt/utils/cloners/JsonCloner";
 
 import type { MinMax } from "@spt/models/common/MinMax";
@@ -58,7 +58,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
     private profileHelper: ProfileHelper;
     private localeService: LocaleService;
     private httpResponseUtil: HttpResponseUtil;
-    private fileSystem: FileSystem;
+    private fileSystem: FileSystemSync;
     private jsonCloner: JsonCloner;
 
     private originalRagfairOfferCount: MinMax;
@@ -141,7 +141,7 @@ class HardcoreRules implements IPreSptLoadMod, IPostSptLoadMod, IPostDBLoadMod
         this.ragfairController = container.resolve<RagfairController>("RagfairController");
         this.localeService = container.resolve<LocaleService>("LocaleService");
         this.httpResponseUtil = container.resolve<HttpResponseUtil>("HttpResponseUtil");
-        this.fileSystem = container.resolve<FileSystem>("FileSystem");
+        this.fileSystem = container.resolve<FileSystemSync>("FileSystemSync");
         this.jsonCloner = container.resolve<JsonCloner>("JsonCloner");
 		
         this.databaseTables = this.databaseServer.getTables();
