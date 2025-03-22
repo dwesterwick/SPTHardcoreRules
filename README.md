@@ -14,7 +14,7 @@ This mod is highly customizable, so you can change the configuration to match th
 * **services.disable_post_raid_healing**: Disables Therapist's post-raid healing, but the screen will still be shown so you can review the damage you received during the raid.
 * **services.disable_scav_raids**: Disables Scav raids.
 * **traders.disable_fence**: Allows you to remove all of Fence's offers. You can still sell items to Fence. 
-* **traders.disable_prapor_starting_gifts**: Prapor no longer gives you starting gifts. 
+* **traders.disable_starting_gifts**: Prapor and Mechanic no longer give you starting gifts. 
 * **traders.barters_only**: Removes all trader offers using currency unless they're explicitly whitelisted below.
 * **traders.allow_GPCoins**: Allows trader offers for GP coins to be considered barter offers. As of SPT 3.9.0, GP coins are considered currency. 
 * **traders.whitelist_only**: Removes all trader offers unless they're explicitly whitelisted in this mod.
