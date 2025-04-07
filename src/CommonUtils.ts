@@ -20,6 +20,11 @@ export class CommonUtils
 	
     public logInfo(message: string, alwaysShow = false): void
     {
+        if (!modConfig.debug.enabled)
+        {
+            return;
+        }
+
         if (modConfig.enabled || alwaysShow)
             this.logger.info(this.debugMessagePrefix + message);
     }
