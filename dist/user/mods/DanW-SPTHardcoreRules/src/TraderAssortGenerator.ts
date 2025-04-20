@@ -293,11 +293,11 @@ export class TraderAssortGenerator
         if (trader.questassort === undefined)
             return;
         
-        if (barterID in trader.questassort.started)
+        if ((trader.questassort.started !== undefined) && (barterID in trader.questassort.started))
             delete trader.questassort.started[barterID];
-        if (barterID in trader.questassort.success)
+        if ((trader.questassort.success !== undefined) && (barterID in trader.questassort.success))
             delete trader.questassort.success[barterID];
-        if (barterID in trader.questassort.fail)
+        if ((trader.questassort.fail !== undefined) && (barterID in trader.questassort.fail))
             delete trader.questassort.fail[barterID];
     }
 }
