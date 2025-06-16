@@ -189,7 +189,7 @@ export class TraderAssortGenerator
 
             this.commonUtils.logInfo(`Modifying trader assorts for ${this.commonUtils.getTraderName(trader)}...`);
 			
-            const newAssort = TraderAssortGenerator.getNewTraderAssort(this.databaseTables.traders[trader], this.databaseTables);
+            const newAssort = this.getNewTraderAssort(this.databaseTables.traders[trader], this.databaseTables);
 
             // need to do this or generateFleaOffersForTrader() will complain about undefined slotID's.
             this.databaseTables.traders[trader].assort.items = TraderAssortGenerator.rebuildArray(newAssort.items);
@@ -218,7 +218,7 @@ export class TraderAssortGenerator
         }
     }
 	
-    private static getNewTraderAssort(trader: ITrader, databaseTables: IDatabaseTables): ITraderAssort
+    private getNewTraderAssort(trader: ITrader, databaseTables: IDatabaseTables): ITraderAssort
     {
         let lastItemRemoved = false;
         for (const assortItem in trader.assort.items)
@@ -246,7 +246,18 @@ export class TraderAssortGenerator
             lastItemRemoved = false;
 			
             const itemID = trader.assort.items[assortItem]._tpl;
+            if (itemID === undefined)
+            {
+                this.commonUtils.logError(`Found invalid template for ${barterID} in trader assort for ${this.commonUtils.getTraderName(trader.base._id)}`);
+                continue;
+            }
+
             const item = databaseTables.templates.items[itemID];
+            if (item === undefined)
+            {
+                this.commonUtils.logError(`Cannot find item with template ${itemID} in trader assort for ${this.commonUtils.getTraderName(trader.base._id)}`);
+                continue;
+            }
 			
             if (item._props.QuestItem === true)
                 continue;
