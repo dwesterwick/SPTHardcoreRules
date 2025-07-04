@@ -268,6 +268,12 @@ export class TraderAssortGenerator
             if (ItemHelper.hasAnyParents(item, modConfig.traders.whitelist_items.parents, databaseTables))
                 continue;
             
+            if (trader.assort.barter_scheme[barterID] === undefined)
+            {
+                this.commonUtils.logError(`Cannot find barter scheme ${barterID} for ${this.commonUtils.getTraderName(trader.base._id)}`);
+                continue;
+            }
+
             if (!modConfig.traders.whitelist_only && (!modConfig.traders.barters_only || TraderAssortGenerator.isABarterOffer(trader.assort.barter_scheme[barterID][0], databaseTables)))
                 continue;
 			
