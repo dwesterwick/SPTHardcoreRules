@@ -99,20 +99,8 @@ export class TraderAssortGenerator
         // Review all offers and generate an array of ID's for traders who appear in them
         for (const offer in offers)
         {
-            if (offers[offer].user.memberType === MemberCategory.TRADER)
-                if (!updateableTraders.includes(offers[offer].user.id))
-                    updateableTraders.push(offers[offer].user.id);
-        }
-
-        const playersOffersText = modConfig.services.flea_market.only_barter_offers ? "cash " : "";
-        this.commonUtils.logInfo(`Removing ${playersOffersText}offers from players...`);
-        
-        for (const offer in offers)
-        {
-            if (updateableTraders.includes(offers[offer].user.id))
-            {
-                continue;
-            }
+            if (offers[offer].user.memberType === MemberCategory.TRADER && !updateableTraders.includes(offers[offer].user.id))
+                updateableTraders.push(offers[offer].user.id);
 
             const isBarterOffer = TraderAssortGenerator.isABarterOffer(offers[offer].requirements, this.databaseTables);
             if (!modConfig.services.flea_market.enabled || (!isBarterOffer && modConfig.services.flea_market.only_barter_offers))
@@ -120,6 +108,9 @@ export class TraderAssortGenerator
                 this.ragfairOfferService.removeOfferById(offers[offer]._id);
             }
         }
+
+        const playersOffersText = modConfig.services.flea_market.only_barter_offers ? "cash " : "";
+        this.commonUtils.logInfo(`Removing ${playersOffersText}offers from players...`);
 
         this.commonUtils.logInfo("Refreshing Ragfair offers for traders...");
         for (const i in updateableTraders)
@@ -290,10 +281,7 @@ export class TraderAssortGenerator
         {
             const buyReqItem = databaseTables.templates.items[barterScheme[buyReq]._tpl];
 
-            if (modConfig.traders.allow_GPCoins && (buyReqItem._id === modConfig.traders.ID_GPCoins))
-                return true;
-			
-            if (buyReqItem._parent !== modConfig.traders.ID_money)
+            if ((modConfig.traders.allow_GPCoins && (buyReqItem._id === modConfig.traders.ID_GPCoins)) || buyReqItem._parent !== modConfig.traders.ID_money)
                 return true;
         }
 		
