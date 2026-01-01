@@ -1,7 +1,8 @@
-﻿using DansDevTools.Utils;
+﻿using HardcoreRules.Helpers;
+using HardcoreRules.Utils;
 using SPTarkov.Server.Core.DI;
 
-namespace DansDevTools.Services.Internal;
+namespace HardcoreRules.Services.Internal;
 
 public abstract class AbstractService : IOnLoad
 {
@@ -18,7 +19,7 @@ public abstract class AbstractService : IOnLoad
 
     public Task OnLoad()
     {
-        if (Config.IsModEnabled)
+        if (Config.CurrentConfig.IsModEnabled())
         {
             OnLoadIfModIsEnabled();
         }

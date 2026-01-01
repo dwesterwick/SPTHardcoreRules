@@ -1,4 +1,6 @@
-﻿namespace DansDevTools.Utils
+﻿using HardcoreRules.Helpers;
+
+namespace HardcoreRules.Utils
 {
     public class LoggingUtil
     {
@@ -11,21 +13,41 @@
 
         public void LogDebug(string message)
         {
+            if (!ConfigUtil.CurrentConfig.IsDebugEnabled())
+            {
+                return;
+            }
+
             _logger.LogDebug(message);
         }
 
         public void LogInfo(string message)
         {
+            if (!ConfigUtil.CurrentConfig.IsDebugEnabled())
+            {
+                return;
+            }
+
             _logger.LogInfo(message);
         }
 
-        public void LogWarning(string message)
+        public void LogWarning(string message, bool onlyForDebug = false)
         {
+            if (onlyForDebug && !ConfigUtil.CurrentConfig.IsDebugEnabled())
+            {
+                return;
+            }
+
             _logger.LogWarning(message);
         }
 
-        public void LogError(string message)
+        public void LogError(string message, bool onlyForDebug = false)
         {
+            if (onlyForDebug && !ConfigUtil.CurrentConfig.IsDebugEnabled())
+            {
+                return;
+            }
+
             _logger.LogError(message);
         }
     }

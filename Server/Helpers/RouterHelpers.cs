@@ -1,6 +1,6 @@
 ﻿using SPTarkov.Server.Core.Utils;
 
-namespace DansDevTools.Helpers
+namespace HardcoreRules.Helpers
 {
     public static class RouterHelpers
     {

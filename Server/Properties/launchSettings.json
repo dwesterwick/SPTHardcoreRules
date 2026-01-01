@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "DansDevTools-Server": {
+    "HardcoreRules-Server": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

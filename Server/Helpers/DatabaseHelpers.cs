@@ -1,7 +1,7 @@
 ﻿using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Services;
 
-namespace DansDevTools.Helpers
+namespace HardcoreRules.Helpers
 {
     public static class DatabaseHelpers
     {

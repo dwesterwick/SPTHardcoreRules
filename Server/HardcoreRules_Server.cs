@@ -1,7 +1,7 @@
 ﻿using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 
-namespace DansDevTools;
+namespace HardcoreRules;
 
 [Injectable(TypePriority = OnLoadOrder.PreSptModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
 public class HardcoreRules_Server

@@ -1,4 +1,4 @@
-﻿namespace DansDevTools.Routers.Internal
+﻿namespace HardcoreRules.Routers.Internal
 {
     public interface IRouteHandler
     {

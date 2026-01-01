@@ -31,7 +31,7 @@
     <PackageReference Include="SPTarkov.Server.Core" Version="4.0.0" />
   </ItemGroup>
 
-  <Import Project="..\Shared\DansDevTools-Shared.projitems" Label="Shared" />
+  <Import Project="..\Shared\HardcoreRules-Shared.projitems" Label="Shared" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)CopyFilesAfterBuild.ps1&quot; -modName &quot;$(AssemblyTitle)&quot;&#xD;&#xA;powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)..\Shared\CreatePackageAfterBuild.ps1&quot; -modName &quot;$(AssemblyTitle)&quot; -modVersion &quot;$(Version)&quot;" />

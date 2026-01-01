@@ -1,10 +1,10 @@
-﻿using DansDevTools.Configuration;
+﻿using HardcoreRules.Configuration;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Helpers;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
 
-namespace DansDevTools.Utils
+namespace HardcoreRules.Utils
 {
     [Injectable(InjectionType.Singleton)]
     public class ConfigUtil
@@ -12,8 +12,6 @@ namespace DansDevTools.Utils
         private const string FILENAME = "config.json";
 
         public ModConfig CurrentConfig { get; private set; }
-
-        public bool IsModEnabled => CurrentConfig.Enabled;
 
         public ConfigUtil(ModHelper modHelper)
         {

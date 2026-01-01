@@ -1,9 +1,9 @@
-﻿using DansDevTools.Routers.Internal;
-using DansDevTools.Utils;
+﻿using HardcoreRules.Routers.Internal;
+using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Utils;
 
-namespace DansDevTools.Routers
+namespace HardcoreRules.Routers
 {
     [Injectable]
     public class ConfigRouter : AbstractStaticRouter

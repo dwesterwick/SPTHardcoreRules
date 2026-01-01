@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace DansDevTools.Server;
+namespace HardcoreRules.Server;
 
 public class BuildPropertyTests
 {

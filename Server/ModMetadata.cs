@@ -1,6 +1,6 @@
 ﻿using SPTarkov.Server.Core.Models.Spt.Mod;
 
-namespace DansDevTools
+namespace HardcoreRules
 {
     public record ModMetadata : AbstractModMetadata
     {

@@ -1,7 +1,7 @@
-﻿using DansDevTools.Helpers;
+﻿using HardcoreRules.Helpers;
 using SPTarkov.Server.Core.DI;
 
-namespace DansDevTools.Routers.Internal
+namespace HardcoreRules.Routers.Internal
 {
     public class RouteInfo
     {

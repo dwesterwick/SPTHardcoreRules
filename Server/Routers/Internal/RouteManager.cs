@@ -1,6 +1,6 @@
 ﻿using SPTarkov.Server.Core.DI;
 
-namespace DansDevTools.Routers.Internal
+namespace HardcoreRules.Routers.Internal
 {
     public class RouteManager
     {

@@ -2,7 +2,7 @@
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Utils;
 
-namespace DansDevTools.Routers.Internal
+namespace HardcoreRules.Routers.Internal
 {
     [Injectable(InjectionType = InjectionType.Singleton, TypePriority = OnLoadOrder.PreSptModLoader + 1)]
     public class HTTPResponseRepository

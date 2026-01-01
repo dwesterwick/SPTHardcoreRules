@@ -1,4 +1,4 @@
-﻿using DansDevTools.Helpers;
+﻿using HardcoreRules.Helpers;
 using Newtonsoft.Json;
 using SPT.Common.Http;
 using System;
@@ -7,10 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DansDevTools.Utils
+namespace HardcoreRules.Utils
 {
     public static class ConfigUtil
     {
+        private static bool _usingHardcoreProfile = false;
+        public static bool UsingHardcoreProfile
+        {
+            get
+            {
+                if (_currentConfig == null)
+                {
+                    GetConfig();
+                }
+
+                return _usingHardcoreProfile;
+            }
+        }
+
         private static Configuration.ModConfig? _currentConfig;
         public static Configuration.ModConfig CurrentConfig
         {
@@ -30,13 +44,14 @@ namespace DansDevTools.Utils
             string routeName = SharedRouterHelpers.GetRoutePath("GetConfig");
 
             string json = RequestHandler.GetJson(routeName);
-            Configuration.ModConfig? configResponse = JsonConvert.DeserializeObject<Configuration.ModConfig>(json);
+            Configuration.ConfigResponse? configResponse = JsonConvert.DeserializeObject<Configuration.ConfigResponse>(json);
             if (configResponse == null)
             {
                 throw new InvalidOperationException("Could not deserialize config file");
             }
 
-            _currentConfig = configResponse;
+            _usingHardcoreProfile = configResponse.UsingHardcoreProfile;
+            _currentConfig = configResponse.Config;
         }
     }
 }

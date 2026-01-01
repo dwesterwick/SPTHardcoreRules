@@ -1,7 +1,7 @@
 ﻿using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Models.Utils;
 
-namespace DansDevTools.Utils
+namespace HardcoreRules.Utils
 {
     [Injectable(InjectionType.Singleton)]
     public class LoggingUtil(ISptLogger<HardcoreRules_Server> logger)

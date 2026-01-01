@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardcoreRules-Client", "Cli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardcoreRules-Tests", "Tests\HardcoreRules-Tests.csproj", "{5C264016-E28C-0280-716B-DAA2DE535658}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPTHardcoreRules", "bepinex_dev\SPTHardcoreRules\SPTHardcoreRules.csproj", "{A1808483-469F-4ED0-B51B-0969526AFF06}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,10 +37,6 @@ Global
 		{5C264016-E28C-0280-716B-DAA2DE535658}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C264016-E28C-0280-716B-DAA2DE535658}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C264016-E28C-0280-716B-DAA2DE535658}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1808483-469F-4ED0-B51B-0969526AFF06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1808483-469F-4ED0-B51B-0969526AFF06}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1808483-469F-4ED0-B51B-0969526AFF06}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1808483-469F-4ED0-B51B-0969526AFF06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,8 +45,8 @@ Global
 		SolutionGuid = {4AFC7064-86A0-410B-8A07-D1516283D3EB}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Shared\DansDevTools-Shared.projitems*{17fbdd37-7c10-4306-b936-4b32dbfe74bc}*SharedItemsImports = 13
-		Shared\DansDevTools-Shared.projitems*{340b90a2-d164-444f-9844-5d7e96582ed5}*SharedItemsImports = 5
-		Shared\DansDevTools-Shared.projitems*{ceb2aeed-e040-0cd6-8933-13718a1c35be}*SharedItemsImports = 5
+		Shared\HardcoreRules-Shared.projitems*{17fbdd37-7c10-4306-b936-4b32dbfe74bc}*SharedItemsImports = 13
+		Shared\HardcoreRules-Shared.projitems*{340b90a2-d164-444f-9844-5d7e96582ed5}*SharedItemsImports = 5
+		Shared\HardcoreRules-Shared.projitems*{ceb2aeed-e040-0cd6-8933-13718a1c35be}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

@@ -1,8 +1,9 @@
-﻿using DansDevTools.Utils;
+﻿using HardcoreRules.Helpers;
+using HardcoreRules.Utils;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Utils;
 
-namespace DansDevTools.Routers.Internal;
+namespace HardcoreRules.Routers.Internal;
 
 public abstract class AbstractStaticRouter : StaticRouter, IRouteHandler
 {
@@ -24,7 +25,7 @@ public abstract class AbstractStaticRouter : StaticRouter, IRouteHandler
         RouteManager.RegisterRoutes(_routeNames, this);
     }
 
-    public virtual bool ShouldCreateRoutes() => Config.IsModEnabled;
+    public virtual bool ShouldCreateRoutes() => Config.CurrentConfig.IsModEnabled();
     public virtual bool ShouldHandleRoutes() => true;
 
     public abstract ValueTask<string?> HandleRoute(string routeName, RequestData routerData);

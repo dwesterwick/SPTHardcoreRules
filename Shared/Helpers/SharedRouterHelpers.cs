@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DansDevTools.Helpers
+namespace HardcoreRules.Helpers
 {
     public static class SharedRouterHelpers
     {

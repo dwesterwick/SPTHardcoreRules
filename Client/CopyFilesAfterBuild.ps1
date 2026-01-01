@@ -11,6 +11,11 @@ $clientLibraryAbsolute = Join-Path $PSScriptRoot ('bin\Debug\netstandard2.1\{0}-
 
 try
 {
+    if (!(Test-Path -PathType Container $destinationAbsolute))
+    {
+        New-Item -Path $destinationAbsolute -ItemType Directory
+    }
+
     Copy-Item -Path $clientLibraryAbsolute -Destination $destinationAbsolute -errorAction stop | Out-Null
 }
 catch
