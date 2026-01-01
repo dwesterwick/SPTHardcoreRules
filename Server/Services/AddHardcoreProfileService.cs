@@ -11,12 +11,11 @@ namespace HardcoreRules.Services
     [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
     public class AddHardcoreProfileService : AbstractService
     {
-        private const string HARDCORE_PROFILE_NAME = "Hardcore Playthrough";
-        private const string ZERO_TO_HERO_PROFILE_NAME = "SPT Zero to hero";
+        public const string HARDCORE_PROFILE_NAME = "Hardcore Playthrough";
 
+        private const string ZERO_TO_HERO_PROFILE_NAME = "SPT Zero to hero";
         private const string HARDCORE_PROFILE_DESCRIPTION_LOCALE_KEY = "launcher-profile_hardcoreplaythrough";
         private const string FALLBACK_LOCALE = "en";
-
         private const bool LAUNCHER_USES_NEW_TRANSLATIONS = false;
 
         private DatabaseService _databaseService;
@@ -33,8 +32,6 @@ namespace HardcoreRules.Services
             _databaseService = databaseService;
             _newTranslationsService = newTranslationsService;
         }
-
-        public bool IsUsingHardcoreProfile() => true;
 
         protected override void OnLoadIfModIsEnabled()
         {

@@ -2,6 +2,7 @@
 
 namespace HardcoreRules.Configuration
 {
+    [DataContract]
     public class SecureContainerConfig
     {
         [DataMember(Name ="only_use_whitelists_in_this_mod")]

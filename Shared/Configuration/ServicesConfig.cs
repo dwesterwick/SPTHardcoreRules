@@ -2,6 +2,7 @@
 
 namespace HardcoreRules.Configuration
 {
+    [DataContract]
     public class ServicesConfig
     {
         [DataMember(Name ="flea_market")]

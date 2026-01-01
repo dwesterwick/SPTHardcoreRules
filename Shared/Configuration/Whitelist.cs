@@ -2,6 +2,7 @@
 
 namespace HardcoreRules.Configuration
 {
+    [DataContract]
     public class Whitelist
     {
         [DataMember(Name ="parents")]

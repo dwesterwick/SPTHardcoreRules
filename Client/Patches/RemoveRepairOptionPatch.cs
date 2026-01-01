@@ -38,7 +38,7 @@ namespace HardcoreRules.Patches
         }
 
         [PatchPostfix]
-        protected static void PatchPostfix(ref IResult __result, EItemInfoButton button, ItemUiContext ___itemUiContext_0, Item ___item_0)
+        protected static void PatchPostfix(ref IResult __result, EItemInfoButton button, ItemUiContext ___ItemUiContext_0, Item ___Item_0_1)
         {
             // No need to continue if the option is already disabled
             if (!__result.Succeed)
@@ -48,7 +48,7 @@ namespace HardcoreRules.Patches
 
             //LoggingController.LogInfo("Item: " + ___item_0.LocalizedName());
 
-            if ((button == EItemInfoButton.Repair) && !isRepairAllowed(___item_0, ___itemUiContext_0.Session))
+            if ((button == EItemInfoButton.Repair) && !isRepairAllowed(___Item_0_1, ___ItemUiContext_0.Session))
             {
                 __result = new FailedResult("Could not find a suitable repair kit");
             }

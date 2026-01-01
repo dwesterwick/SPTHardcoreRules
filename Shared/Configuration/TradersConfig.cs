@@ -2,6 +2,7 @@
 
 namespace HardcoreRules.Configuration
 {
+    [DataContract]
     public class TradersConfig
     {
         [DataMember(Name = "ID_money")]

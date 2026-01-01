@@ -2,6 +2,7 @@
 
 namespace HardcoreRules.Configuration
 {
+    [DataContract]
     public class FleaMarketConfig
     {
         [DataMember(Name ="enabled")]

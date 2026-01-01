@@ -2,6 +2,7 @@
 
 namespace HardcoreRules.Configuration
 {
+    [DataContract]
     public class DebugConfig
     {
         [DataMember(Name ="enabled")]

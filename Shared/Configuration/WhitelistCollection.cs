@@ -2,6 +2,7 @@
 
 namespace HardcoreRules.Configuration
 {
+    [DataContract]
     public class WhitelistCollection
     {
         [DataMember(Name ="inRaid")]
