@@ -1,4 +1,5 @@
-﻿using HardcoreRules.Helpers;
+﻿using HardcoreRules.Configuration;
+using HardcoreRules.Helpers;
 using Newtonsoft.Json;
 using SPT.Common.Http;
 using System;
@@ -11,17 +12,17 @@ namespace HardcoreRules.Utils
 {
     public static class ConfigUtil
     {
-        private static bool _usingHardcoreProfile = false;
+        private static bool? _usingHardcoreProfile = null!;
         public static bool UsingHardcoreProfile
         {
             get
             {
-                if (_currentConfig == null)
+                if (_usingHardcoreProfile == null)
                 {
-                    GetConfig();
+                    _usingHardcoreProfile = IsUsingHardcoreProfile();
                 }
 
-                return _usingHardcoreProfile;
+                return _usingHardcoreProfile.Value;
             }
         }
 
@@ -32,26 +33,39 @@ namespace HardcoreRules.Utils
             {
                 if (_currentConfig == null)
                 {
-                    GetConfig();
+                    _currentConfig = GetConfig();
                 }
 
                 return _currentConfig!;
             }
         }
 
-        private static void GetConfig()
+        private static ModConfig GetConfig()
         {
             string routeName = SharedRouterHelpers.GetRoutePath("GetConfig");
 
             string json = RequestHandler.GetJson(routeName);
-            Configuration.ConfigResponse? configResponse = JsonConvert.DeserializeObject<Configuration.ConfigResponse>(json);
-            if (configResponse == null)
+            ModConfig? response = JsonConvert.DeserializeObject<ModConfig>(json);
+            if (response == null)
             {
-                throw new InvalidOperationException("Could not deserialize config file");
+                throw new InvalidOperationException("Could not retrieve mod configuration from the server");
             }
 
-            _usingHardcoreProfile = configResponse.UsingHardcoreProfile;
-            _currentConfig = configResponse.Config;
+            return response;
+        }
+
+        private static bool IsUsingHardcoreProfile()
+        {
+            string routeName = SharedRouterHelpers.GetRoutePath("IsUsingHardcoreProfile");
+
+            string json = RequestHandler.GetJson(routeName);
+            bool? response = JsonConvert.DeserializeObject<bool>(json);
+            if (response == null)
+            {
+                throw new InvalidOperationException("Could not receive response from server to determine if a hardcore profile is being used");
+            }
+
+            return response.Value;
         }
     }
 }

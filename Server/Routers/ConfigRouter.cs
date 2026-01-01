@@ -1,4 +1,5 @@
-﻿using HardcoreRules.Routers.Internal;
+﻿using HardcoreRules.Helpers;
+using HardcoreRules.Routers.Internal;
 using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Utils;
@@ -19,7 +20,7 @@ namespace HardcoreRules.Routers
 
         public override ValueTask<string?> HandleRoute(string routeName, RequestData routerData)
         {
-            string json = ConfigUtil.Serialize(Config.CurrentConfig);
+            string json = ConfigHelpers.Serialize(Config.CurrentConfig);
             return new ValueTask<string?>(json);
         }
     }

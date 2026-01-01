@@ -13,7 +13,6 @@
     <Content Include="$(MSBuildThisFileDirectory)Config\translations.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ConfigResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\DebugConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FleaMarketConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\ModConfig.cs" />
