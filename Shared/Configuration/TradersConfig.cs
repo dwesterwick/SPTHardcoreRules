@@ -21,7 +21,7 @@ namespace HardcoreRules.Configuration
         public bool WhitelistOnly { get; set; }
 
         [DataMember(Name ="whitelist_items")]
-        public Whitelist WhitelistItems { get; set; } = new Whitelist();
+        public string[] WhitelistItems { get; set; } = new string[0];
 
         [DataMember(Name ="whitelist_traders")]
         public string[] WhitelistTraders { get; set; } = new string[0];

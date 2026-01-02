@@ -56,11 +56,13 @@ namespace HardcoreRules.Routers
 
         private void RefreshFleaMarketOffers()
         {
-            _traderOffersUtil.RefreshFleaMarketOffers();
-
             if (_toggleHardcoreRulesService.HardcoreRulesEnabled)
             {
-                _traderOffersUtil.RemoveBannedFleaMarketOffers();
+                _traderOffersUtil.RefreshFleaMarketOffersAndRemoveBannedOffers();
+            }
+            else
+            {
+                _traderOffersUtil.RefreshFleaMarketOffers();
             }
         }
 

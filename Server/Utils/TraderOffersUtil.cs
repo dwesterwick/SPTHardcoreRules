@@ -1,5 +1,7 @@
 ﻿using HardcoreRules.Helpers;
 using HardcoreRules.Services;
+using HardcoreRules.Utils.OfferRequirementWrappers;
+using HardcoreRules.Utils.OfferRequirementWrappers.Internal;
 using HardcoreRules.Utils.TraderOfferSources;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Generators;
@@ -16,6 +18,8 @@ namespace HardcoreRules.Utils
     [Injectable(InjectionType.Singleton)]
     public class TraderOffersUtil
     {
+        private const string HIDEOUT_SLOT_ID = "hideout";
+
         private FleaMarketOfferSource FleaMarket;
         private FenceOfferSource Fence;
         private GiftsOfferSource Gifts;
@@ -45,6 +49,20 @@ namespace HardcoreRules.Utils
                 }
 
                 return _whiteListedTraders.AsReadOnly();
+            }
+        }
+
+        private MongoId[] _whiteListedItems = null!;
+        public IReadOnlyCollection<MongoId> WhitelistedItems
+        {
+            get
+            {
+                if (_whiteListedItems == null)
+                {
+                    _whiteListedItems = GetWhiteListedItems();
+                }
+
+                return _whiteListedItems.AsReadOnly();
             }
         }
 
@@ -91,21 +109,159 @@ namespace HardcoreRules.Utils
                 .ToArray();
         }
 
+        private MongoId[] GetWhiteListedItems()
+        {
+            return _databaseService.GetTables().Templates.Items
+                .Where(item => _configUtil.CurrentConfig.Traders.WhitelistItems.Contains(item.Key))
+                .Select(item => item.Key)
+                .ToArray();
+        }
+
         private void RestrictTraderOffers()
         {
-            foreach ((MongoId id, Trader trader) in _databaseService.GetTables().Traders)
+            foreach (Trader trader in _databaseService.GetTables().Traders.Values)
             {
-                if (WhitelistedTraders.Contains(id))
+                RestrictTraderOffers(trader);
+            }
+        }
+
+        private void RestrictTraderOffers(Trader trader)
+        {
+            string localizedTraderName = _translationService.GetLocalisedTraderName(trader);
+
+            if (IsWhitelisted(trader))
+            {
+                _loggingUtil.Info($"Skipping whitelisted trader {localizedTraderName}...");
+                return;
+            }
+
+            _loggingUtil.Info($"Removing banned offers from trader {localizedTraderName}...");
+
+            bool lastItemRemoved = false;
+            foreach (Item item in trader.Assort.Items)
+            {
+                if (item.SlotId?.ToLower() == HIDEOUT_SLOT_ID)
                 {
-                    _loggingUtil.Info($"Skipping whitelisted trader {_translationService.GetLocalisedTraderName(trader)}...");
+                    if (lastItemRemoved)
+                    {
+                        RemoveItemFromTraderOffers(trader, item);
+                    }
+
                     continue;
                 }
 
-                _loggingUtil.Info($"Removing banned offers from trader {_translationService.GetLocalisedTraderName(trader)}...");
+                lastItemRemoved = false;
 
+                if (!ShouldRemoveItemFromTraderOffers(trader, item))
+                {
+                    continue;
+                }
 
+                RemoveItemFromTraderOffers(trader, item);
+                lastItemRemoved = true;
             }
         }
+
+        private bool ShouldRemoveItemFromTraderOffers(Trader trader, Item item)
+        {
+            string localizedTraderName = _translationService.GetLocalisedTraderName(trader);
+
+            if (!MustKeepTraderAssortItem(item))
+            {
+                return false;
+            }
+
+            if (!trader.Assort.BarterScheme.TryGetValue(item.Id, out List<List<BarterScheme>>? barterSchemes) || (barterSchemes == null))
+            {
+                _loggingUtil.Error($"Could not retrieve barter scheme for item {item.Id} for trader {localizedTraderName}");
+                return false;
+            }
+
+            if (barterSchemes.Count == 0)
+            {
+                return false;
+            }
+
+            bool whitelistOnly = _configUtil.CurrentConfig.Traders.WhitelistOnly;
+            bool bartersOnly = _configUtil.CurrentConfig.Traders.BartersOnly;
+            if (!whitelistOnly && !bartersOnly && IsABarterOffer(barterSchemes))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void RemoveItemFromTraderOffers(Trader trader, Item item)
+        {
+            string localizedTraderName = _translationService.GetLocalisedTraderName(trader);
+
+            if (trader.Assort.LoyalLevelItems.ContainsKey(item.Id))
+            {
+                trader.Assort.LoyalLevelItems.Remove(item.Id);
+            }
+            else
+            {
+                _loggingUtil.Error($"Could not remove item {item.Id} from LoyalLevelItems for trader {localizedTraderName}");
+            }
+
+            if (trader.Assort.BarterScheme.ContainsKey(item.Id))
+            {
+                trader.Assort.BarterScheme.Remove(item.Id);
+            }
+            else
+            {
+                _loggingUtil.Error($"Could not remove item {item.Id} from BarterScheme for trader {localizedTraderName}");
+            }
+
+            if (!trader.Assort.Items.Remove(item))
+            {
+                _loggingUtil.Error($"Could not remove item {item.Id} from trader {localizedTraderName}'s offers");
+            }
+
+            foreach (Dictionary<MongoId, MongoId> questAssort in trader.QuestAssort.Values)
+            {
+                questAssort.Remove(item.Id);
+            }
+        }
+
+        private bool MustKeepTraderAssortItem(Item item)
+        {
+            if (!_databaseService.GetTables().Templates.Items.TryGetValue(item.Template, out TemplateItem? template) || (template == null))
+            {
+                _loggingUtil.Error($"Could not retrieve template {item.Template} for item {item.Id}");
+                return true;
+            }
+
+            if (template.Properties?.QuestItem == true)
+            {
+                return true;
+            }
+
+            if (IsWhiteisted(template))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsWhiteisted(TemplateItem template)
+        {
+            if (WhitelistedItems.Contains(template.Id))
+            {
+                return true;
+            }
+
+            if (WhitelistedItems.Any(whitelistedItem => _itemHelper.IsOfBaseclass(template.Id, whitelistedItem)))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsWhitelisted(Trader trader) => WhitelistedTraders.Contains(trader.Base.Id);
 
         public void RestoreTraderOffers() => Traders.Enable();
         public void RemoveBannedTraderOffers() => Traders.Disable();
@@ -120,6 +276,12 @@ namespace HardcoreRules.Utils
         public void DisableFleaMarket() => FleaMarket.Disable();
         public void EnableFleaMarket() => FleaMarket.Enable();
         public void RefreshFleaMarketOffers() => FleaMarket.Refresh();
+
+        public void RefreshFleaMarketOffersAndRemoveBannedOffers()
+        {
+            FleaMarket.Refresh();
+            RemoveBannedFleaMarketOffers();
+        }
 
         public void RemoveBannedFleaMarketOffers()
         {
@@ -167,14 +329,46 @@ namespace HardcoreRules.Utils
                 return false;
             }
 
-            foreach (OfferRequirement requirement in offerRequirements)
+            IEnumerable<FleaMarketOfferRequirement> requirements = offerRequirements.Select(req => new FleaMarketOfferRequirement(req));
+            return IsABarterOffer(requirements);
+        }
+
+        public bool IsABarterOffer(IEnumerable<IEnumerable<BarterScheme>> offer)
+        {
+            foreach (IEnumerable<BarterScheme> offerRequirements in offer)
             {
-                if (!_databaseService.GetTables().Templates.Items.TryGetValue(requirement.TemplateId, out TemplateItem? requiredItem) || (requiredItem == null))
+                return IsABarterOffer(offerRequirements);
+            }
+
+            return false;
+        }
+
+        public bool IsABarterOffer(IEnumerable<BarterScheme>? offerRequirements)
+        {
+            if (offerRequirements == null)
+            {
+                return false;
+            }
+
+            IEnumerable<BarterSchemeRequirement> requirements = offerRequirements.Select(req => new BarterSchemeRequirement(req));
+            return IsABarterOffer(requirements);
+        }
+
+        private bool IsABarterOffer(IEnumerable<IAbstractOfferRequirement>? offerRequirements)
+        {
+            if (offerRequirements == null)
+            {
+                return false;
+            }
+
+            foreach (IAbstractOfferRequirement requirement in offerRequirements)
+            {
+                if (!_databaseService.GetTables().Templates.Items.TryGetValue(requirement.Template, out TemplateItem? requiredItem) || (requiredItem == null))
                 {
-                    _loggingUtil.Error($"Could not get required item {requirement.TemplateId} for barter scheme");
+                    _loggingUtil.Error($"Could not get required item {requirement.Template} for barter scheme");
                     return false;
                 }
-                
+
                 if (_configUtil.CurrentConfig.Traders.AllowGPCoins && (requiredItem.Id == _gpCoin_Id))
                 {
                     return true;

@@ -6,10 +6,10 @@ namespace HardcoreRules.Configuration
     public class WhitelistWithInspectionState
     {
         [DataMember(Name ="inspected")]
-        public Whitelist Inspected { get; set; } = new Whitelist();
+        public string[] Inspected { get; set; } = new string[0];
 
         [DataMember(Name ="uninspected")]
-        public Whitelist Uninspected { get; set; } = new Whitelist();
+        public string[] Uninspected { get; set; } = new string[0];
 
         public WhitelistWithInspectionState()
         {

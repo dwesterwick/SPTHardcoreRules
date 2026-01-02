@@ -19,7 +19,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\SecureContainerConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\ServicesConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\TradersConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Whitelist.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\WhitelistCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\WhitelistWithInspectionState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SharedConfigHelpers.cs" />

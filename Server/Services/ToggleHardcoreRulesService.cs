@@ -68,6 +68,10 @@ namespace HardcoreRules.Services
                 _traderOffersUtil.EnableGifts();
             }
 
+            _traderOffersUtil.RemoveBannedTraderOffers();
+            _traderOffersUtil.RefreshFenceOffers();
+            _traderOffersUtil.RefreshFleaMarketOffersAndRemoveBannedOffers();
+
             HardcoreRulesEnabled = true;
             Logger.Info("Enabling hardcore rules...done.");
         }
@@ -90,6 +94,10 @@ namespace HardcoreRules.Services
             {
                 _traderOffersUtil.DisableGifts();
             }
+
+            _traderOffersUtil.RestoreTraderOffers();
+            _traderOffersUtil.RefreshFenceOffers();
+            _traderOffersUtil.RefreshFleaMarketOffers();
 
             HardcoreRulesEnabled = false;
             Logger.Info("Disabling hardcore rules...done.");

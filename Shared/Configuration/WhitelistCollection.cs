@@ -9,10 +9,10 @@ namespace HardcoreRules.Configuration
         public WhitelistWithInspectionState InRaid { get; set; } = new WhitelistWithInspectionState();
 
         [DataMember(Name ="inHideout")]
-        public Whitelist InHideout { get; set; } = new Whitelist();
+        public string[] InHideout { get; set; } = new string[0];
 
         [DataMember(Name ="global")]
-        public Whitelist Global { get; set; } = new Whitelist();
+        public string[] Global { get; set; } = new string[0];
 
         public WhitelistCollection()
         {
