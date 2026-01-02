@@ -9,5 +9,7 @@ namespace HardcoreRules.Helpers
     {
         public static bool IsModEnabled(this ModConfig? modConfig) => modConfig?.Enabled == true;
         public static bool IsDebugEnabled(this ModConfig? modConfig) => modConfig?.Debug?.Enabled == true;
+
+        public static void DisableMod(this ModConfig modConfig) => modConfig.Enabled = false;
     }
 }

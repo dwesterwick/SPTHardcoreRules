@@ -1,7 +1,14 @@
 ﻿param (
     [string]$modName,
-    [string]$modVersion
+    [string]$modVersion,
+    [string]$configuration
 )
+
+if ($configuration -eq "DEBUG")
+{
+    Write-Host ("Files will not be packaged for debug builds")
+    exit 0
+}
 
 # Set path to 7-Zip executable
 $pathTo7z = "C:\Program Files\7-Zip\7z.exe"
@@ -46,8 +53,9 @@ Write-Host ('Packaging {0} v{1}...copying files...' -f $modName, $modVersion)
 
 $configFileAbsolute = Join-Path $PSScriptRoot 'Config\config.json'
 $translationsFileAbsolute = Join-Path $PSScriptRoot 'Config\translations.json'
-$serverLibraryAbsolute = Join-Path $PSScriptRoot ('..\Server\bin\Debug\{0}-Server\{0}-Server.dll' -f $modName)
-$clientLibraryAbsolute = Join-Path $PSScriptRoot ('..\Client\bin\Debug\netstandard2.1\{0}-Client.dll' -f $modName)
+$serverLibraryAbsolute = Join-Path $PSScriptRoot ('..\Server\bin\Release\{0}-Server\{0}-Server.dll' -f $modName)
+
+$clientLibraryAbsolute = Join-Path $PSScriptRoot ('..\Client\bin\Release\netstandard2.1\{0}-Client.dll' -f $modName)
 
 try
 {
@@ -70,7 +78,6 @@ Write-Host ('Packaging {0} v{1}...creating archive...' -f $modName, $modVersion)
 $archiveName = Join-Path $packageFolderAbsolute ('{0}-{1}.7z' -f $modName, $modVersion)
 $sourceFiles = Join-Path $packageFolderAbsolute '*'
 $arguments = "a", "-t7z", $archiveName, $sourceFiles
-
 
 try
 {

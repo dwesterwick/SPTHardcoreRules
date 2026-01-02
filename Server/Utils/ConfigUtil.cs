@@ -12,6 +12,20 @@ namespace HardcoreRules.Utils
         private const string FILENAME_CONFIG = "config.json";
         private const string FILENAME_TRANSLATIONS = "translations.json";
 
+        private string _serverModDirectory = null!;
+        public string ServerModDirectory
+        {
+            get
+            {
+                if (_serverModDirectory == null)
+                {
+                    _serverModDirectory = GetServerModDirectory();
+                }
+
+                return _serverModDirectory;
+            }
+        }
+
         private ModConfig _currentConfig = null!;
         public ModConfig CurrentConfig
         {
@@ -41,17 +55,20 @@ namespace HardcoreRules.Utils
         }
 
         private ModHelper _modHelper;
-        private string _pathToMod;
 
         public ConfigUtil(ModHelper modHelper)
         {
             _modHelper = modHelper;
-            _pathToMod = modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
+        }
+
+        private string GetServerModDirectory()
+        {
+            return _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
         }
 
         private T GetObject<T>(string filename)
         {
-            string fileText = File.ReadAllText(Path.Combine(_pathToMod, filename));
+            string fileText = File.ReadAllText(Path.Combine(ServerModDirectory, filename));
             T? obj = ConfigHelpers.Deserialize<T>(fileText);
             if (obj == null)
             {

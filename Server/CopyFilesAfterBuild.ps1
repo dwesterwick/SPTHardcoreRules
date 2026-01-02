@@ -1,5 +1,6 @@
 ﻿param (
     [string]$modName,
+    [string]$configuration,
     [string]$debugPath
 )
 
@@ -8,8 +9,8 @@ Write-Host ('Copying server files for {0}...' -f $modName)
 Set-Location $PSScriptRoot
 
 $destinationAbsolute = Join-Path $PSScriptRoot ('..\..\..\SPT\user\mods\{0}-Server\' -f $modName)
-$serverLibraryAbsolute = Join-Path $PSScriptRoot ('bin\Debug\{0}-Server\{0}-Server.dll' -f $modName)
-$serverLibraryPdbAbsolute = Join-Path $PSScriptRoot ('bin\Debug\{0}-Server\{0}-Server.pdb' -f $modName)
+$serverLibraryAbsolute = Join-Path $PSScriptRoot ('bin\{0}\{1}-Server\{1}-Server.dll' -f $configuration, $modName)
+$serverLibraryPdbAbsolute = Join-Path $PSScriptRoot ('bin\{0}\{1}-Server\{1}-Server.pdb' -f $configuration, $modName)
 
 try
 {
@@ -26,7 +27,7 @@ catch
     exit 1
 }
 
-if (Test-Path -PathType Container $debugPath)
+if (($configuration -eq "DEBUG") -and (Test-Path -PathType Container $debugPath))
 {
     Write-Host ('Copying server files for {0} to debug location...' -f $modName)
 
