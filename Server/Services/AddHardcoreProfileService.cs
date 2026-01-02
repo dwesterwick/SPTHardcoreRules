@@ -19,14 +19,14 @@ namespace HardcoreRules.Services
         private const bool LAUNCHER_USES_NEW_TRANSLATIONS = false;
 
         private DatabaseService _databaseService;
-        private NewTranslationsService _newTranslationsService;
+        private TranslationService _newTranslationsService;
 
         public AddHardcoreProfileService
         (
             LoggingUtil logger,
             ConfigUtil config,
             DatabaseService databaseService,
-            NewTranslationsService newTranslationsService
+            TranslationService newTranslationsService
         ) : base(logger, config)
         {
             _databaseService = databaseService;

@@ -2,7 +2,6 @@
 using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
-using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Services
 {
@@ -11,11 +10,16 @@ namespace HardcoreRules.Services
     {
         public bool HardcoreRulesEnabled { get; private set; } = false;
 
-        private DatabaseService _databaseService;
+        private TraderOffersUtil _traderOffersUtil;
 
-        public ToggleHardcoreRulesService(LoggingUtil logger, ConfigUtil config, DatabaseService databaseService) : base(logger, config)
+        public ToggleHardcoreRulesService
+        (
+            LoggingUtil logger,
+            ConfigUtil config,
+            TraderOffersUtil traderOffersUtil
+        ) : base(logger, config)
         {
-            _databaseService = databaseService;
+            _traderOffersUtil = traderOffersUtil;
         }
 
         protected override void OnLoadIfModIsEnabled()
@@ -25,7 +29,70 @@ namespace HardcoreRules.Services
 
         public void ToggleHardcoreRules(bool enableHardcoreRules)
         {
+            if (!enableHardcoreRules)
+            {
+                Logger.Warning("Not using a hardcore profile");
+            }
 
+            if (enableHardcoreRules == HardcoreRulesEnabled)
+            {
+                return;
+            }
+
+            if (enableHardcoreRules)
+            {
+                EnableHardcoreRules();
+            }
+            else
+            {
+                DisableHardcoreRules();
+            }
+        }
+
+        private void EnableHardcoreRules()
+        {
+            Logger.Info("Enabling hardcore rules...");
+
+            if (!Config.CurrentConfig.Services.FleaMarket.Enabled)
+            {
+                _traderOffersUtil.EnableFleaMarket();
+            }
+
+            if (Config.CurrentConfig.Traders.DisableFence)
+            {
+                _traderOffersUtil.EnableFence();
+            }
+
+            if (Config.CurrentConfig.Traders.DisableStartingGifts)
+            {
+                _traderOffersUtil.EnableGifts();
+            }
+
+            HardcoreRulesEnabled = true;
+            Logger.Info("Enabling hardcore rules...done.");
+        }
+
+        private void DisableHardcoreRules()
+        {
+            Logger.Info("Disabling hardcore rules...");
+
+            if (!Config.CurrentConfig.Services.FleaMarket.Enabled)
+            {
+                _traderOffersUtil.DisableFleaMarket();
+            }
+
+            if (Config.CurrentConfig.Traders.DisableFence)
+            {
+                _traderOffersUtil.DisableFence();
+            }
+
+            if (Config.CurrentConfig.Traders.DisableStartingGifts)
+            {
+                _traderOffersUtil.DisableGifts();
+            }
+
+            HardcoreRulesEnabled = false;
+            Logger.Info("Disabling hardcore rules...done.");
         }
     }
 }

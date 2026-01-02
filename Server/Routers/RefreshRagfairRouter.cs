@@ -54,7 +54,15 @@ namespace HardcoreRules.Routers
             return new ValueTask<string?>(jsonResponse);
         }
 
-        private void RefreshFleaMarketOffers() => _traderOffersUtil.RefreshFleaMarketOffers();
+        private void RefreshFleaMarketOffers()
+        {
+            _traderOffersUtil.RefreshFleaMarketOffers();
+
+            if (_toggleHardcoreRulesService.HardcoreRulesEnabled)
+            {
+                _traderOffersUtil.RemoveBannedFleaMarketOffers();
+            }
+        }
 
         private bool MustUpdateOffers()
         {

@@ -1,4 +1,5 @@
-﻿using SPTarkov.Server.Core.Models.Eft.Common;
+﻿using SPTarkov.Server.Core.Models.Common;
+using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Helpers
@@ -25,5 +26,7 @@ namespace HardcoreRules.Helpers
         {
             return databaseService.GetLocations().GetDictionary().Keys;
         }
+
+        public static bool Contains(this IEnumerable<string> ids, MongoId id) => ids.Any(id.Equals);
     }
 }

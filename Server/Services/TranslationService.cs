@@ -1,29 +1,37 @@
-﻿using HardcoreRules.Helpers;
-using HardcoreRules.Services.Internal;
+﻿using HardcoreRules.Services.Internal;
 using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
+using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Services
 {
     [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
-    public class NewTranslationsService : AbstractService
+    public class TranslationService : AbstractService
     {
         private DatabaseService _databaseService;
         private LocaleService _localeService;
+        private ServerLocalisationService _serverLocalisationService;
 
-        public NewTranslationsService
+        public TranslationService
         (
             LoggingUtil logger,
             ConfigUtil config,
             DatabaseService databaseService,
-            LocaleService localeService
+            LocaleService localeService,
+            ServerLocalisationService serverLocalisationService
         ) : base(logger, config)
         {
             _databaseService = databaseService;
             _localeService = localeService;
+            _serverLocalisationService = serverLocalisationService;
         }
+
+        public string GetLocalisedValue(string key) => _serverLocalisationService.GetLocalisedValue(key);
+
+        public string GetLocalisedTraderName(Trader trader) => GetLocalisedValue($"{trader.Base.Id} Nickname");
+        public string GetLocalisedItemName(TemplateItem item) => GetLocalisedValue($"{item.Id} Name");
 
         public bool TryGetNewTranslation(string key, string? locale, out string? translation, out string localeUsed)
         {
