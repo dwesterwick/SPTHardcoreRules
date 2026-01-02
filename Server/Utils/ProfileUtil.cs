@@ -19,6 +19,9 @@ namespace HardcoreRules.Utils
         public SptProfile? GetSptProfile(MongoId sessionId) => _profileHelper.GetFullProfile(sessionId);
         public PmcData? GetPmcProfile(MongoId sessionId) => _profileHelper.GetPmcProfile(sessionId);
 
+        public string? GetUsername(MongoId sessionId) => GetUsername(GetSptProfile(sessionId));
+        public string? GetUsername(SptProfile? sptData) => sptData?.ProfileInfo?.Username;
+
         public string? GetProfileGameEdition(MongoId sessionId) => GetProfileGameEdition(GetSptProfile(sessionId));
         public string? GetProfileGameEdition(SptProfile? sptData) => sptData?.ProfileInfo?.Edition;
 

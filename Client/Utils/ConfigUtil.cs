@@ -56,7 +56,7 @@ namespace HardcoreRules.Utils
 
         private static bool IsUsingHardcoreProfile()
         {
-            string routeName = SharedRouterHelpers.GetRoutePath("IsUsingHardcoreProfile");
+            string routeName = SharedRouterHelpers.GetRoutePath("ToggleHardcoreRules");
 
             string json = RequestHandler.GetJson(routeName);
             bool? response = JsonConvert.DeserializeObject<bool>(json);

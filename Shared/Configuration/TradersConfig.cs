@@ -5,12 +5,6 @@ namespace HardcoreRules.Configuration
     [DataContract]
     public class TradersConfig
     {
-        [DataMember(Name = "ID_money")]
-        public string ID_money { get; set; } = null!;
-
-        [DataMember(Name ="ID_GPCoins")]
-        public string ID_GPCoins { get; set; } = null!;
-
         [DataMember(Name ="disable_fence")]
         public bool DisableFence { get; set; }
 
