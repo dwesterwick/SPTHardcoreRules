@@ -36,7 +36,10 @@ namespace HardcoreRules.Utils.TraderOfferSources
         {
             _loggingUtil.Info("Disabling gifts...");
 
-            _giftsConfig.Gifts.Clear();
+            foreach (Gift gift in _giftsConfig.Gifts.Values)
+            {
+                gift.Items.Clear();
+            }
         }
 
         protected override void OnEnable()

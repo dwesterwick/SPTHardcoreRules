@@ -43,7 +43,7 @@ namespace HardcoreRules.Routers
             bool useHardcoreRules = IsUsingAHardcoreProfile(sessionId) || Config.CurrentConfig.UseForAllProfiles;
 
             _toggleHardcoreRulesService.ToggleHardcoreRules(useHardcoreRules);
-            Logger.Info($"Hardcore rules were {(useHardcoreRules ? "" : "not")} enabled.");
+            Logger.Info($"Hardcore rules were {(useHardcoreRules ? "" : "not ")}enabled.");
         }
 
         private bool IsUsingAHardcoreProfile(MongoId sessionId)
@@ -51,7 +51,7 @@ namespace HardcoreRules.Routers
             string? username = _profileUtil.GetUsername(sessionId);
             bool isUsingAHardcoreProfile = _profileUtil.IsUsingAHardcoreProfile(sessionId);
 
-            Logger.Info($"{username} is {(isUsingAHardcoreProfile ? "" : "not")} using a hardcore profile.");
+            Logger.Info($"{username} is {(isUsingAHardcoreProfile ? "" : "not ")}using a hardcore profile.");
             return isUsingAHardcoreProfile;
         }
     }

@@ -5,6 +5,7 @@ using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Controllers;
 using SPTarkov.Server.Core.Models.Common;
+using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Ragfair;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Utils;
@@ -40,6 +41,8 @@ namespace HardcoreRules.Routers
 
         public override ValueTask<string?> HandleRoute(string routeName, RequestData routerData)
         {
+            Logger.Warning($"Handling {routeName}: URL={routerData.Url}, ResponseType={routerData.Info.GetType()}, Response={routerData.Output}");
+
             if (!MustUpdateOffers() || !HasCashOffers(routerData.SessionId, routerData.Info))
             {
                 return new ValueTask<string?>(routerData.Output);
@@ -97,7 +100,7 @@ namespace HardcoreRules.Routers
             SearchRequestData? searchRequestData = info as SearchRequestData;
             if (searchRequestData == null)
             {
-                throw new InvalidCastException("Server request data is not SearchRequestData");
+                throw new InvalidCastException($"Server request data is not SearchRequestData. Type={info.GetType()}");
             }
 
             return _ragfairController.GetOffers(sessionId, searchRequestData);

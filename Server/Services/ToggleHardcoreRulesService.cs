@@ -55,17 +55,17 @@ namespace HardcoreRules.Services
 
             if (!Config.CurrentConfig.Services.FleaMarket.Enabled)
             {
-                _traderOffersUtil.EnableFleaMarket();
+                _traderOffersUtil.DisableFleaMarket();
             }
 
             if (Config.CurrentConfig.Traders.DisableFence)
             {
-                _traderOffersUtil.EnableFence();
+                _traderOffersUtil.DisableFence();
             }
 
             if (Config.CurrentConfig.Traders.DisableStartingGifts)
             {
-                _traderOffersUtil.EnableGifts();
+                _traderOffersUtil.DisableGifts();
             }
 
             _traderOffersUtil.RemoveBannedTraderOffers();
@@ -82,17 +82,17 @@ namespace HardcoreRules.Services
 
             if (!Config.CurrentConfig.Services.FleaMarket.Enabled)
             {
-                _traderOffersUtil.DisableFleaMarket();
+                _traderOffersUtil.EnableFleaMarket();
             }
 
             if (Config.CurrentConfig.Traders.DisableFence)
             {
-                _traderOffersUtil.DisableFence();
+                _traderOffersUtil.EnableFence();
             }
 
             if (Config.CurrentConfig.Traders.DisableStartingGifts)
             {
-                _traderOffersUtil.DisableGifts();
+                _traderOffersUtil.EnableGifts();
             }
 
             _traderOffersUtil.RestoreTraderOffers();

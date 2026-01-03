@@ -1,5 +1,7 @@
 ﻿using HardcoreRules.Helpers;
 using SPTarkov.Server.Core.DI;
+using SPTarkov.Server.Core.Models.Common;
+using SPTarkov.Server.Core.Models.Utils;
 
 namespace HardcoreRules.Routers.Internal
 {
@@ -49,9 +51,15 @@ namespace HardcoreRules.Routers.Internal
             }
 
             RouteAction routeAction = new RouteAction(Path, async (url, info, sessionId, output) =>
-                        await HandleRoute(Name, new RequestData(url, info, sessionId, output)) ?? throw new InvalidOperationException("HandleRoute returned null"));
+                        await HandleRoute(Name, url, info, sessionId, output) ?? throw new InvalidOperationException("HandleRoute returned null"));
 
             return routeAction;
+        }
+
+        private async ValueTask<string?> HandleRoute(string routeName, string url, IRequestData info, MongoId sessionId, string? output)
+        {
+            RequestData requestData = new RequestData(url, info, sessionId, output);
+            return await HandleRoute(routeName, requestData);
         }
 
         private ValueTask<string?> HandleRoute(string name, RequestData data)

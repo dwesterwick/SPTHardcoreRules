@@ -143,40 +143,52 @@ namespace HardcoreRules.Utils
                 return;
             }
 
-            _loggingUtil.Info($"Removing banned offers from trader {localizedTraderName}...");
+            List<Item> itemsToRemove = new();
+            bool lastItemWillBeRemoved = false;
 
-            bool lastItemRemoved = false;
             foreach (Item item in trader.Assort.Items)
             {
-                if (item.SlotId?.ToLower() == HIDEOUT_SLOT_ID)
+                if (item.SlotId?.ToLower() != HIDEOUT_SLOT_ID)
                 {
-                    if (lastItemRemoved)
+                    if (lastItemWillBeRemoved)
                     {
-                        RemoveItemFromTraderOffers(trader, item);
+                        itemsToRemove.Add(item);
                     }
 
                     continue;
                 }
 
-                lastItemRemoved = false;
+                lastItemWillBeRemoved = false;
 
                 if (!ShouldRemoveItemFromTraderOffers(trader, item))
                 {
                     continue;
                 }
 
-                RemoveItemFromTraderOffers(trader, item);
-                lastItemRemoved = true;
+                itemsToRemove.Add(item);
+                lastItemWillBeRemoved = true;
             }
+
+            foreach (Item item in itemsToRemove)
+            {
+                RemoveItemFromTraderOffers(trader, item);
+            }
+
+            _loggingUtil.Info($"Removed {itemsToRemove.Count} banned offers from trader {localizedTraderName}");
         }
 
         private bool ShouldRemoveItemFromTraderOffers(Trader trader, Item item)
         {
             string localizedTraderName = _translationService.GetLocalisedTraderName(trader);
 
-            if (!MustKeepTraderAssortItem(item))
+            if (MustKeepTraderAssortItem(item))
             {
                 return false;
+            }
+
+            if (_configUtil.CurrentConfig.Traders.WhitelistOnly)
+            {
+                return true;
             }
 
             if (!trader.Assort.BarterScheme.TryGetValue(item.Id, out List<List<BarterScheme>>? barterSchemes) || (barterSchemes == null))
@@ -190,9 +202,7 @@ namespace HardcoreRules.Utils
                 return false;
             }
 
-            bool whitelistOnly = _configUtil.CurrentConfig.Traders.WhitelistOnly;
-            bool bartersOnly = _configUtil.CurrentConfig.Traders.BartersOnly;
-            if (!whitelistOnly && !bartersOnly && IsABarterOffer(barterSchemes))
+            if (!_configUtil.CurrentConfig.Traders.BartersOnly || IsABarterOffer(barterSchemes))
             {
                 return false;
             }
@@ -200,37 +210,37 @@ namespace HardcoreRules.Utils
             return true;
         }
 
-        private void RemoveItemFromTraderOffers(Trader trader, Item item)
+        private bool RemoveItemFromTraderOffers(Trader trader, Item item)
         {
             string localizedTraderName = _translationService.GetLocalisedTraderName(trader);
 
-            if (trader.Assort.LoyalLevelItems.ContainsKey(item.Id))
+            if (item.ParentId == HIDEOUT_SLOT_ID)
             {
-                trader.Assort.LoyalLevelItems.Remove(item.Id);
-            }
-            else
-            {
-                _loggingUtil.Error($"Could not remove item {item.Id} from LoyalLevelItems for trader {localizedTraderName}");
-            }
+                if (!trader.Assort.LoyalLevelItems.Remove(item.Id))
+                {
+                    _loggingUtil.Error($"Could not remove item {item.Id} from LoyalLevelItems for trader {localizedTraderName}");
+                    return false;
+                }
 
-            if (trader.Assort.BarterScheme.ContainsKey(item.Id))
-            {
-                trader.Assort.BarterScheme.Remove(item.Id);
-            }
-            else
-            {
-                _loggingUtil.Error($"Could not remove item {item.Id} from BarterScheme for trader {localizedTraderName}");
+                if (!trader.Assort.BarterScheme.Remove(item.Id))
+                {
+                    _loggingUtil.Error($"Could not remove item {item.Id} from BarterScheme for trader {localizedTraderName}");
+                    return false;
+                }
             }
 
             if (!trader.Assort.Items.Remove(item))
             {
                 _loggingUtil.Error($"Could not remove item {item.Id} from trader {localizedTraderName}'s offers");
+                return false;
             }
 
             foreach (Dictionary<MongoId, MongoId> questAssort in trader.QuestAssort.Values)
             {
                 questAssort.Remove(item.Id);
             }
+
+            return true;
         }
 
         private bool MustKeepTraderAssortItem(Item item)
@@ -246,7 +256,7 @@ namespace HardcoreRules.Utils
                 return true;
             }
 
-            if (IsWhiteisted(template))
+            if (IsWhitelisted(template))
             {
                 return true;
             }
@@ -254,7 +264,7 @@ namespace HardcoreRules.Utils
             return false;
         }
 
-        public bool IsWhiteisted(TemplateItem template)
+        public bool IsWhitelisted(TemplateItem template)
         {
             if (WhitelistedItems.Contains(template.Id))
             {
@@ -294,7 +304,7 @@ namespace HardcoreRules.Utils
         public void RemoveBannedFleaMarketOffers()
         {
             bool onlyBarterOffers = _configUtil.CurrentConfig.Services.FleaMarket.OnlyBarterOffers;
-            _loggingUtil.Info($"Removing {(onlyBarterOffers ? "" : "cash")} offers from players...");
+            _loggingUtil.Info($"Removing {(onlyBarterOffers ? "" : "cash ")}offers from players...");
 
             List<RagfairOffer> offers = _ragfairOfferService.GetOffers();
             foreach (RagfairOffer offer in offers)
