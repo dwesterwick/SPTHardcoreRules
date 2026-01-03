@@ -117,19 +117,15 @@ namespace HardcoreRules.Utils
                 .ToArray();
         }
 
+        private IEnumerable<Trader> _tradersWithOffersNotIncludingFence => _databaseService.GetTables().Traders.Values
+                .NotIncludingFence()
+                .WithOffers();
+
         private void RestrictTraderOffers()
         {
-            foreach (Trader trader in _databaseService.GetTables().Traders.Values)
+            foreach (Trader trader in _tradersWithOffersNotIncludingFence)
             {
-                if (trader.Base.Id == Traders.FENCE)
-                {
-                    continue;
-                }
-
-                if (trader.Assort?.Items?.Count > 0)
-                {
-                    RestrictTraderOffers(trader);
-                }
+                RestrictTraderOffers(trader);
             }
         }
 
@@ -304,7 +300,7 @@ namespace HardcoreRules.Utils
         public void RemoveBannedFleaMarketOffers()
         {
             bool onlyBarterOffers = _configUtil.CurrentConfig.Services.FleaMarket.OnlyBarterOffers;
-            _loggingUtil.Info($"Removing {(onlyBarterOffers ? "" : "cash ")}offers from players...");
+            _loggingUtil.Info($"Removing all {(onlyBarterOffers ? "" : "cash ")}flea market offers...");
 
             List<RagfairOffer> offers = _ragfairOfferService.GetOffers();
             foreach (RagfairOffer offer in offers)
@@ -315,6 +311,18 @@ namespace HardcoreRules.Utils
                 }
 
                 _ragfairOfferService.RemoveOfferById(offer.Id);
+            }
+
+            CreateFleaMarketOffersForTraders();
+        }
+
+        public void CreateFleaMarketOffersForTraders()
+        {
+            _loggingUtil.Info("Adding flea market offers for traders...");
+
+            foreach (Trader trader in _tradersWithOffersNotIncludingFence)
+            {
+                _ragfairOfferGenerator.GenerateFleaOffersForTrader(trader.Base.Id);
             }
         }
 

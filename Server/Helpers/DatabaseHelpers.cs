@@ -1,5 +1,7 @@
 ﻿using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
+using SPTarkov.Server.Core.Models.Eft.Common.Tables;
+using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Helpers
@@ -25,6 +27,24 @@ namespace HardcoreRules.Helpers
         public static IEnumerable<string> EnumerateLocationIDs(this DatabaseService databaseService)
         {
             return databaseService.GetLocations().GetDictionary().Keys;
+        }
+
+        public static bool IsFence(this Trader? trader) => trader?.Base?.Id == Traders.FENCE;
+
+        public static IEnumerable<Trader> NotIncludingFence(this IEnumerable<Trader> traders) => traders.Where(t => !t.IsFence());
+
+        public static IDictionary<TKey, Trader> NotIncludingFence<TKey>(this IDictionary<TKey, Trader> traders)
+        {
+            return (IDictionary<TKey, Trader>)traders.Where(t => !t.Value.IsFence());
+        }
+
+        public static bool HasOffers(this Trader? trader) => trader?.Assort?.Items?.Count > 0;
+
+        public static IEnumerable<Trader> WithOffers(this IEnumerable<Trader> traders) => traders.Where(t => t.HasOffers());
+
+        public static IDictionary<TKey, Trader> WithOffers<TKey>(this IDictionary<TKey, Trader> traders)
+        {
+            return (IDictionary<TKey, Trader>)traders.Where(t => t.Value.HasOffers());
         }
 
         public static bool Contains(this IEnumerable<string> ids, MongoId id) => ids.Any(id.Equals);
