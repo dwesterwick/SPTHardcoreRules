@@ -89,16 +89,16 @@ namespace HardcoreRules.Helpers
             return false;
         }
 
-        public static bool IsItemInWhitelist(this Item item, Configuration.Whitelist whitelist)
+        public static bool IsItemInWhitelist(this Item item, string[] whitelist)
         {
-            if (whitelist.ID_Items.Contains(item.TemplateId.ToString()))
+            if (whitelist.Contains(item.TemplateId.ToString()))
             {
                 return true;
             }
 
-            foreach (string parentID in whitelist.ID_Parents)
+            foreach (string id in whitelist)
             {
-                if (item.Template.IsChildOf(parentID))
+                if (item.Template.IsChildOf(id))
                 {
                     return true;
                 }

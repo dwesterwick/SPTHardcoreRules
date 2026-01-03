@@ -1,4 +1,4 @@
-﻿namespace HardcoreRules.Utils
+﻿namespace HardcoreRules.Utils.Internal
 {
     public class ObjectCache<T>
     {

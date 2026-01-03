@@ -23,7 +23,7 @@ namespace HardcoreRules.Utils
         private FleaMarketOfferSource FleaMarket;
         private FenceOfferSource Fence;
         private GiftsOfferSource Gifts;
-        private TraderOfferSource Traders;
+        private TraderOfferSource TraderAssorts;
 
         private LoggingUtil _loggingUtil;
         private ConfigUtil _configUtil;
@@ -98,7 +98,7 @@ namespace HardcoreRules.Utils
             FleaMarket = new FleaMarketOfferSource(_loggingUtil, _configServer, _databaseService, _ragfairOfferGenerator);
             Fence = new FenceOfferSource(_loggingUtil, _configServer, _fenceService);
             Gifts = new GiftsOfferSource(_loggingUtil, _configServer);
-            Traders = new TraderOfferSource(_loggingUtil, _databaseService, RestrictTraderOffers);
+            TraderAssorts = new TraderOfferSource(_loggingUtil, _databaseService, RestrictTraderOffers);
         }
 
         private MongoId[] GetWhiteListedTraders()
@@ -121,7 +121,15 @@ namespace HardcoreRules.Utils
         {
             foreach (Trader trader in _databaseService.GetTables().Traders.Values)
             {
-                RestrictTraderOffers(trader);
+                if (trader.Base.Id == Traders.FENCE)
+                {
+                    continue;
+                }
+
+                if (trader.Assort?.Items?.Count > 0)
+                {
+                    RestrictTraderOffers(trader);
+                }
             }
         }
 
@@ -263,8 +271,8 @@ namespace HardcoreRules.Utils
 
         public bool IsWhitelisted(Trader trader) => WhitelistedTraders.Contains(trader.Base.Id);
 
-        public void RestoreTraderOffers() => Traders.Enable();
-        public void RemoveBannedTraderOffers() => Traders.Disable();
+        public void RestoreTraderOffers() => TraderAssorts.Enable();
+        public void RemoveBannedTraderOffers() => TraderAssorts.Disable();
 
         public void DisableFence() => Fence.Disable();
         public void EnableFence() => Fence.Enable();

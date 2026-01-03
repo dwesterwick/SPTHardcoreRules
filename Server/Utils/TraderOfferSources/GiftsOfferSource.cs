@@ -1,10 +1,11 @@
-﻿using HardcoreRules.Utils.TraderOfferSources.Internal;
+﻿using HardcoreRules.Utils.Internal;
+using HardcoreRules.Utils.TraderOfferSources.Internal;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Servers;
 
 namespace HardcoreRules.Utils.TraderOfferSources
 {
-    public class GiftsOfferSource : IOfferSource
+    public class GiftsOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
         private ConfigServer _configServer;
@@ -13,43 +14,37 @@ namespace HardcoreRules.Utils.TraderOfferSources
 
         private ObjectCache<GiftsConfig> _originalGiftsConfig = new();
 
-        public GiftsOfferSource(LoggingUtil loggingUtil, ConfigServer configServer)
+        public GiftsOfferSource(LoggingUtil loggingUtil, ConfigServer configServer) : base()
         {
             _loggingUtil = loggingUtil;
             _configServer = configServer;
 
             _giftsConfig = _configServer.GetConfig<GiftsConfig>();
-
-            UpdateCache();
         }
 
-        private void UpdateCache()
+        protected override void OnUpdateCache()
         {
             _originalGiftsConfig.CacheValueAndThrowIfNull(_giftsConfig);
         }
 
-        private void RestoreCache()
+        protected override void OnRestoreCache()
         {
             _giftsConfig = _originalGiftsConfig.GetValueAndThrowIfNull();
         }
 
-        public void Disable()
+        protected override void OnDisable()
         {
             _loggingUtil.Info("Disabling gifts...");
-
-            UpdateCache();
 
             _giftsConfig.Gifts.Clear();
         }
 
-        public void Enable()
+        protected override void OnEnable()
         {
             _loggingUtil.Info("Enabling gifts...");
-
-            RestoreCache();
         }
 
-        public void Refresh()
+        protected override void OnRefresh()
         {
             throw new NotImplementedException();
         }

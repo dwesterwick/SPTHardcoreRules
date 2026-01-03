@@ -1,4 +1,4 @@
-﻿using SPTarkov.Server.Core.Utils;
+﻿using HardcoreRules.Helpers;
 
 namespace HardcoreRules.Utils.ModIntegrityTests
 {
@@ -18,7 +18,7 @@ namespace HardcoreRules.Utils.ModIntegrityTests
 
         public void Run()
         {
-            if (!ClientModFileRequired())
+            if (!DebugHelpers.IsReleaseBuild())
             {
                 Result = true;
                 FailureMessage = null;
@@ -38,15 +38,6 @@ namespace HardcoreRules.Utils.ModIntegrityTests
 
             Result = result;
             FailureMessage = result ? null : $"Could not find client mod file, {pathToClientMod}. Without it, this mod will NOT work correctly.";
-        }
-
-        private bool ClientModFileRequired()
-        {
-#if DEBUG
-            return ProgramStatics.ENTRY_TYPE() == SPTarkov.Server.Core.Models.Enums.EntryType.RELEASE;
-#else
-            return true;
-#endif
         }
     }
 }

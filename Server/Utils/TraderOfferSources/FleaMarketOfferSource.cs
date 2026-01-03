@@ -1,4 +1,5 @@
-﻿using HardcoreRules.Utils.TraderOfferSources.Internal;
+﻿using HardcoreRules.Utils.Internal;
+using HardcoreRules.Utils.TraderOfferSources.Internal;
 using SPTarkov.Server.Core.Generators;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
@@ -8,7 +9,7 @@ using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Utils.TraderOfferSources
 {
-    public class FleaMarketOfferSource : IOfferSource
+    public class FleaMarketOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
         private ConfigServer _configServer;
@@ -26,7 +27,7 @@ namespace HardcoreRules.Utils.TraderOfferSources
             ConfigServer configServer,
             DatabaseService databaseService,
             RagfairOfferGenerator ragfairOfferGenerator
-        )
+        ) : base()
         {
             _loggingUtil = loggingUtil;
             _configServer = configServer;
@@ -34,27 +35,23 @@ namespace HardcoreRules.Utils.TraderOfferSources
             _ragfairOfferGenerator = ragfairOfferGenerator;
 
             _ragfairConfig = _configServer.GetConfig<RagfairConfig>();
-
-            UpdateCache();
         }
 
-        private void UpdateCache()
+        protected override void OnUpdateCache()
         {
             _originalOfferItemCount.CacheValueAndThrowIfNull(_ragfairConfig.Dynamic.OfferItemCount);
             _originalMaxActiveOfferCount.CacheValueAndThrowIfNull(_databaseService.GetTables().Globals.Configuration.RagFair.MaxActiveOfferCount);
         }
 
-        private void RestoreCache()
+        protected override void OnRestoreCache()
         {
             _ragfairConfig.Dynamic.OfferItemCount = _originalOfferItemCount.GetValueAndThrowIfNull();
             _databaseService.GetTables().Globals.Configuration.RagFair.MaxActiveOfferCount = _originalMaxActiveOfferCount.GetValueAndThrowIfNull();
         }
 
-        public void Disable()
+        protected override void OnDisable()
         {
             _loggingUtil.Info("Disabling flea market...");
-
-            UpdateCache();
 
             foreach (MinMax<int> limits in _ragfairConfig.Dynamic.OfferItemCount.Values)
             {
@@ -68,14 +65,12 @@ namespace HardcoreRules.Utils.TraderOfferSources
             }
         }
 
-        public void Enable()
+        protected override void OnEnable()
         {
             _loggingUtil.Info("Enabling flea market...");
-
-            RestoreCache();
         }
 
-        public void Refresh()
+        protected override void OnRefresh()
         {
             _loggingUtil.Info("Refreshing flea market offers...");
             _ragfairOfferGenerator.GenerateDynamicOffers();

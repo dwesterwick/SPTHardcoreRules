@@ -68,7 +68,7 @@ namespace HardcoreRules.Utils
 
         private T GetObject<T>(string filename)
         {
-            string fileText = File.ReadAllText(Path.Combine(_serverModDirectory, filename));
+            string fileText = File.ReadAllText(Path.Combine(ServerModDirectory, filename));
             T? obj = ConfigHelpers.Deserialize<T>(fileText);
             if (obj == null)
             {

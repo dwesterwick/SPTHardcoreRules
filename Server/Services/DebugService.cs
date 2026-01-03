@@ -9,25 +9,28 @@ using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Services
 {
-    [Injectable(TypePriority = OnLoadOrder.TraderRegistration + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
-    public class ShowTraderDebugInfoService : AbstractService
+    [Injectable(TypePriority = OnLoadOrder.PostSptModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
+    public class DebugService : AbstractService
     {
         private DatabaseService _databaseService;
         private TraderOffersUtil _traderOffersUtil;
         private TranslationService _translationService;
+        private ToggleHardcoreRulesService _toggleHardcoreRulesService;
 
-        public ShowTraderDebugInfoService
+        public DebugService
         (
             LoggingUtil logger,
             ConfigUtil config,
             DatabaseService databaseService,
             TraderOffersUtil traderOffersUtil,
-            TranslationService translationService
+            TranslationService translationService,
+            ToggleHardcoreRulesService toggleHardcoreRulesService
         ) : base(logger, config)
         {
             _databaseService = databaseService;
             _traderOffersUtil = traderOffersUtil;
             _translationService = translationService;
+            _toggleHardcoreRulesService = toggleHardcoreRulesService;
         }
 
         protected override void OnLoadIfModIsEnabled()
@@ -35,6 +38,11 @@ namespace HardcoreRules.Services
             if (Config.CurrentConfig.IsDebugEnabled())
             {
                 ShowTraderIDs();
+            }
+
+            if (!DebugHelpers.IsReleaseBuild())
+            {
+                _toggleHardcoreRulesService.ToggleHardcoreRules(true);
             }
         }
 

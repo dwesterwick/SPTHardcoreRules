@@ -14,6 +14,8 @@ namespace HardcoreRules.Services
         private LocaleService _localeService;
         private ServerLocalisationService _serverLocalisationService;
 
+        private Dictionary<string, string> _cachedTranslations = new();
+
         public TranslationService
         (
             LoggingUtil logger,
@@ -28,7 +30,18 @@ namespace HardcoreRules.Services
             _serverLocalisationService = serverLocalisationService;
         }
 
-        public string GetLocalisedValue(string key) => _serverLocalisationService.GetLocalisedValue(key);
+        public string GetLocalisedValue(string key)
+        {
+            if ( _cachedTranslations.ContainsKey(key))
+            {
+                return _cachedTranslations[key];
+            }
+
+            string translation = _serverLocalisationService.GetLocalisedValue(key);
+            _cachedTranslations.Add(key, translation);
+
+            return translation;
+        }
 
         public string GetLocalisedTraderName(Trader trader) => GetLocalisedValue($"{trader.Base.Id} Nickname");
         public string GetLocalisedItemName(TemplateItem item) => GetLocalisedValue($"{item.Id} Name");

@@ -1,4 +1,5 @@
-﻿using HardcoreRules.Utils.TraderOfferSources.Internal;
+﻿using HardcoreRules.Utils.Internal;
+using HardcoreRules.Utils.TraderOfferSources.Internal;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Servers;
@@ -6,7 +7,7 @@ using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Utils.TraderOfferSources
 {
-    public class FenceOfferSource : IOfferSource
+    public class FenceOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
         private ConfigServer _configServer;
@@ -16,32 +17,28 @@ namespace HardcoreRules.Utils.TraderOfferSources
 
         private ObjectCache<FenceConfig> _originalFenceConfig = new();
 
-        public FenceOfferSource(LoggingUtil loggingUtil, ConfigServer configServer, FenceService fenceService)
+        public FenceOfferSource(LoggingUtil loggingUtil, ConfigServer configServer, FenceService fenceService) : base()
         {
             _loggingUtil = loggingUtil;
             _configServer = configServer;
             _fenceService = fenceService;
 
             _traderConfig = _configServer.GetConfig<TraderConfig>();
-
-            UpdateCache();
         }
 
-        private void UpdateCache()
+        protected override void OnUpdateCache()
         {
             _originalFenceConfig.CacheValueAndThrowIfNull(_traderConfig.Fence);
         }
 
-        private void RestoreCache()
+        protected override void OnRestoreCache()
         {
             _traderConfig.Fence = _originalFenceConfig.GetValueAndThrowIfNull();
         }
 
-        public void Disable()
+        protected override void OnDisable()
         {
             _loggingUtil.Info("Disabling Fence...");
-
-            UpdateCache();
 
             _traderConfig.Fence.AssortSize = 0;
             _traderConfig.Fence.DiscountOptions.AssortSize = 0;
@@ -53,14 +50,12 @@ namespace HardcoreRules.Utils.TraderOfferSources
             _traderConfig.Fence.DiscountOptions.WeaponPresetMinMax = new MinMax<int>(0, 0);
         }
 
-        public void Enable()
+        protected override void OnEnable()
         {
             _loggingUtil.Info("Enabling Fence...");
-
-            RestoreCache();
         }
 
-        public void Refresh()
+        protected override void OnRefresh()
         {
             _fenceService.GenerateFenceAssorts();
         }

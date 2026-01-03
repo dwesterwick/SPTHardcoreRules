@@ -1,4 +1,5 @@
-﻿using HardcoreRules.Utils.TraderOfferSources.Internal;
+﻿using HardcoreRules.Utils.Internal;
+using HardcoreRules.Utils.TraderOfferSources.Internal;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums;
@@ -6,7 +7,7 @@ using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Utils.TraderOfferSources
 {
-    public class TraderOfferSource : IOfferSource
+    public class TraderOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
         private DatabaseService _databaseService;
@@ -16,17 +17,15 @@ namespace HardcoreRules.Utils.TraderOfferSources
         private Dictionary<MongoId, ObjectCache<TraderAssort>> _originalTraderAssorts = new();
         private Dictionary<MongoId, ObjectCache<Dictionary<string, Dictionary<MongoId, MongoId>>>> _originalTraderQuestAssorts = new();
 
-        public TraderOfferSource(LoggingUtil loggingUtil, DatabaseService databaseService, Action restrictTraderOffersAction)
+        public TraderOfferSource(LoggingUtil loggingUtil, DatabaseService databaseService, Action restrictTraderOffersAction) : base()
         {
             _loggingUtil = loggingUtil;
             _databaseService = databaseService;
 
             _restrictTraderOffersAction = restrictTraderOffersAction;
-
-            UpdateCache();
         }
 
-        private void UpdateCache()
+        protected override void OnUpdateCache()
         {
             foreach ((MongoId id, Trader trader) in _databaseService.GetTables().Traders)
             {
@@ -57,7 +56,7 @@ namespace HardcoreRules.Utils.TraderOfferSources
             }
         }
 
-        private void RestoreCache()
+        protected override void OnRestoreCache()
         {
             foreach ((MongoId id, Trader trader) in _databaseService.GetTables().Traders)
             {
@@ -84,23 +83,19 @@ namespace HardcoreRules.Utils.TraderOfferSources
             }
         }
 
-        public void Disable()
+        protected override void OnDisable()
         {
             _loggingUtil.Info("Restricting trader offers...");
-
-            UpdateCache();
 
             _restrictTraderOffersAction();
         }
 
-        public void Enable()
+        protected override void OnEnable()
         {
             _loggingUtil.Info("Restoring original trader offers...");
-
-            RestoreCache();
         }
 
-        public void Refresh()
+        protected override void OnRefresh()
         {
             throw new NotImplementedException();
         }
