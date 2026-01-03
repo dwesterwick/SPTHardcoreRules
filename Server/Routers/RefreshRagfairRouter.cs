@@ -5,7 +5,6 @@ using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Controllers;
 using SPTarkov.Server.Core.Models.Common;
-using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Ragfair;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Utils;
@@ -13,7 +12,7 @@ using SPTarkov.Server.Core.Utils;
 namespace HardcoreRules.Routers
 {
     [Injectable]
-    public class RefreshRagfairRouter : AbstractStaticRouter
+    public class RefreshRagfairRouter : AbstractTypedStaticRouter<SearchRequestData>
     {
         private static readonly string[] _routeNames = ["/client/ragfair/find"];
 
@@ -41,8 +40,6 @@ namespace HardcoreRules.Routers
 
         public override ValueTask<string?> HandleRoute(string routeName, RequestData routerData)
         {
-            Logger.Warning($"Handling {routeName}: URL={routerData.Url}, ResponseType={routerData.Info.GetType()}, Response={routerData.Output}");
-
             if (!MustUpdateOffers() || !HasCashOffers(routerData.SessionId, routerData.Info))
             {
                 return new ValueTask<string?>(routerData.Output);

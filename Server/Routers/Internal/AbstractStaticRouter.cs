@@ -1,32 +1,15 @@
-﻿using HardcoreRules.Helpers;
-using HardcoreRules.Utils;
-using SPTarkov.Server.Core.DI;
+﻿using HardcoreRules.Utils;
+using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Utils;
 
-namespace HardcoreRules.Routers.Internal;
-
-public abstract class AbstractStaticRouter : StaticRouter, IRouteHandler
+namespace HardcoreRules.Routers.Internal
 {
-    protected static ConfigUtil Config { get; private set; } = null!;
-
-    protected LoggingUtil Logger { get; private set; } = null!;
-    protected JsonUtil JsonUtil { get; private set; } = null!;
-
-    public AbstractStaticRouter(IEnumerable<string> _routeNames, LoggingUtil logger, ConfigUtil config, JsonUtil jsonUtil) : base(jsonUtil, RouteManager.GetRoutes(_routeNames))
+    public abstract class AbstractStaticRouter : AbstractTypedStaticRouter<EmptyRequestData>
     {
-        if (Config == null)
+        public AbstractStaticRouter(IEnumerable<string> _routeNames, LoggingUtil logger, ConfigUtil config, JsonUtil jsonUtil)
+            : base(_routeNames, logger, config, jsonUtil)
         {
-            Config = config;
+
         }
-
-        Logger = logger;
-        JsonUtil = jsonUtil;
-
-        RouteManager.RegisterRoutes(_routeNames, this);
     }
-
-    public virtual bool ShouldCreateRoutes() => Config.CurrentConfig.IsModEnabled();
-    public virtual bool ShouldHandleRoutes() => true;
-
-    public abstract ValueTask<string?> HandleRoute(string routeName, RequestData routerData);
 }
