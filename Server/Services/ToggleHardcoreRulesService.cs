@@ -6,7 +6,7 @@ using SPTarkov.Server.Core.DI;
 namespace HardcoreRules.Services
 {
     [Injectable(TypePriority = OnLoadOrder.PostSptModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
-    public class ToggleHardcoreRulesService : AbstractService
+    internal class ToggleHardcoreRulesService : AbstractService
     {
         public bool HardcoreRulesEnabled { get; private set; } = false;
 

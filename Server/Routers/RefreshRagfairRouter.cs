@@ -12,7 +12,7 @@ using SPTarkov.Server.Core.Utils;
 namespace HardcoreRules.Routers
 {
     [Injectable]
-    public class RefreshRagfairRouter : AbstractTypedStaticRouter<SearchRequestData>
+    internal class RefreshRagfairRouter : AbstractTypedStaticRouter<SearchRequestData>
     {
         private static readonly string[] _routeNames = ["/client/ragfair/find"];
 

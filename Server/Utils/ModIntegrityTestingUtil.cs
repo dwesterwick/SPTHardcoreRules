@@ -5,7 +5,7 @@ using SPTarkov.DI.Annotations;
 namespace HardcoreRules.Utils
 {
     [Injectable(InjectionType.Singleton)]
-    public class ModIntegrityTestingUtil
+    internal class ModIntegrityTestingUtil
     {
         private readonly List<IModIntegrityTest> tests = new List<IModIntegrityTest>();
         private LoggingUtil _loggingUtil;

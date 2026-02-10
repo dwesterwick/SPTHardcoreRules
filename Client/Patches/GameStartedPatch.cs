@@ -10,7 +10,7 @@ using HardcoreRules.Models;
 
 namespace HardcoreRules.Patches
 {
-    public class GameStartedPatch: ModulePatch
+    internal class GameStartedPatch: ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

@@ -10,7 +10,7 @@ using HardcoreRules.Models;
 
 namespace HardcoreRules.Patches
 {
-    public class GameWorldOnDestroyPatch : ModulePatch
+    internal class GameWorldOnDestroyPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

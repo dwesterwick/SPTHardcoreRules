@@ -16,7 +16,7 @@ using SPTarkov.Server.Core.Services;
 namespace HardcoreRules.Utils
 {
     [Injectable(InjectionType.Singleton)]
-    public class TraderOffersUtil
+    internal class TraderOffersUtil
     {
         private const string HIDEOUT_SLOT_ID = "hideout";
 

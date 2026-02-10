@@ -13,7 +13,7 @@ using Comfort.Common;
 
 namespace HardcoreRules.Patches
 {
-    public class UpdateSideSelectionPatch : ModulePatch
+    internal class UpdateSideSelectionPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

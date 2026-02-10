@@ -11,7 +11,7 @@ using HardcoreRules.Helpers;
 
 namespace HardcoreRules.Patches
 {
-    public class MenuShowPatch : ModulePatch
+    internal class MenuShowPatch : ModulePatch
     {
         private static bool _displayedProfileWarning = false;
 

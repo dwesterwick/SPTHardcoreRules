@@ -6,7 +6,7 @@ using SPTarkov.Server.Core.Models.Utils;
 
 namespace HardcoreRules.Routers.Internal
 {
-    public class TypedRouteInfo<T> : IRouteInfo where T: class, IRequestData
+    internal class TypedRouteInfo<T> : IRouteInfo where T: class, IRequestData
     {
         public string Name { get; private set; }
         public IRouteHandler Handler { get; private set; }

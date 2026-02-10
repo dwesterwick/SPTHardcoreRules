@@ -5,7 +5,7 @@ using SPTarkov.Server.Core.Servers;
 
 namespace HardcoreRules.Utils.TraderOfferSources
 {
-    public class GiftsOfferSource : AbstractOfferSource
+    internal class GiftsOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
         private ConfigServer _configServer;

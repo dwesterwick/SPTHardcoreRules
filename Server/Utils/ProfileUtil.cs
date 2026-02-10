@@ -7,7 +7,7 @@ using SPTarkov.Server.Core.Models.Eft.Profile;
 namespace HardcoreRules.Utils
 {
     [Injectable(InjectionType.Singleton)]
-    public class ProfileUtil
+    internal class ProfileUtil
     {
         private ProfileHelper _profileHelper;
 

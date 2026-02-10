@@ -3,7 +3,7 @@ using SPTarkov.Server.Core.Models.Utils;
 
 namespace HardcoreRules.Routers.Internal
 {
-    public static class RouteManager
+    internal static class RouteManager
     {
         private static readonly Dictionary<string, IRouteInfo> _allRegisteredRoutes = new();
 

@@ -13,7 +13,7 @@ using HardcoreRules.Utils;
 
 namespace HardcoreRules.Patches
 {
-    public class RemoveRepairOptionPatch : ModulePatch
+    internal class RemoveRepairOptionPatch : ModulePatch
     {
         private static Type _repairerInfoInterface = null!;
         private static Type _repairerInfoArmor = null!;

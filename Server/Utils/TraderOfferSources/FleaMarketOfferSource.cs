@@ -9,7 +9,7 @@ using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Utils.TraderOfferSources
 {
-    public class FleaMarketOfferSource : AbstractOfferSource
+    internal class FleaMarketOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
         private ConfigServer _configServer;

@@ -10,7 +10,7 @@ using HardcoreRules.Models;
 
 namespace HardcoreRules.Patches
 {
-    public class ShowScreenPatch : ModulePatch
+    internal class ShowScreenPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

@@ -7,7 +7,7 @@ using SPTarkov.Server.Core.Utils;
 namespace HardcoreRules.Routers
 {
     [Injectable]
-    public class ConfigRouter : AbstractStaticRouter
+    internal class ConfigRouter : AbstractStaticRouter
     {
         private static readonly string[] _routeNames = [ "GetConfig" ];
 

@@ -10,7 +10,7 @@ using SPTarkov.Server.Core.Services;
 namespace HardcoreRules.Services
 {
     [Injectable(TypePriority = OnLoadOrder.PostSptModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
-    public class DebugService : AbstractService
+    internal class DebugService : AbstractService
     {
         private DatabaseService _databaseService;
         private TraderOffersUtil _traderOffersUtil;

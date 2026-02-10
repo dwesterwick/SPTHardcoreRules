@@ -2,7 +2,7 @@
 
 namespace HardcoreRules.Utils
 {
-    public class LoggingUtil
+    internal class LoggingUtil
     {
         private BepInEx.Logging.ManualLogSource _logger;
 

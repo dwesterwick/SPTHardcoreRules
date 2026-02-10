@@ -9,7 +9,7 @@ using SPT.Reflection.Patching;
 
 namespace HardcoreRules.Patches
 {
-    public class HealthTreatmentScreenAddTreatmentPatch : ModulePatch
+    internal class HealthTreatmentScreenAddTreatmentPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

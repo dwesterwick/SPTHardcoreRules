@@ -8,7 +8,7 @@ using SPTarkov.Server.Core.Services;
 namespace HardcoreRules.Services
 {
     [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
-    public class TranslationService : AbstractService
+    internal class TranslationService : AbstractService
     {
         private DatabaseService _databaseService;
         private LocaleService _localeService;

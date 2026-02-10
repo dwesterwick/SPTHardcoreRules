@@ -6,7 +6,7 @@ using SPTarkov.Server.Core.Utils;
 
 namespace HardcoreRules.Routers.Internal;
 
-public abstract class AbstractTypedStaticRouter<T> : StaticRouter, IRouteHandler where T : class, IRequestData
+internal abstract class AbstractTypedStaticRouter<T> : StaticRouter, IRouteHandler where T : class, IRequestData
 {
     protected static ConfigUtil Config { get; private set; } = null!;
 

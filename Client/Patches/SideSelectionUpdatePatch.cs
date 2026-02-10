@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace HardcoreRules.Patches
 {
-    public class SideSelectionUpdatePatch : ModulePatch
+    internal class SideSelectionUpdatePatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

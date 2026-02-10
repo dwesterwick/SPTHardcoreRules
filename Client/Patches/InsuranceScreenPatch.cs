@@ -11,7 +11,7 @@ using Comfort.Common;
 
 namespace HardcoreRules.Patches
 {
-    public class InsuranceScreenPatch: ModulePatch
+    internal class InsuranceScreenPatch: ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

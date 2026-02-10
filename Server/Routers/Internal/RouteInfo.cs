@@ -2,7 +2,7 @@
 
 namespace HardcoreRules.Routers.Internal
 {
-    public class RouteInfo : TypedRouteInfo<EmptyRequestData>
+    internal class RouteInfo : TypedRouteInfo<EmptyRequestData>
     {
         public RouteInfo(string routeName, IRouteHandler routerInstance) : base(routeName, routerInstance)
         {

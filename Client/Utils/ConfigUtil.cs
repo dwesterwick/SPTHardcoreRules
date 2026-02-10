@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HardcoreRules.Utils
 {
-    public static class ConfigUtil
+    internal static class ConfigUtil
     {
         private static bool? _usingHardcoreProfile = null!;
         public static bool UsingHardcoreProfile

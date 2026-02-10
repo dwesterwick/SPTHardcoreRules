@@ -12,7 +12,7 @@ using Comfort.Common;
 
 namespace HardcoreRules.Patches
 {
-    public class GetPrioritizedContainersForLootPatch : ModulePatch
+    internal class GetPrioritizedContainersForLootPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

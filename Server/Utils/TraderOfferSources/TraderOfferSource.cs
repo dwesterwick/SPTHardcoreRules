@@ -7,7 +7,7 @@ using SPTarkov.Server.Core.Services;
 
 namespace HardcoreRules.Utils.TraderOfferSources
 {
-    public class TraderOfferSource : AbstractOfferSource
+    internal class TraderOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
         private DatabaseService _databaseService;

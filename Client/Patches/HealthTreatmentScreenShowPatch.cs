@@ -11,7 +11,7 @@ using TMPro;
 
 namespace HardcoreRules.Patches
 {
-    public class HealthTreatmentScreenShowPatch : ModulePatch
+    internal class HealthTreatmentScreenShowPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

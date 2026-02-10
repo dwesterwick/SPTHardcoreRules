@@ -9,7 +9,7 @@ using SPTarkov.Server.Core.Services;
 namespace HardcoreRules.Services
 {
     [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
-    public class AddHardcoreProfileService : AbstractService
+    internal class AddHardcoreProfileService : AbstractService
     {
         public const string HARDCORE_PROFILE_NAME = "Hardcore Playthrough";
 

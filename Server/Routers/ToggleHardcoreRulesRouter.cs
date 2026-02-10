@@ -9,7 +9,7 @@ using SPTarkov.Server.Core.Utils;
 namespace HardcoreRules.Routers
 {
     [Injectable]
-    public class ToggleHardcoreRulesRouter : AbstractStaticRouter
+    internal class ToggleHardcoreRulesRouter : AbstractStaticRouter
     {
         private static readonly string[] _routeNames = ["ToggleHardcoreRules"];
 

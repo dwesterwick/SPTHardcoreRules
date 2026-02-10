@@ -2,7 +2,7 @@
 
 namespace HardcoreRules.Utils.ModIntegrityTests
 {
-    public class ClientLibraryExistsTest : Internal.IModIntegrityTest
+    internal class ClientLibraryExistsTest : Internal.IModIntegrityTest
     {
         private const string RELATIVE_PATH_TO_CLIENT_MOD = $"{ModInfo.RELATIVE_PATH_TO_SPT_INSTALL}../../BepInEx/plugins/{ModInfo.MODNAME}/{ModInfo.MODNAME}-Client.dll";
 

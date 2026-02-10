@@ -9,7 +9,7 @@ using HardcoreRules.Models;
 
 namespace HardcoreRules.Patches
 {
-    public class ItemCheckActionPatch : ModulePatch
+    internal class ItemCheckActionPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

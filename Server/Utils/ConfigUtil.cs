@@ -7,7 +7,7 @@ using System.Reflection;
 namespace HardcoreRules.Utils
 {
     [Injectable(InjectionType.Singleton)]
-    public class ConfigUtil
+    internal class ConfigUtil
     {
         private const string FILENAME_CONFIG = "config.json";
         private const string FILENAME_TRANSLATIONS = "translations.json";

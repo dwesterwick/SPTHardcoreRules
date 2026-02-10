@@ -8,7 +8,7 @@ using SPT.Reflection.Patching;
 
 namespace HardcoreRules.Patches
 {
-    public class DisableInsuranceForItemClassPatch : ModulePatch
+    internal class DisableInsuranceForItemClassPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
