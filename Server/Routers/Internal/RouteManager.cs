@@ -3,25 +3,9 @@ using SPTarkov.Server.Core.Models.Utils;
 
 namespace HardcoreRules.Routers.Internal
 {
-    public class RouteManager
+    public static class RouteManager
     {
         private static readonly Dictionary<string, IRouteInfo> _allRegisteredRoutes = new();
-
-        private static RouteManager _instance = null!;
-        public static RouteManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new RouteManager();
-                }
-
-                return _instance;
-            }
-        }
-
-        private RouteManager() { }
 
         public static void RegisterRoutes<T>(IEnumerable<string> routeNames, IRouteHandler handler) where T : class, IRequestData
         {

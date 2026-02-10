@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace HardcoreRules.Server;
 
-public class BuildPropertyTests
+internal class BuildPropertyTests
 {
     private ModMetadata modMetadata;
 

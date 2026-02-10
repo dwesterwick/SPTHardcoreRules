@@ -12,6 +12,8 @@ namespace HardcoreRules.Utils
         private const string FILENAME_CONFIG = "config.json";
         private const string FILENAME_TRANSLATIONS = "translations.json";
 
+        protected virtual string ConfigFileDirectory => ServerModDirectory;
+
         private string _serverModDirectory = null!;
         public string ServerModDirectory
         {
@@ -68,7 +70,7 @@ namespace HardcoreRules.Utils
 
         private T GetObject<T>(string filename)
         {
-            string fileText = File.ReadAllText(Path.Combine(ServerModDirectory, filename));
+            string fileText = File.ReadAllText(Path.Combine(ConfigFileDirectory, filename));
             T? obj = ConfigHelpers.Deserialize<T>(fileText);
             if (obj == null)
             {

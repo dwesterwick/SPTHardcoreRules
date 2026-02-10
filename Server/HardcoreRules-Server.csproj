@@ -34,10 +34,10 @@
   <Import Project="..\Shared\HardcoreRules-Shared.projitems" Label="Shared" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)CopyFilesAfterBuild.ps1&quot; -modName &quot;$(AssemblyTitle)&quot; -configuration &quot;$(Configuration)&quot; -debugPath &quot;$(SPTServerDebugPath)&quot;&#xD;&#xA;powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)..\Shared\CreatePackageAfterBuild.ps1&quot; -modName &quot;$(AssemblyTitle)&quot; -modVersion &quot;$(Version)&quot; -configuration &quot;$(Configuration)&quot;" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)CopyFilesAfterBuild.ps1&quot; -modName &quot;$(AssemblyTitle)&quot; -configuration &quot;$(Configuration)&quot; -debugPath &quot;$(SPTServerDebugPath)&quot; -relPathToSptInstall &quot;$(RelativePathToRootSPTInstall)&quot;&#xD;&#xA;powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)..\Shared\CreatePackageAfterBuild.ps1&quot; -modName &quot;$(AssemblyTitle)&quot; -modVersion &quot;$(Version)&quot; -configuration &quot;$(Configuration)&quot;" />
   </Target>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)..\Shared\UpdateModInfoBeforeBuild.ps1&quot; -guid &quot;$(SPTGUID)&quot; -modName &quot;$(AssemblyTitle)&quot; -author &quot;$(Authors)&quot; -modVersion &quot;$(Version)&quot; -sptVersion &quot;$(SPTVersion)&quot;" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(ProjectDir)..\Shared\UpdateModInfoBeforeBuild.ps1&quot; -guid &quot;$(SPTGUID)&quot; -modName &quot;$(AssemblyTitle)&quot; -author &quot;$(Authors)&quot; -modVersion &quot;$(Version)&quot; -sptVersion &quot;$(SPTVersion)&quot; -relPathToSptInstall &quot;$(RelativePathToRootSPTInstall)&quot;" />
   </Target>
 </Project>

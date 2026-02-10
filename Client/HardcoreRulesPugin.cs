@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HardcoreRules
 {
-    [BepInPlugin(ModInfo.GUID, ModInfo.MODNAME, ModInfo.MODVERSION)]
+    [BepInPlugin(ModInfo.GUID, ModInfo.MODNAME, ModInfo.MOD_VERSION)]
     public class HardcoreRulesPugin : BaseUnityPlugin
     {
         protected void Awake()

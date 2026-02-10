@@ -3,7 +3,8 @@
     [string]$modName,
     [string]$author,
     [string]$modVersion,
-    [string]$sptVersion
+    [string]$sptVersion,
+    [string]$relPathToSptInstall
 )
 
 Set-Location $PSScriptRoot
@@ -43,12 +44,13 @@ finally
 $updatedContent = $originalContent
 
 # Update property values
-Write-Host ('Updating {0}...setting properties: GUID={1}, MODNAME={2}, AUTHOR={3}, MODVERSION={4}, SPTVERSIONCOMPATIBILITY={5}.' -f $modInfoAbsolutePath, $guid, $modName, $author, $modVersion, $sptVersion)
+Write-Host ('Updating {0}...setting mod properties...' -f $modInfoAbsolutePath)
 $updatedContent = $updatedContent.Trim() -replace 'GUID = ".*"' , ('GUID = "{0}"' -f $guid)
 $updatedContent = $updatedContent.Trim() -replace 'MODNAME = ".*"' , ('MODNAME = "{0}"' -f $modName)
 $updatedContent = $updatedContent.Trim() -replace 'AUTHOR = ".*"' , ('AUTHOR = "{0}"' -f $author)
-$updatedContent = $updatedContent.Trim() -replace 'MODVERSION = ".*"' , ('MODVERSION = "{0}"' -f $modVersion)
-$updatedContent = $updatedContent.Trim() -replace 'SPTVERSIONCOMPATIBILITY = ".*"' , ('SPTVERSIONCOMPATIBILITY = "{0}"' -f $sptVersion)
+$updatedContent = $updatedContent.Trim() -replace 'MOD_VERSION = ".*"' , ('MOD_VERSION = "{0}"' -f $modVersion)
+$updatedContent = $updatedContent.Trim() -replace 'SPT_VERSION_COMPATIBILITY = ".*"' , ('SPT_VERSION_COMPATIBILITY = "{0}"' -f $sptVersion)
+$updatedContent = $updatedContent.Trim() -replace 'RELATIVE_PATH_TO_SPT_INSTALL = ".*"' , ('RELATIVE_PATH_TO_SPT_INSTALL = "{0}"' -f $relPathToSptInstall)
 
 # Write modified contents back to the file
 try

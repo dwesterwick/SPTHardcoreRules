@@ -1,13 +1,14 @@
 ﻿param (
     [string]$modName,
-    [string]$configuration
+    [string]$configuration,
+    [string]$relPathToSptInstall
 )
 
 Write-Host ('Copying client files for {0}...' -f $modName)
 
 Set-Location $PSScriptRoot
 
-$destinationAbsolute = Join-Path $PSScriptRoot ('..\..\..\BepInEx\plugins\{0}\' -f $modName)
+$destinationAbsolute = Join-Path $PSScriptRoot ('{0}..\BepInEx\plugins\{1}\' -f $relPathToSptInstall, $modName)
 $clientLibraryAbsolute = Join-Path $PSScriptRoot ('bin\{0}\netstandard2.1\{1}-Client.dll' -f $configuration, $modName)
 
 try

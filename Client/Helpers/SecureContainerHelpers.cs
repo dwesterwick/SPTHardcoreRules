@@ -3,53 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Comfort.Common;
 using EFT.InventoryLogic;
-using HardcoreRules.Utils;
 
 namespace HardcoreRules.Helpers
 {
     public static class SecureContainerHelpers
     {
-        private static List<Item> secureContainers = new List<Item>();
-
-        public static List<Item> GetAllSecureContainers()
+        private static List<Item> _secureContainers = new List<Item>();
+        public static List<Item> AllSecureContainers
         {
-            if (secureContainers.Count > 0)
+            get
             {
-                return secureContainers;
-            }
-
-            ItemFactoryClass itemFactory = Singleton<ItemFactoryClass>.Instance;
-            if (itemFactory == null)
-            {
-                return secureContainers;
-            }
-
-            // Find all possible secure containers
-            foreach (Item item in itemFactory.CreateAllItemsEver())
-            {
-                if (!EFT.UI.DragAndDrop.ItemViewFactory.IsSecureContainer(item))
+                if (_secureContainers.Count == 0)
                 {
-                    continue;
+                    _secureContainers = getAllSecureContainers();
                 }
 
-                secureContainers.Add(item);
+                return _secureContainers;
             }
+        }
+
+        private static List<Item> getAllSecureContainers()
+        {
+            List<Item> secureContainers = ItemHelpers.AllItems
+                .Where(item => item.IsSecureContainer())
+                .ToList();
 
             // Removed secure containers that can't be used by the player (namely the "development" and "boss" secure containers)
-            secureContainers.RemoveAll(c => ConfigUtil.CurrentConfig.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId.ToString()));
+            //secureContainers.RemoveAll(c => ConfigUtil.CurrentConfig.SecureContainer.IgnoredSecureContainers.Contains(c.TemplateId.ToString()));
+
+            if (secureContainers.Count == 0)
+            {
+                throw new InvalidOperationException("Could not create list of secure container ID's");
+            }
 
             return secureContainers;
         }
 
+        public static bool IsSecureContainer(this Item item) => EFT.UI.DragAndDrop.ItemViewFactory.IsSecureContainer(item);
+
         public static bool IsOrIsInASecureContainer(this Item item)
         {
-            List<Item> secureContainers = GetAllSecureContainers();
-
-            foreach (Item containedItem in item.GetAllParentItemsAndSelf())
+            foreach (Item parentItem in item.GetAllParentItemsAndSelf())
             {
-                if (secureContainers.Any(c => c.TemplateId == containedItem.TemplateId))
+                if (_secureContainers.Any(c => c.TemplateId == parentItem.TemplateId))
                 {
                     return true;
                 }

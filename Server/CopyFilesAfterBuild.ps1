@@ -1,14 +1,15 @@
 ﻿param (
     [string]$modName,
     [string]$configuration,
-    [string]$debugPath
+    [string]$debugPath,
+    [string]$relPathToSptInstall
 )
 
 Write-Host ('Copying server files for {0}...' -f $modName)
 
 Set-Location $PSScriptRoot
 
-$destinationAbsolute = Join-Path $PSScriptRoot ('..\..\..\SPT\user\mods\{0}-Server\' -f $modName)
+$destinationAbsolute = Join-Path $PSScriptRoot ('{0}..\SPT\user\mods\{1}-Server\' -f $relPathToSptInstall, $modName)
 $serverLibraryAbsolute = Join-Path $PSScriptRoot ('bin\{0}\{1}-Server\{1}-Server.dll' -f $configuration, $modName)
 $serverLibraryPdbAbsolute = Join-Path $PSScriptRoot ('bin\{0}\{1}-Server\{1}-Server.pdb' -f $configuration, $modName)
 

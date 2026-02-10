@@ -8,12 +8,14 @@ namespace HardcoreRules
         public override string Name { get; init; } = ModInfo.MODNAME;
         public override string Author { get; init; } = ModInfo.AUTHOR;
         public override List<string>? Contributors { get; init; }
-        public override SemanticVersioning.Version Version { get; init; } = new(ModInfo.MODVERSION);
-        public override SemanticVersioning.Range SptVersion { get; init; } = new(ModInfo.SPTVERSIONCOMPATIBILITY);
+        public override SemanticVersioning.Version Version { get; init; } = new(ModInfo.MOD_VERSION);
+        public override SemanticVersioning.Range SptVersion { get; init; } = new(ModInfo.SPT_VERSION_COMPATIBILITY);
         public override List<string>? Incompatibilities { get; init; }
         public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
         public override string? Url { get; init; }
         public override bool? IsBundleMod { get; init; } = false;
         public override string License { get; init; } = "MIT";
+
+        public string RelativePathToSptInstall = ModInfo.RELATIVE_PATH_TO_SPT_INSTALL;
     }
 }
