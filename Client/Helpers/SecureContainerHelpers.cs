@@ -46,7 +46,7 @@ namespace HardcoreRules.Helpers
         {
             foreach (Item parentItem in item.GetAllParentItemsAndSelf())
             {
-                if (_secureContainers.Any(c => c.TemplateId == parentItem.TemplateId))
+                if (AllSecureContainers.Any(c => c.TemplateId == parentItem.TemplateId))
                 {
                     return true;
                 }
