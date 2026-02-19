@@ -1,5 +1,5 @@
 ﻿using HardcoreRules.Utils.Internal;
-using HardcoreRules.Utils.TraderOfferSources.Internal;
+using HardcoreRules.Utils.OfferSourceUtils.OfferSources.Internal;
 using SPTarkov.Server.Core.Generators;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
@@ -7,7 +7,7 @@ using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Servers;
 using SPTarkov.Server.Core.Services;
 
-namespace HardcoreRules.Utils.TraderOfferSources
+namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 {
     internal class FleaMarketOfferSource : AbstractOfferSource
     {

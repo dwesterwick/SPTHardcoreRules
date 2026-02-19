@@ -1,5 +1,6 @@
 ﻿using HardcoreRules.Services.Internal;
 using HardcoreRules.Utils;
+using HardcoreRules.Utils.OfferSourceUtils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 
@@ -8,18 +9,27 @@ namespace HardcoreRules.Services
     [Injectable(TypePriority = OnLoadOrder.PostSptModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
     internal class ToggleHardcoreRulesService : AbstractService
     {
-        public bool HardcoreRulesEnabled { get; private set; } = false;
+        public static bool HardcoreRulesEnabled { get; private set; } = false;
 
         private TraderOffersUtil _traderOffersUtil;
+        private GiftOffersUtil _giftOffersUtil;
+        private FenceOffersUtil _fenceOffersUtil;
+        private FleaMarketOffersUtil _fleaMarketOffersUtil;
 
         public ToggleHardcoreRulesService
         (
             LoggingUtil logger,
             ConfigUtil config,
-            TraderOffersUtil traderOffersUtil
+            TraderOffersUtil traderOffersUtil,
+            GiftOffersUtil giftOffersUtil,
+            FenceOffersUtil fenceOffersUtil,
+            FleaMarketOffersUtil fleaMarketOffersUtil
         ) : base(logger, config)
         {
             _traderOffersUtil = traderOffersUtil;
+            _giftOffersUtil = giftOffersUtil;
+            _fenceOffersUtil = fenceOffersUtil;
+            _fleaMarketOffersUtil = fleaMarketOffersUtil;
         }
 
         protected override void OnLoadIfModIsEnabled()
@@ -55,22 +65,22 @@ namespace HardcoreRules.Services
 
             if (!Config.CurrentConfig.Services.FleaMarket.Enabled)
             {
-                _traderOffersUtil.DisableFleaMarket();
+                _fleaMarketOffersUtil.DisableFleaMarket();
             }
 
             if (Config.CurrentConfig.Traders.DisableFence)
             {
-                _traderOffersUtil.DisableFence();
+                _fenceOffersUtil.DisableFence();
             }
 
             if (Config.CurrentConfig.Traders.DisableStartingGifts)
             {
-                _traderOffersUtil.DisableGifts();
+                _giftOffersUtil.DisableGifts();
             }
 
+            _fenceOffersUtil.RefreshFenceOffers();
             _traderOffersUtil.RemoveBannedTraderOffers();
-            _traderOffersUtil.RefreshFenceOffers();
-            _traderOffersUtil.RefreshFleaMarketOffersAndRemoveBannedOffers();
+            _fleaMarketOffersUtil.RefreshFleaMarketOffers();
 
             HardcoreRulesEnabled = true;
             Logger.Info("Enabling hardcore rules...done.");
@@ -82,22 +92,22 @@ namespace HardcoreRules.Services
 
             if (!Config.CurrentConfig.Services.FleaMarket.Enabled)
             {
-                _traderOffersUtil.EnableFleaMarket();
+                _fleaMarketOffersUtil.EnableFleaMarket();
             }
 
             if (Config.CurrentConfig.Traders.DisableFence)
             {
-                _traderOffersUtil.EnableFence();
+                _fenceOffersUtil.EnableFence();
             }
 
             if (Config.CurrentConfig.Traders.DisableStartingGifts)
             {
-                _traderOffersUtil.EnableGifts();
+                _giftOffersUtil.EnableGifts();
             }
 
+            _fenceOffersUtil.RefreshFenceOffers();
             _traderOffersUtil.RestoreTraderOffers();
-            _traderOffersUtil.RefreshFenceOffers();
-            _traderOffersUtil.RefreshFleaMarketOffers();
+            _fleaMarketOffersUtil.RefreshFleaMarketOffers();
 
             HardcoreRulesEnabled = false;
             Logger.Info("Disabling hardcore rules...done.");

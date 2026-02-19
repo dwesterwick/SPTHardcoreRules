@@ -35,7 +35,7 @@ namespace HardcoreRules.Routers
         {
             ToggleHardcoreRules(routerData.SessionId);
 
-            return JsonUtil.SerializeToValueTask(_toggleHardcoreRulesService.HardcoreRulesEnabled);
+            return JsonUtil.SerializeToValueTask(ToggleHardcoreRulesService.HardcoreRulesEnabled);
         }
 
         private void ToggleHardcoreRules(MongoId sessionId)

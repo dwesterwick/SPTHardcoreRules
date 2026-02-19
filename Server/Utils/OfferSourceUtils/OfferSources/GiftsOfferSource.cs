@@ -1,9 +1,9 @@
 ﻿using HardcoreRules.Utils.Internal;
-using HardcoreRules.Utils.TraderOfferSources.Internal;
+using HardcoreRules.Utils.OfferSourceUtils.OfferSources.Internal;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Servers;
 
-namespace HardcoreRules.Utils.TraderOfferSources
+namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 {
     internal class GiftsOfferSource : AbstractOfferSource
     {

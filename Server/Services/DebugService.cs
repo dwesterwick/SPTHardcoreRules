@@ -1,6 +1,7 @@
 ﻿using HardcoreRules.Helpers;
 using HardcoreRules.Services.Internal;
 using HardcoreRules.Utils;
+using HardcoreRules.Utils.OfferSourceUtils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Common;
@@ -13,7 +14,7 @@ namespace HardcoreRules.Services
     internal class DebugService : AbstractService
     {
         private DatabaseService _databaseService;
-        private TraderOffersUtil _traderOffersUtil;
+        private OfferModificationUtil _traderOffersUtil;
         private TranslationService _translationService;
         private ToggleHardcoreRulesService _toggleHardcoreRulesService;
 
@@ -22,7 +23,7 @@ namespace HardcoreRules.Services
             LoggingUtil logger,
             ConfigUtil config,
             DatabaseService databaseService,
-            TraderOffersUtil traderOffersUtil,
+            OfferModificationUtil traderOffersUtil,
             TranslationService translationService,
             ToggleHardcoreRulesService toggleHardcoreRulesService
         ) : base(logger, config)

@@ -1,4 +1,4 @@
-﻿namespace HardcoreRules.Utils.TraderOfferSources.Internal
+﻿namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources.Internal
 {
     public abstract class AbstractOfferSource
     {
