@@ -5,7 +5,7 @@ using SPTarkov.Server.Core.Models.Utils;
 namespace HardcoreRules.Utils
 {
     [Injectable(InjectionType.Singleton)]
-    internal class LoggingUtil(ISptLogger<HardcoreRules_Server> _logger, ConfigUtil _configUtil)
+    public class LoggingUtil(ISptLogger<HardcoreRules_Server> _logger, ConfigUtil _configUtil)
     {
         public void Debug(string message)
         {

@@ -12,7 +12,7 @@ using SPTarkov.Server.Core.Services;
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
     [Injectable(InjectionType.Singleton)]
-    internal class OfferModificationUtil
+    public class OfferModificationUtil
     {
         private LoggingUtil _loggingUtil;
         private ConfigUtil _configUtil;

@@ -23,6 +23,8 @@
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Include="SPTarkov.Common" Version="4.0.12" />
+    <PackageReference Include="SPTarkov.DI" Version="4.0.12" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,7 +48,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="dotnet test --no-build" />
+    <Exec Command="if not &quot;$(Configuration)&quot; == &quot;Debug&quot; (dotnet test --no-build)" />
   </Target>
 
 </Project>
