@@ -13,7 +13,7 @@ using SPTarkov.Server.Core.Services;
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
     [Injectable(InjectionType.Singleton)]
-    internal class FleaMarketOffersUtil
+    public class FleaMarketOffersUtil
     {
         private FleaMarketOfferSource FleaMarket;
 
