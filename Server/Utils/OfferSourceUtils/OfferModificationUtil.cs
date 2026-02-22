@@ -20,7 +20,6 @@ namespace HardcoreRules.Utils.OfferSourceUtils
         private ItemHelper _itemHelper;
 
         private HashSet<MongoId> _money_Ids;
-        private MongoId _gpCoin_Id;
 
         private MongoId[] _whiteListedTraders = null!;
         public IReadOnlyCollection<MongoId> WhitelistedTraders
@@ -67,7 +66,6 @@ namespace HardcoreRules.Utils.OfferSourceUtils
             _itemHelper = itemHelper;
 
             _money_Ids = Money.GetMoneyTpls();
-            _gpCoin_Id = Money.GP;
         }
 
         private MongoId[] GetWhiteListedTraders()
@@ -149,23 +147,25 @@ namespace HardcoreRules.Utils.OfferSourceUtils
                 return false;
             }
 
-            foreach (IAbstractOfferRequirement requirement in offerRequirements)
+            return offerRequirements.All(IsForABarterItem);
+        }
+
+        private bool IsForABarterItem(IAbstractOfferRequirement offerRequirement)
+        {
+            if (!_databaseService.GetTables().Templates.Items.TryGetValue(offerRequirement.Template, out TemplateItem? requiredItem) || requiredItem == null)
             {
-                if (!_databaseService.GetTables().Templates.Items.TryGetValue(requirement.Template, out TemplateItem? requiredItem) || requiredItem == null)
-                {
-                    _loggingUtil.Error($"Could not get required item {requirement.Template} for barter scheme");
-                    return false;
-                }
+                _loggingUtil.Error($"Could not get required item {offerRequirement.Template} for barter scheme");
+                return false;
+            }
 
-                if (_configUtil.CurrentConfig.Traders.AllowGPCoins && requiredItem.Id == _gpCoin_Id)
-                {
-                    return true;
-                }
+            if (_configUtil.CurrentConfig.Traders.AllowGPCoins && requiredItem.Id == Money.GP)
+            {
+                return true;
+            }
 
-                if (!IsMoney(requiredItem))
-                {
-                    return true;
-                }
+            if (!IsMoney(requiredItem))
+            {
+                return true;
             }
 
             return false;
