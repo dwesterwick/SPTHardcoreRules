@@ -25,8 +25,6 @@ namespace HardcoreRules.Server
         private const string ID_OFFER_MECHANIC_TOOLSET = "686e34386c2a18ed6b0e9c3c";
         private const string ID_OFFER_MECHANIC_MULTITOOL = "686e342e6c2a18ed6b0e983a";
 
-        private const string ID_TRADER_FENCE = "579dc571d53a0658a154fbec";
-
         private const string ID_TRADER_REF = "6617beeaa9cfa777ca915b7c";
         private const string ID_OFFER_REF_ARMOR_REPAIR_KIT = "68a58a62b20845b9d00bbf4b";
         private const string ID_OFFER_REF_SHATUNS_KEY = "68a58a60b20845b9d00bbe30";
