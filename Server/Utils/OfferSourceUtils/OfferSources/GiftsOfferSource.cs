@@ -12,7 +12,7 @@ namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 
         private GiftsConfig _giftsConfig;
 
-        private ObjectCache<GiftsConfig> _originalGiftsConfig = new();
+        private ObjectCache<Dictionary<string, Gift>> _originalGifts = new();
 
         public GiftsOfferSource(LoggingUtil loggingUtil, ConfigServer configServer) : base()
         {
@@ -24,12 +24,12 @@ namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 
         protected override void OnUpdateCache()
         {
-            _originalGiftsConfig.CacheValueAndThrowIfNull(_giftsConfig);
+            _originalGifts.CacheValueAndThrowIfNull(_giftsConfig.Gifts);
         }
 
         protected override void OnRestoreCache()
         {
-            _giftsConfig = _originalGiftsConfig.GetValueAndThrowIfNull();
+            _giftsConfig.Gifts = _originalGifts.GetValueAndThrowIfNull();
         }
 
         protected override void OnDisable()

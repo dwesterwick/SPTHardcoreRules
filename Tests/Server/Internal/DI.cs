@@ -7,6 +7,8 @@ using SPTarkov.Server.Core.Utils.Logger.Handlers;
 
 namespace HardcoreRules.Server.Internal;
 
+// Copied from https://github.com/sp-tarkov/server-csharp/blob/main/Testing/UnitTests/DI.cs
+
 [TestFixture]
 public class DI
 {

@@ -6,6 +6,8 @@ using SPTarkov.Server.Core.Utils.Logger;
 
 namespace HardcoreRules.Server.Internal;
 
+// Copied from https://github.com/sp-tarkov/server-csharp/blob/main/Testing/UnitTests/Mock/MockLogger.cs
+
 [Injectable(TypeOverride = typeof(SptLogger<>))]
 public class MockLogger<T> : ISptLogger<T>
 {

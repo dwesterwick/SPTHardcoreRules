@@ -5,7 +5,7 @@ using SPTarkov.Server.Core.Servers;
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
     [Injectable(InjectionType.Singleton)]
-    internal class GiftOffersUtil
+    public class GiftOffersUtil
     {
         private GiftsOfferSource Gifts;
 
