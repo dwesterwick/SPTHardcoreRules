@@ -33,17 +33,20 @@ namespace HardcoreRules.Routers
 
         public override ValueTask<string?> HandleRoute(string routeName, RequestData routerData)
         {
-            ToggleHardcoreRules(routerData.SessionId);
+            bool shouldUseHardcoreRules = ShouldUseHardcoreRules(routerData.SessionId);
 
-            return JsonUtil.SerializeToValueTask(ToggleHardcoreRulesService.HardcoreRulesEnabled);
+            if (Config.CurrentConfig.IsModEnabled())
+            {
+                _toggleHardcoreRulesService.ToggleHardcoreRules(shouldUseHardcoreRules);
+                Logger.Info($"Hardcore rules were {(shouldUseHardcoreRules ? "" : "not ")}enabled.");
+            }
+            
+            return JsonUtil.SerializeToValueTask(shouldUseHardcoreRules);
         }
 
-        private void ToggleHardcoreRules(MongoId sessionId)
+        private bool ShouldUseHardcoreRules(MongoId sessionId)
         {
-            bool useHardcoreRules = IsUsingAHardcoreProfile(sessionId) || Config.CurrentConfig.UseForAllProfiles;
-
-            _toggleHardcoreRulesService.ToggleHardcoreRules(useHardcoreRules);
-            Logger.Info($"Hardcore rules were {(useHardcoreRules ? "" : "not ")}enabled.");
+            return IsUsingAHardcoreProfile(sessionId) || Config.CurrentConfig.UseForAllProfiles;
         }
 
         private bool IsUsingAHardcoreProfile(MongoId sessionId)
