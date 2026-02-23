@@ -11,8 +11,6 @@ namespace HardcoreRules.Utils.OfferSourceUtils
     [Injectable(InjectionType.Singleton)]
     public class TraderOffersUtil
     {
-        private const string HIDEOUT_SLOT_ID = "hideout";
-
         private TraderOfferSource TraderAssorts;
 
         private LoggingUtil _loggingUtil;
@@ -69,7 +67,7 @@ namespace HardcoreRules.Utils.OfferSourceUtils
 
             foreach (Item item in trader.Assort.Items)
             {
-                if (item.SlotId?.ToLower() != HIDEOUT_SLOT_ID)
+                if (item.SlotId?.ToLower() != DatabaseHelpers.HIDEOUT_SLOT_ID)
                 {
                     if (lastItemWillBeRemoved)
                     {
@@ -135,7 +133,7 @@ namespace HardcoreRules.Utils.OfferSourceUtils
         {
             string localizedTraderName = _translationService.GetLocalisedTraderName(trader);
 
-            if (item.ParentId == HIDEOUT_SLOT_ID)
+            if (item.ParentId == DatabaseHelpers.HIDEOUT_SLOT_ID)
             {
                 if (!trader.Assort.LoyalLevelItems.Remove(item.Id))
                 {

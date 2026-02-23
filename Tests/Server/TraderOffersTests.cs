@@ -1,4 +1,5 @@
-﻿using HardcoreRules.Server.Internal;
+﻿using HardcoreRules.Helpers;
+using HardcoreRules.Server.Internal;
 using HardcoreRules.Utils;
 using HardcoreRules.Utils.OfferSourceUtils;
 using SPTarkov.Server.Core.Helpers;
@@ -67,14 +68,20 @@ namespace HardcoreRules.Server
         public void TraderOffersCanBeToggled()
         {
             EnableTraders();
-            int notWhitelistedTraderOffersCount = GetAllNotWhitelistedTraderOffersCount();
             int cashTraderOffersCount = GetAllCashTraderOffersCount();
+            int notWhitelistedTraderOffersCount = GetAllNotWhitelistedTraderOffersCount();
             Assert.NotZero(notWhitelistedTraderOffersCount, "Trader offers are only whitelisted offers");
             Assert.NotZero(cashTraderOffersCount, "Trader offers are only barter offers");
 
             EnableTradersBarterOnly();
+            cashTraderOffersCount = GetAllCashTraderOffersCount();
             int whitelistedCashTraderOffersCount = GetAllCashWhitelistedTraderOffersCount();
+            Assert.True(whitelistedCashTraderOffersCount == cashTraderOffersCount, "Cash offers exist besides whitelisted items");
 
+            EnableTradersWhitelistOnly();
+            int allOffers = GetAllTraderOffersCount();
+            int whitelistedOffersCount = GetAllWhitelistedTraderOffersCount();
+            Assert.True(allOffers == whitelistedOffersCount, "Offers exist besides whitelisted items");
         }
 
         private void EnableTraders()
@@ -139,62 +146,76 @@ namespace HardcoreRules.Server
         private IEnumerable<Trader> GetTradersWithTradeOffers()
         {
             return _databaseService.GetTraders()
-                .Where(trader => trader.Value.Assort?.Items.Count() > 0)
+                .NotIncludingFence()
+                .WithOffers()
                 .Select(trader => trader.Value);
         }
 
         private int GetAllTraderOffersCount()
         {
             return GetTradersWithTradeOffers()
-                .Select(trader => trader.Assort.Items)
+                .SelectMany(trader => trader.Assort.AssortOfferItems())
                 .Count();
+        }
+
+        private int GetAllWhitelistedTraderOffersCount()
+        {
+            var notWhitelistedTraderOffers = GetTradersWithTradeOffers()
+                .Select(trader => trader.Assort.AssortOfferItems())
+                .SelectMany(items => items
+                    .Select(item => _offerModificationUtil.GetItemTemplate(item))
+                    .Where(template => template != null)
+                    //.Where(template => !template!.IsQuestItem())
+                    .Where(template => _offerModificationUtil.IsWhitelisted(template!))
+                );
+
+            return notWhitelistedTraderOffers.Count();
         }
 
         private int GetAllNotWhitelistedTraderOffersCount()
         {
-            return GetTradersWithTradeOffers()
-                .Select(trader => trader.Assort.Items)
+            var notWhitelistedTraderOffers = GetTradersWithTradeOffers()
+                .Select(trader => trader.Assort.AssortOfferItems())
                 .SelectMany(items => items
                     .Select(item => _offerModificationUtil.GetItemTemplate(item))
                     .Where(template => template != null)
                     //.Where(template => !template!.IsQuestItem())
                     .Where(template => !_offerModificationUtil.IsWhitelisted(template!))
-                ).Count();
+                );
+            
+            return notWhitelistedTraderOffers.Count();
         }
 
         private int GetAllBarterSchemesCount()
         {
             return GetTradersWithTradeOffers()
-                .Select(trader => trader.Assort.BarterScheme)
+                .SelectMany(trader => trader.Assort.BarterScheme)
                 .Count();
         }
 
         private int GetAllCashTraderOffersCount()
         {
-            return GetTradersWithTradeOffers()
-                .Select(trader => trader.Assort.BarterScheme)
-                .Where(scheme => scheme
-                    .Select(scheme => scheme.Value)
-                    .Any(scheme => !_offerModificationUtil.IsABarterOffer(scheme))
-                )
+            var cashTraderOffers = GetTradersWithTradeOffers()
+                .SelectMany(trader => trader.Assort.BarterScheme)
+                .Where(scheme => scheme.Value.Any(scheme => !_offerModificationUtil.IsABarterOffer(scheme)));
+                
+            return cashTraderOffers
+                .Select(scheme => scheme.Value)
                 .Count();
         }
 
         private int GetAllCashWhitelistedTraderOffersCount()
         {
             Item[] allWhitelistedTraderOffers = GetTradersWithTradeOffers()
-                .SelectMany(trader => trader.Assort.Items)
+                .SelectMany(trader => trader.Assort.AssortOfferItems())
                 .Where(item => _offerModificationUtil.GetItemTemplate(item.Template) != null)
                 .Where(item => _offerModificationUtil.IsWhitelisted(_offerModificationUtil.GetItemTemplate(item.Template)!))
                 .ToArray();
 
             MongoId[] allCashTraderOfferIds = GetTradersWithTradeOffers()
-               .Select(trader => trader.Assort.BarterScheme)
-               .Where(scheme => scheme
-                   .Select(scheme => scheme.Value)
-                   .Any(scheme => !_offerModificationUtil.IsABarterOffer(scheme))
-               )
-               .SelectMany(scheme => scheme.Keys)
+               .SelectMany(trader => trader.Assort.BarterScheme)
+               .Where(scheme => scheme.Value.Any(scheme => !_offerModificationUtil.IsABarterOffer(scheme)))
+               .Select(scheme => scheme.Key)
                .ToArray();
 
             IEnumerable<Item> whitelistedCashTraderOffers = allWhitelistedTraderOffers

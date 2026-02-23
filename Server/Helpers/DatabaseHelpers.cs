@@ -8,6 +8,13 @@ namespace HardcoreRules.Helpers
 {
     public static class DatabaseHelpers
     {
+        public const string HIDEOUT_SLOT_ID = "hideout";
+
+        public static IEnumerable<Item> AssortOfferItems(this TraderAssort assort)
+        {
+            return assort.Items.Where(item => item.SlotId == HIDEOUT_SLOT_ID);
+        }
+
         public static Location GetAndVerifyLocation(this DatabaseService databaseService, string locationId)
         {
             Location? location = databaseService.GetLocation(locationId);
@@ -33,18 +40,18 @@ namespace HardcoreRules.Helpers
 
         public static IEnumerable<Trader> NotIncludingFence(this IEnumerable<Trader> traders) => traders.Where(t => !t.IsFence());
 
-        public static IDictionary<TKey, Trader> NotIncludingFence<TKey>(this IDictionary<TKey, Trader> traders)
+        public static IDictionary<TKey, Trader> NotIncludingFence<TKey>(this IDictionary<TKey, Trader> traders) where TKey: notnull
         {
-            return (IDictionary<TKey, Trader>)traders.Where(t => !t.Value.IsFence());
+            return traders.Where(t => !t.Value.IsFence()).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         public static bool HasOffers(this Trader? trader) => trader?.Assort?.Items?.Count > 0;
 
         public static IEnumerable<Trader> WithOffers(this IEnumerable<Trader> traders) => traders.Where(t => t.HasOffers());
 
-        public static IDictionary<TKey, Trader> WithOffers<TKey>(this IDictionary<TKey, Trader> traders)
+        public static IDictionary<TKey, Trader> WithOffers<TKey>(this IDictionary<TKey, Trader> traders) where TKey : notnull
         {
-            return (IDictionary<TKey, Trader>)traders.Where(t => t.Value.HasOffers());
+            return traders.Where(t => t.Value.HasOffers()).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         public static bool Contains(this IEnumerable<string> ids, MongoId id) => ids.Any(id.Equals);

@@ -78,11 +78,13 @@ namespace HardcoreRules.Services
                 _giftOffersUtil.DisableGifts();
             }
 
-            _fenceOffersUtil.RefreshFenceOffers();
             _traderOffersUtil.RemoveBannedTraderOffers();
-            _fleaMarketOffersUtil.RefreshFleaMarketOffers();
 
             HardcoreRulesEnabled = true;
+
+            _fenceOffersUtil.RefreshFenceOffers();
+            _fleaMarketOffersUtil.RefreshFleaMarketOffers();
+
             Logger.Info("Enabling hardcore rules...done.");
         }
 
@@ -105,11 +107,13 @@ namespace HardcoreRules.Services
                 _giftOffersUtil.EnableGifts();
             }
 
-            _fenceOffersUtil.RefreshFenceOffers();
             _traderOffersUtil.RestoreTraderOffers();
-            _fleaMarketOffersUtil.RefreshFleaMarketOffers();
 
             HardcoreRulesEnabled = false;
+
+            _fenceOffersUtil.RefreshFenceOffers();
+            _fleaMarketOffersUtil.RefreshFleaMarketOffers();
+
             Logger.Info("Disabling hardcore rules...done.");
         }
     }
