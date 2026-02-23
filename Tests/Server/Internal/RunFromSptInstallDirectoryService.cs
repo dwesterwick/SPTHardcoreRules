@@ -46,7 +46,7 @@ namespace HardcoreRules.Server.Internal
             Directory.SetCurrentDirectory(CurrentDirectory);
         }
 
-        public static TOut RunFromSptInstallDirectory<Tin, TOut>(Func<Tin, TOut> func, Tin value)
+        public static TOut RunFromSptInstallDirectory<TIn, TOut>(Func<TIn, TOut> func, TIn value)
         {
             Directory.SetCurrentDirectory(PathToSptInstallDirectory);
             TOut output = func(value);
