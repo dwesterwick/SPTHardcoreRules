@@ -25,6 +25,7 @@ namespace HardcoreRules.Server.Internal
 
         public override string GetLocalisedValue(string key)
         {
+            // Need to temporarily switch directories because translations are lazy loaded
             return RunFromSptInstallDirectoryService.RunFromSptInstallDirectory(base.GetLocalisedValue, key);
         }
     }
