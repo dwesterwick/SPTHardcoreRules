@@ -4,7 +4,7 @@ using SPTarkov.Server.Core.DI;
 
 namespace HardcoreRules.Services.Internal;
 
-internal abstract class AbstractService : IOnLoad
+public abstract class AbstractService : IOnLoad
 {
     protected LoggingUtil Logger { get; private set; } = null!;
     protected ConfigUtil Config { get; private set; } = null!;

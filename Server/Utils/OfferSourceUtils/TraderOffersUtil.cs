@@ -9,7 +9,7 @@ using SPTarkov.Server.Core.Services;
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
     [Injectable(InjectionType.Singleton)]
-    internal class TraderOffersUtil
+    public class TraderOffersUtil
     {
         private const string HIDEOUT_SLOT_ID = "hideout";
 
@@ -166,9 +166,10 @@ namespace HardcoreRules.Utils.OfferSourceUtils
 
         private bool MustKeepTraderAssortItem(Item item)
         {
-            if (!_databaseService.GetTables().Templates.Items.TryGetValue(item.Template, out TemplateItem? template) || template == null)
+            TemplateItem? template = _offerModificationUtil.GetItemTemplate(item);
+            if (template == null)
             {
-                _loggingUtil.Error($"Could not retrieve template {item.Template} for item {item.Id}");
+                _loggingUtil.Error($"Template {item.Template} for item {item.Id} is null");
                 return true;
             }
 

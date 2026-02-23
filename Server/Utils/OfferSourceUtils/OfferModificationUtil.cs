@@ -84,6 +84,19 @@ namespace HardcoreRules.Utils.OfferSourceUtils
                 .ToArray();
         }
 
+        public TemplateItem? GetItemTemplate(Item item) => GetItemTemplate(item.Template);
+
+        public TemplateItem? GetItemTemplate(MongoId mongoId)
+        {
+            if (!_databaseService.GetTables().Templates.Items.TryGetValue(mongoId, out TemplateItem? template))
+            {
+                _loggingUtil.Error($"Could not retrieve template {mongoId}");
+                return null;
+            }
+
+            return template;
+        }
+
         public bool IsWhitelisted(TemplateItem template)
         {
             if (WhitelistedItems.Contains(template.Id))
@@ -152,9 +165,10 @@ namespace HardcoreRules.Utils.OfferSourceUtils
 
         private bool IsForABarterItem(IAbstractOfferRequirement offerRequirement)
         {
-            if (!_databaseService.GetTables().Templates.Items.TryGetValue(offerRequirement.Template, out TemplateItem? requiredItem) || requiredItem == null)
+            TemplateItem? requiredItem = GetItemTemplate(offerRequirement.Template);
+            if (requiredItem == null)
             {
-                _loggingUtil.Error($"Could not get required item {offerRequirement.Template} for barter scheme");
+                _loggingUtil.Error($"Required item {offerRequirement.Template} for barter scheme is null");
                 return false;
             }
 

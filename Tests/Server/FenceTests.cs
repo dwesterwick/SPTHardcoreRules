@@ -36,7 +36,7 @@ namespace HardcoreRules.Server
         [SetUp]
         public void Setup()
         {
-            SptDependencyLoader.LoadDependencies(LoadSptDependencies);
+            RunFromSptInstallDirectoryService.RunFromSptInstallDirectory(LoadSptDependencies);
 
             _logger = new MockLogger<HardcoreRules_Server>();
             _configUtil = new MockConfigUtil(_modHelper);
