@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Comfort.Common;
+using HardcoreRules.Utils;
+using HarmonyLib;
+using SPT.Reflection.Patching;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using SPT.Reflection.Patching;
-using EFT;
-using HardcoreRules.Utils;
-using Comfort.Common;
 
 namespace HardcoreRules.Patches
 {
@@ -18,35 +19,25 @@ namespace HardcoreRules.Patches
             return typeof(MainMenuControllerClass).GetMethod("method_80", BindingFlags.Public | BindingFlags.Instance);
         }
 
-        [PatchPrefix]
-        protected static bool PatchPrefix(MainMenuControllerClass __instance, RaidSettings ___RaidSettings_0, RaidSettings ___RaidSettings_1)
+        [PatchTranspiler]
+        protected static IEnumerable<CodeInstruction> PatchTranspiler(IEnumerable<CodeInstruction> originalInstructions)
         {
-            Singleton<LoggingUtil>.Instance.LogDebug("Disabling insurance screen...");
-            // The insurance screen is disabled in live Tarkov for offline raids
-            ___RaidSettings_0.RaidMode = ERaidMode.Local;
+            MethodInfo showInsuranceScreenMethodInfo = typeof(MainMenuControllerClass).GetMethod("method_51", BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo showAcceptScreenMethodInfo = typeof(MainMenuControllerClass).GetMethod("method_52", BindingFlags.Public | BindingFlags.Instance);
 
-            // The rest of the code was copied from the original method (except for invoking other private methods in MainMenuController)
-            if (___RaidSettings_0.SelectedLocation.Id == "laboratory")
+            List<CodeInstruction> modifiedInstructions = originalInstructions.ToList();
+
+            for (int i = 0; i < modifiedInstructions.Count; i++)
             {
-                ___RaidSettings_0.WavesSettings.IsBosses = true;
-                ___RaidSettings_1.WavesSettings.IsBosses = true;
-            }
-            if (___RaidSettings_0.RaidMode == ERaidMode.Online)
-            {
-                __instance.method_51();
-                return false;
+                if ((modifiedInstructions[i].opcode == OpCodes.Call) && ((MethodInfo)modifiedInstructions[i].operand == showInsuranceScreenMethodInfo))
+                {
+                    Singleton<LoggingUtil>.Instance.LogInfo("Disabling insurance screen...");
+
+                    modifiedInstructions[i].operand = showAcceptScreenMethodInfo;
+                }
             }
 
-            __instance.method_52();
-            return false;
-        }
-
-        [PatchPostfix]
-        protected static void PatchPostfix(MainMenuControllerClass __instance, RaidSettings ___RaidSettings_0)
-        {
-            // TO DO: Is this really true?
-            // This is done in SPT.SinglePlayer.Patches.MainMenu.InsuranceScreenPatch and therefore also needs to be implemented here
-            ___RaidSettings_0.RaidMode = ERaidMode.Local;
+            return modifiedInstructions;
         }
     }
 }
