@@ -2,7 +2,7 @@ Is SPT getting too easy? Too much nice gear collecting dust in your stash? Fix t
 
 To start a new hardcore playthrough, create a new profile in the SPT launcher using the "Hardcore Playthrough" edition this mod adds. By default, this mod will be active when a profile using the "Hardcore Playthrough" edition is loaded, and it will be deactivated when any other profile edition is loaded. 
 
-![Hardcore Playthrough profile type image](https://github.com/dwesterwick/SPTHardcoreRules/blob/master/Assets/NewProfileHardcorePlaythrough.jpg)
+![Hardcore Playthrough profile type image](https://raw.githubusercontent.com/dwesterwick/SPTHardcoreRules/refs/heads/master/Assets/NewProfileHardcorePlaythrough.jpg)
 
 If you're using an existing hardcore profile from a previous version of this mod (that was compatible with SPT 3.9.x), you can still use it if you do one of the following:
 * Set **use_for_all_profiles=true** in _config.json_ to apply the hardcore ruleset to all profiles, regardless of their edition
