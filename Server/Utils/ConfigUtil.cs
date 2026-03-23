@@ -71,7 +71,7 @@ namespace HardcoreRules.Utils
         private T GetObject<T>(string filename)
         {
             string fileText = File.ReadAllText(Path.Combine(ConfigFileDirectory, filename));
-            T? obj = ConfigHelpers.Deserialize<T>(fileText);
+            T? obj = ConfigHelpers.DeserializeAndInitializeMissingFields<T>(fileText);
             if (obj == null)
             {
                 throw new InvalidOperationException($"Could not deserialize {filename}");
