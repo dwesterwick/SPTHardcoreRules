@@ -6,7 +6,7 @@ using SPTarkov.Server.Core.DI;
 
 namespace HardcoreRules;
 
-[Injectable(TypePriority = OnLoadOrder.PreSptModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
+[Injectable(TypePriority = OnLoadOrder.Preload + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
 public class HardcoreRules_Server : IOnLoad
 {
     public const int LOAD_ORDER_OFFSET = 1;
@@ -22,7 +22,7 @@ public class HardcoreRules_Server : IOnLoad
         _modIntegrityTestingUtil = modIntegrityTestingUtil;
     }
 
-    public Task OnLoad()
+    public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         RunModIntegrityCheck();
 

@@ -1,4 +1,5 @@
 ﻿using Comfort.Common;
+using EFT;
 using HardcoreRules.Utils;
 using HarmonyLib;
 using SPT.Reflection.Patching;
@@ -16,14 +17,14 @@ namespace HardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuControllerClass).GetMethod("method_80", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(MainMenuShowOperation).GetMethod("CG_method_80", BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchTranspiler]
         protected static IEnumerable<CodeInstruction> PatchTranspiler(IEnumerable<CodeInstruction> originalInstructions)
         {
-            MethodInfo showInsuranceScreenMethodInfo = typeof(MainMenuControllerClass).GetMethod("method_51", BindingFlags.Public | BindingFlags.Instance);
-            MethodInfo showAcceptScreenMethodInfo = typeof(MainMenuControllerClass).GetMethod("method_52", BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo showInsuranceScreenMethodInfo = typeof(MainMenuShowOperation).GetMethod("method_51", BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo showAcceptScreenMethodInfo = typeof(MainMenuShowOperation).GetMethod("method_52", BindingFlags.Public | BindingFlags.Instance);
 
             List<CodeInstruction> modifiedInstructions = originalInstructions.ToList();
 

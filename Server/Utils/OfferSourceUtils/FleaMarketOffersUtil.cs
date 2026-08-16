@@ -3,12 +3,13 @@ using HardcoreRules.Services;
 using HardcoreRules.Utils.OfferSourceUtils.OfferSources;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Controllers;
-using SPTarkov.Server.Core.Generators;
+using SPTarkov.Server.Core.Generators.Ragfair;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Eft.Ragfair;
-using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Config;
+using SPTarkov.Server.Core.Models.Spt.Tables;
+using SPTarkov.Server.Core.Services.Ragfair;
 
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
@@ -19,14 +20,15 @@ namespace HardcoreRules.Utils.OfferSourceUtils
 
         private LoggingUtil _loggingUtil;
         private ConfigUtil _configUtil;
-        private ConfigServer _configServer;
-        private DatabaseService _databaseService;
+        private RagfairConfig _ragfairConfig;
+        private GlobalTable _globalTable;
+        private TradersTable _tradersTable;
         private OfferModificationUtil _offerModificationUtil;
         private RagfairOfferGenerator _ragfairOfferGenerator;
         private RagfairOfferService _ragfairOfferService;
         private RagfairController _ragfairController;
 
-        private IEnumerable<Trader> _tradersWithOffersNotIncludingFence => _databaseService.GetTables().Traders.Values
+        private IEnumerable<Trader> _tradersWithOffersNotIncludingFence => _tradersTable.Values
                 .NotIncludingFence()
                 .WithOffers();
 
@@ -34,8 +36,9 @@ namespace HardcoreRules.Utils.OfferSourceUtils
         (
             LoggingUtil loggingUtil,
             ConfigUtil configUtil,
-            ConfigServer configServer,
-            DatabaseService databaseService,
+            RagfairConfig ragfairConfig,
+            GlobalTable globalTable,
+            TradersTable tradersTable,
             OfferModificationUtil offerModificationUtil,
             RagfairOfferGenerator ragfairOfferGenerator,
             RagfairOfferService ragfairOfferService,
@@ -44,14 +47,15 @@ namespace HardcoreRules.Utils.OfferSourceUtils
         {
             _loggingUtil = loggingUtil;
             _configUtil = configUtil;
-            _configServer = configServer;
-            _databaseService = databaseService;
+            _ragfairConfig = ragfairConfig;
+            _globalTable = globalTable;
+            _tradersTable = tradersTable;
             _offerModificationUtil = offerModificationUtil;
             _ragfairOfferGenerator = ragfairOfferGenerator;
             _ragfairOfferService = ragfairOfferService;
             _ragfairController = ragfairController;
 
-            FleaMarket = new FleaMarketOfferSource(_loggingUtil, _configServer, _databaseService, _ragfairOfferGenerator);
+            FleaMarket = new FleaMarketOfferSource(_loggingUtil, _ragfairConfig, _globalTable, _ragfairOfferGenerator);
         }
 
         public void DisableFleaMarket() => FleaMarket.Disable();

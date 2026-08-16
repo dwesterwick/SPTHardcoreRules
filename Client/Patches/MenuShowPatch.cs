@@ -1,13 +1,14 @@
-﻿using System;
+﻿using EFT.Communications;
+using EFT.UI;
+using HardcoreRules.Helpers;
+using HardcoreRules.Utils;
+using SPT.Reflection.Patching;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using EFT.UI;
-using SPT.Reflection.Patching;
-using HardcoreRules.Utils;
-using HardcoreRules.Helpers;
 
 namespace HardcoreRules.Patches
 {
@@ -28,7 +29,7 @@ namespace HardcoreRules.Patches
             {
                 string profileWarningMessage = "Using a hardcore profile but Hardcore Rules is disabled";
 
-                NotificationManagerClass.DisplayWarningNotification(profileWarningMessage, EFT.Communications.ENotificationDurationType.Long);
+                NotificationManager.DisplayWarningNotification(profileWarningMessage, EFT.Communications.ENotificationDurationType.Long);
                 SPT.Common.Utils.ServerLog.Warn(ModInfo.MODNAME, profileWarningMessage);
 
                 _displayedProfileWarning = true;

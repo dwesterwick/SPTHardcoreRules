@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using EFT.InventoryLogic;
+using EFT.UI.Insurance;
 using SPT.Reflection.Patching;
 
 namespace HardcoreRules.Patches
@@ -13,8 +14,8 @@ namespace HardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(InsuranceCompanyClass).GetMethod(
-                nameof(InsuranceCompanyClass.ItemTypeAvailableForInsurance),
+            return typeof(InsuranceCompany).GetMethod(
+                nameof(InsuranceCompany.ItemTypeAvailableForInsurance),
                 BindingFlags.Public | BindingFlags.Instance,
                 null,
                 new Type[] { typeof(Item) },

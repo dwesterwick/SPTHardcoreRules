@@ -1,4 +1,5 @@
 ﻿using Comfort.Common;
+using EFT;
 using EFT.InventoryLogic;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace HardcoreRules.Helpers
 
         private static List<Item> getAllItems()
         {
-            ItemFactoryClass itemFactory = Singleton<ItemFactoryClass>.Instance;
+            ItemFactory itemFactory = Singleton<ItemFactory>.Instance;
             if (itemFactory == null)
             {
                 throw new InvalidOperationException("Could not retrieve ItemFactoryClass instance");

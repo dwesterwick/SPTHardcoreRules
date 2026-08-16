@@ -6,14 +6,14 @@ using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace HardcoreRules.Services
 {
-    [Injectable(TypePriority = OnLoadOrder.PostSptModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
+    [Injectable(TypePriority = OnLoadOrder.Preload + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
     internal class DebugService : AbstractService
     {
-        private DatabaseService _databaseService;
+        private TradersTable _tradersTable;
         private OfferModificationUtil _traderOffersUtil;
         private TranslationService _translationService;
         private ToggleHardcoreRulesService _toggleHardcoreRulesService;
@@ -22,13 +22,13 @@ namespace HardcoreRules.Services
         (
             LoggingUtil logger,
             ConfigUtil config,
-            DatabaseService databaseService,
+            TradersTable tradersTable,
             OfferModificationUtil traderOffersUtil,
             TranslationService translationService,
             ToggleHardcoreRulesService toggleHardcoreRulesService
         ) : base(logger, config)
         {
-            _databaseService = databaseService;
+            _tradersTable = tradersTable;
             _traderOffersUtil = traderOffersUtil;
             _translationService = translationService;
             _toggleHardcoreRulesService = toggleHardcoreRulesService;
@@ -49,7 +49,7 @@ namespace HardcoreRules.Services
 
         private void ShowTraderIDs()
         {
-            foreach ((MongoId id, Trader trader) in _databaseService.GetTables().Traders)
+            foreach ((MongoId id, Trader trader) in _tradersTable)
             {
                 if ((trader.Assort?.Items == null) || (trader.Assort.Items.Count == 0))
                 {

@@ -1,7 +1,7 @@
 ﻿using HardcoreRules.Utils.OfferSourceUtils.OfferSources;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Config;
+using SPTarkov.Server.Core.Services.Commerce;
 
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
@@ -11,16 +11,16 @@ namespace HardcoreRules.Utils.OfferSourceUtils
         private FenceOfferSource Fence;
 
         private LoggingUtil _loggingUtil;
-        private ConfigServer _configServer;
         private FenceService _fenceService;
+        private TraderConfig _traderConfig;
 
-        public FenceOffersUtil(LoggingUtil loggingUtil, ConfigServer configServer, FenceService fenceService)
+        public FenceOffersUtil(LoggingUtil loggingUtil, FenceService fenceService, TraderConfig traderConfig)
         {
             _loggingUtil = loggingUtil;
-            _configServer = configServer;
             _fenceService = fenceService;
+            _traderConfig = traderConfig;
 
-            Fence = new FenceOfferSource(_loggingUtil, _configServer, _fenceService);
+            Fence = new FenceOfferSource(_loggingUtil, _fenceService, _traderConfig);
         }
 
         public void DisableFence() => Fence.Disable();

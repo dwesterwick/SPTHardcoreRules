@@ -3,14 +3,15 @@ using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
+using SPTarkov.Server.Core.Services.Locales;
 
 namespace HardcoreRules.Services
 {
-    [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
+    [Injectable(TypePriority = OnLoadOrder.Preload + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
     public class TranslationService : AbstractService
     {
-        private DatabaseService _databaseService;
+        private LocaleTable _localeTable;
         private LocaleService _localeService;
         private ServerLocalisationService _serverLocalisationService;
 
@@ -20,12 +21,12 @@ namespace HardcoreRules.Services
         (
             LoggingUtil logger,
             ConfigUtil config,
-            DatabaseService databaseService,
+            LocaleTable localeTable,
             LocaleService localeService,
             ServerLocalisationService serverLocalisationService
         ) : base(logger, config)
         {
-            _databaseService = databaseService;
+            _localeTable = localeTable;
             _localeService = localeService;
             _serverLocalisationService = serverLocalisationService;
         }
@@ -79,7 +80,7 @@ namespace HardcoreRules.Services
         {
             int maxTranslationsAdded = 0;
 
-            Dictionary<string, string> languages = _databaseService.GetTables().Locales.Languages;
+            Dictionary<string, string> languages = _localeTable.Languages;
             foreach (string locale in languages.Keys)
             {
                 int translationsAddedForLocale = AddNewTranslationsForLocale(locale);

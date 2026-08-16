@@ -4,11 +4,11 @@ using SPTarkov.Common.Extensions;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace HardcoreRules.Services
 {
-    [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
+    [Injectable(TypePriority = OnLoadOrder.Preload + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
     internal class AddHardcoreProfileService : AbstractService
     {
         public const string HARDCORE_PROFILE_NAME = "Hardcore Playthrough";
@@ -18,18 +18,18 @@ namespace HardcoreRules.Services
         private const string FALLBACK_LOCALE = "en";
         private const bool LAUNCHER_USES_NEW_TRANSLATIONS = false;
 
-        private DatabaseService _databaseService;
+        private TemplateTable _templateTable;
         private TranslationService _newTranslationsService;
 
         public AddHardcoreProfileService
         (
             LoggingUtil logger,
             ConfigUtil config,
-            DatabaseService databaseService,
+            TemplateTable templateTable,
             TranslationService newTranslationsService
         ) : base(logger, config)
         {
-            _databaseService = databaseService;
+            _templateTable = templateTable;
             _newTranslationsService = newTranslationsService;
         }
 
@@ -52,14 +52,14 @@ namespace HardcoreRules.Services
 
             hardcoreProfileTemplate.DescriptionLocaleKey = GetProfileDescription();
 
-            _databaseService.GetTables().Templates.Profiles.Add(HARDCORE_PROFILE_NAME, hardcoreProfileTemplate);
+            _templateTable.Profiles.Add(HARDCORE_PROFILE_NAME, hardcoreProfileTemplate);
 
             Logger.Info("Created hardcore profile template");
         }
 
         private ProfileSides? CreateProfileTemplateClone(string profileTemplateName)
         {
-            if (!_databaseService.GetTables().Templates.Profiles.TryGetValue(profileTemplateName, out ProfileSides? profile))
+            if (!_templateTable.Profiles.TryGetValue(profileTemplateName, out ProfileSides? profile))
             {
                 return null;
             }

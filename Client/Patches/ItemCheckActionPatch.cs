@@ -17,7 +17,7 @@ namespace HardcoreRules.Patches
         }
 
         [PatchPrefix]
-        public static bool PatchPrefix(ref GStruct155 __result, Item __instance, ItemAddress location)
+        public static bool PatchPrefix(ref Diz.LanguageExtensions.Option __result, Item __instance, ItemAddress location)
         {
             // Don't apply restrictions to Scavs because they don't have secure containers
             if (CurrentRaidSettings.SelectedSide == EFT.ESideType.Savage)

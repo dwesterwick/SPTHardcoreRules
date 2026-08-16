@@ -3,31 +3,31 @@ using HardcoreRules.Utils.OfferSourceUtils.OfferSources.Internal;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 {
     internal class TraderOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
-        private DatabaseService _databaseService;
+        private TradersTable _tradersTable;
 
         private Action _restrictTraderOffersAction;
 
         private Dictionary<MongoId, ObjectCache<TraderAssort>> _originalTraderAssorts = new();
         private Dictionary<MongoId, ObjectCache<Dictionary<string, Dictionary<MongoId, MongoId>>>> _originalTraderQuestAssorts = new();
 
-        public TraderOfferSource(LoggingUtil loggingUtil, DatabaseService databaseService, Action restrictTraderOffersAction) : base()
+        public TraderOfferSource(LoggingUtil loggingUtil, TradersTable tradersTable, Action restrictTraderOffersAction) : base()
         {
             _loggingUtil = loggingUtil;
-            _databaseService = databaseService;
+            _tradersTable = tradersTable;
 
             _restrictTraderOffersAction = restrictTraderOffersAction;
         }
 
         protected override void OnUpdateCache()
         {
-            foreach ((MongoId id, Trader trader) in _databaseService.GetTables().Traders)
+            foreach ((MongoId id, Trader trader) in _tradersTable)
             {
                 if (id == Traders.FENCE)
                 {
@@ -58,7 +58,7 @@ namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 
         protected override void OnRestoreCache()
         {
-            foreach ((MongoId id, Trader trader) in _databaseService.GetTables().Traders)
+            foreach ((MongoId id, Trader trader) in _tradersTable)
             {
                 if (_originalTraderAssorts.ContainsKey(id))
                 {

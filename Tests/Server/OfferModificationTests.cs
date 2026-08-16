@@ -1,10 +1,11 @@
 ﻿using HardcoreRules.Server.Internal;
 using HardcoreRules.Utils;
 using HardcoreRules.Utils.OfferSourceUtils;
-using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Helpers.Items;
+using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,8 @@ namespace HardcoreRules.Server
         private LoggingUtil _loggingUtil; 
         private MockConfigUtil _configUtil;
 
-        private DatabaseService _databaseService = null!;
+        private TradersTable _tradersTable = null!;
+        private TemplateTable _templateTable = null!;
         private ItemHelper _itemHelper = null!;
         private ModHelper _modHelper = null!;
 
@@ -48,12 +50,13 @@ namespace HardcoreRules.Server
             _configUtil = new MockConfigUtil(_modHelper);
             _loggingUtil = new LoggingUtil(_logger, _configUtil);
 
-            _offerModificationUtil = new OfferModificationUtil(_loggingUtil, _configUtil, _databaseService, _itemHelper);
+            _offerModificationUtil = new OfferModificationUtil(_loggingUtil, _configUtil, _tradersTable, _templateTable, _itemHelper);
         }
 
         private void LoadSptDependencies()
         {
-            _databaseService = DI.GetInstance().GetService<DatabaseService>();
+            _tradersTable = DI.GetInstance().GetService<TradersTable>();
+            _templateTable = DI.GetInstance().GetService<TemplateTable>();
             _itemHelper = DI.GetInstance().GetService<ItemHelper>();
             _modHelper = DI.GetInstance().GetService<ModHelper>();
         }
@@ -61,7 +64,7 @@ namespace HardcoreRules.Server
         [Test]
         public void ToolsetFromMechanicIsBarterTrade()
         {
-            Trader? mechanic = _databaseService.GetTrader(ID_TRADER_MECHANIC);
+            Trader? mechanic = _tradersTable.GetTrader(ID_TRADER_MECHANIC);
             Assert.NotNull(mechanic, "Cannot find trader Mechanic");
 
             bool foundToolsetBarter = mechanic.Assort.BarterScheme.TryGetValue(ID_OFFER_MECHANIC_TOOLSET, out List<List<BarterScheme>>? requirements);
@@ -75,7 +78,7 @@ namespace HardcoreRules.Server
         [Test]
         public void MultitoolFromMechanicIsCashTrade()
         {
-            Trader? mechanic = _databaseService.GetTrader(ID_TRADER_MECHANIC);
+            Trader? mechanic = _tradersTable.GetTrader(ID_TRADER_MECHANIC);
             Assert.NotNull(mechanic, "Cannot find trader Mechanic");
 
             bool foundToolsetBarter = mechanic.Assort.BarterScheme.TryGetValue(ID_OFFER_MECHANIC_MULTITOOL, out List<List<BarterScheme>>? requirements);
@@ -91,7 +94,7 @@ namespace HardcoreRules.Server
         {
             bool whitelistContainsSpecialItems = _configUtil.CurrentConfig.Traders.WhitelistItems.Contains(ID_ITEM_SPECIAL);
 
-            bool foundMultitool = _databaseService.GetItems().TryGetValue(ID_ITEM_MULTITOOL, out TemplateItem? item);
+            bool foundMultitool = _templateTable.Items.TryGetValue(ID_ITEM_MULTITOOL, out TemplateItem? item);
             Assert.True(foundMultitool, "Could not find the multitool item");
             Assert.NotNull(item, "The multitool item template is null");
 
@@ -105,7 +108,7 @@ namespace HardcoreRules.Server
         {
             bool gpCoinsAllowed = _configUtil.CurrentConfig.Traders.AllowGPCoins;
 
-            Trader? traderRef = _databaseService.GetTrader(ID_TRADER_REF);
+            Trader? traderRef = _tradersTable.GetTrader(ID_TRADER_REF);
             Assert.NotNull(traderRef, "Cannot find trader Ref");
 
             bool foundArmorRepairKitOffer = traderRef.Assort.BarterScheme.TryGetValue(ID_OFFER_REF_ARMOR_REPAIR_KIT, out List<List<BarterScheme>>? requirements);
@@ -132,7 +135,7 @@ namespace HardcoreRules.Server
         [Test]
         public void ShatunsKeyFromRefIsBarterTrade()
         {
-            Trader? traderRef = _databaseService.GetTrader(ID_TRADER_REF);
+            Trader? traderRef = _tradersTable.GetTrader(ID_TRADER_REF);
             Assert.NotNull(traderRef, "Cannot find trader Ref");
 
             bool shatunsKeyOffer = traderRef.Assort.BarterScheme.TryGetValue(ID_OFFER_REF_SHATUNS_KEY, out List<List<BarterScheme>>? requirements);
