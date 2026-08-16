@@ -1,13 +1,15 @@
 ﻿using HardcoreRules.Server.Internal;
 using HardcoreRules.Utils;
 using HardcoreRules.Utils.OfferSourceUtils;
+using SPTarkov.Common.Models.Logging;
 using SPTarkov.Server.Core.Controllers;
-using SPTarkov.Server.Core.Generators;
-using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Generators.Ragfair;
+using SPTarkov.Server.Core.Helpers.Items;
+using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Eft.Ragfair;
-using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Config;
+using SPTarkov.Server.Core.Models.Spt.Tables;
+using SPTarkov.Server.Core.Services.Ragfair;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +24,12 @@ namespace HardcoreRules.Server
         private LoggingUtil _loggingUtil;
         private MockConfigUtil _configUtil;
 
-        private ConfigServer _configServer = null!;
         private ModHelper _modHelper = null!;
         private ItemHelper _itemHelper = null!;
-        private DatabaseService _databaseService = null!;
+        private TradersTable _tradersTable = null!;
+        private TemplateTable _templateTable = null!;
+        private GlobalTable _globalTable = null!;
+        private RagfairConfig _ragfairConfig = null!;
         private RagfairOfferGenerator _ragfairOfferGenerator = null!;
         private RagfairOfferService _ragfairOfferService = null!;
         private RagfairController _ragfairController = null!;
@@ -42,13 +46,14 @@ namespace HardcoreRules.Server
             _configUtil = new MockConfigUtil(_modHelper);
             _loggingUtil = new LoggingUtil(_logger, _configUtil);
 
-            _offerModificationUtil = new OfferModificationUtil(_loggingUtil, _configUtil, _databaseService, _itemHelper);
+            _offerModificationUtil = new OfferModificationUtil(_loggingUtil, _configUtil, _tradersTable, _templateTable, _itemHelper);
             _fleaMarketOffersUtil = new FleaMarketOffersUtil
             (
                 _loggingUtil,
                 _configUtil,
-                _configServer,
-                _databaseService,
+                _ragfairConfig,
+                _globalTable,
+                _tradersTable,
                 _offerModificationUtil,
                 _ragfairOfferGenerator,
                 _ragfairOfferService,
@@ -60,8 +65,10 @@ namespace HardcoreRules.Server
         {
             _modHelper = DI.GetInstance().GetService<ModHelper>();
             _itemHelper = DI.GetInstance().GetService<ItemHelper>();
-            _configServer = DI.GetInstance().GetService<ConfigServer>();
-            _databaseService = DI.GetInstance().GetService<DatabaseService>();
+            _tradersTable = DI.GetInstance().GetService<TradersTable>();
+            _templateTable = DI.GetInstance().GetService<TemplateTable>();
+            _globalTable = DI.GetInstance().GetService<GlobalTable>();
+            _ragfairConfig = DI.GetInstance().GetService<RagfairConfig>();
             _ragfairOfferGenerator = DI.GetInstance().GetService<RagfairOfferGenerator>();
             _ragfairOfferService = DI.GetInstance().GetService<RagfairOfferService>();
             _ragfairController = DI.GetInstance().GetService<RagfairController>();
@@ -92,11 +99,23 @@ namespace HardcoreRules.Server
             int nonTraderCashOfferCount = GetNonTraderFleaMarketCashOfferCount();
             Assert.NotZero(nonTraderCashOfferCount, "No cash flea market offers found for players");
 
+            double originalChance = _ragfairConfig.Dynamic.Barter.ChancePercent;
+            _ragfairConfig.Dynamic.Barter.ChancePercent = 1;
+
             EnableBarterOnlyFleaMarket();
-            nonTraderOfferCount = GetNonTraderFleaMarketOfferCount();
-            Assert.NotZero(nonTraderOfferCount, "No flea market offers found for players");
+            if (_ragfairConfig.Dynamic.Barter.ChancePercent == 0)
+            {
+                Assert.Pass("Barter offers are disabled for players");
+            }
+            else
+            {
+                nonTraderOfferCount = GetNonTraderFleaMarketOfferCount();
+                Assert.NotZero(nonTraderOfferCount, "No flea market offers found for players");
+            }
             nonTraderCashOfferCount = GetNonTraderFleaMarketCashOfferCount();
             Assert.Zero(nonTraderCashOfferCount, "Cash flea market offers found for players");
+
+            _ragfairConfig.Dynamic.Barter.ChancePercent = originalChance;
 
             EnableFleaMarket();
             nonTraderOfferCount = GetNonTraderFleaMarketOfferCount();

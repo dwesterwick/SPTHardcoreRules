@@ -1,14 +1,16 @@
 ﻿using HardcoreRules.Server.Internal;
 using HardcoreRules.Utils;
 using HardcoreRules.Utils.OfferSourceUtils;
-using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Helpers.Profile;
+using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Models.Utils;
+using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Services.Commerce;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +26,9 @@ namespace HardcoreRules.Server
         private LoggingUtil _loggingUtil;
         private MockConfigUtil _configUtil;
 
-        private ConfigServer _configServer = null!;
         private ModHelper _modHelper = null!;
         private FenceService _fenceService = null!;
+        private TraderConfig _traderConfig = null!;
         private SaveServer _saveServer = null!;
         private ProfileHelper _profileHelper = null!;
 
@@ -42,7 +44,7 @@ namespace HardcoreRules.Server
             _configUtil = new MockConfigUtil(_modHelper);
             _loggingUtil = new LoggingUtil(_logger, _configUtil);
 
-            _fenceOffersUtil = new FenceOffersUtil(_loggingUtil, _configServer, _fenceService);
+            _fenceOffersUtil = new FenceOffersUtil(_loggingUtil, _fenceService, _traderConfig);
 
             CreateMockSptProfile();
         }
@@ -69,8 +71,8 @@ namespace HardcoreRules.Server
         private void LoadSptDependencies()
         {
             _modHelper = DI.GetInstance().GetService<ModHelper>();
-            _configServer = DI.GetInstance().GetService<ConfigServer>();
             _fenceService = DI.GetInstance().GetService<FenceService>();
+            _traderConfig = DI.GetInstance().GetService<TraderConfig>();
             _saveServer = DI.GetInstance().GetService<SaveServer>();
             _profileHelper = DI.GetInstance().GetService<ProfileHelper>();
         }

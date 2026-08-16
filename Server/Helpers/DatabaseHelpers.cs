@@ -2,7 +2,7 @@
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace HardcoreRules.Helpers
 {
@@ -10,14 +10,27 @@ namespace HardcoreRules.Helpers
     {
         public const string HIDEOUT_SLOT_ID = "hideout";
 
+        public static bool ContainsMongoId(this IEnumerable<string> strings, MongoId id)
+        {
+            foreach (string s in strings)
+            {
+                if (s == id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static IEnumerable<Item> AssortOfferItems(this TraderAssort assort)
         {
             return assort.Items.Where(item => item.SlotId == HIDEOUT_SLOT_ID);
         }
 
-        public static Location GetAndVerifyLocation(this DatabaseService databaseService, string locationId)
+        public static Location GetAndVerifyLocation(this LocationTable locationTable, string locationId)
         {
-            Location? location = databaseService.GetLocation(locationId);
+            Location? location = locationTable.GetLocation(locationId);
             if (location == null)
             {
                 throw new InvalidOperationException($"Cannot find location \"${locationId}\" in database.");
@@ -26,14 +39,14 @@ namespace HardcoreRules.Helpers
             return location;
         }
 
-        public static IEnumerable<Location> EnumerateLocations(this DatabaseService databaseService)
+        public static IEnumerable<Location> EnumerateLocations(this LocationTable locationTable)
         {
-            return databaseService.GetLocations().GetDictionary().Values;
+            return locationTable.GetDictionary().Values;
         }
 
-        public static IEnumerable<string> EnumerateLocationIDs(this DatabaseService databaseService)
+        public static IEnumerable<string> EnumerateLocationIDs(this LocationTable locationTable)
         {
-            return databaseService.GetLocations().GetDictionary().Keys;
+            return locationTable.GetDictionary().Keys;
         }
 
         public static bool IsFence(this Trader? trader) => trader?.Base?.Id == Traders.FENCE;

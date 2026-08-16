@@ -2,28 +2,23 @@
 using HardcoreRules.Utils.OfferSourceUtils.OfferSources.Internal;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Spt.Config;
-using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Services.Commerce;
 
 namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 {
     internal class FenceOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
-        private ConfigServer _configServer;
         private FenceService _fenceService;
-
         private TraderConfig _traderConfig;
 
         private ObjectCache<FenceConfig> _originalFenceConfig = new();
 
-        public FenceOfferSource(LoggingUtil loggingUtil, ConfigServer configServer, FenceService fenceService) : base()
+        public FenceOfferSource(LoggingUtil loggingUtil, FenceService fenceService, TraderConfig traderConfig) : base()
         {
             _loggingUtil = loggingUtil;
-            _configServer = configServer;
             _fenceService = fenceService;
-
-            _traderConfig = _configServer.GetConfig<TraderConfig>();
+            _traderConfig = traderConfig;
         }
 
         protected override void OnUpdateCache()

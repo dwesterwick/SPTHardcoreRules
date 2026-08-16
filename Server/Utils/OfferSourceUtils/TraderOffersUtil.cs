@@ -4,7 +4,7 @@ using HardcoreRules.Utils.OfferSourceUtils.OfferSources;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
@@ -15,11 +15,11 @@ namespace HardcoreRules.Utils.OfferSourceUtils
 
         private LoggingUtil _loggingUtil;
         private ConfigUtil _configUtil;
-        private DatabaseService _databaseService;
+        private TradersTable _tradersTable;
         private TranslationService _translationService;
         private OfferModificationUtil _offerModificationUtil;
 
-        private IEnumerable<Trader> _tradersWithOffersNotIncludingFence => _databaseService.GetTables().Traders.Values
+        private IEnumerable<Trader> _tradersWithOffersNotIncludingFence => _tradersTable.Values
                 .NotIncludingFence()
                 .WithOffers();
 
@@ -27,18 +27,18 @@ namespace HardcoreRules.Utils.OfferSourceUtils
         (
             LoggingUtil loggingUtil,
             ConfigUtil configUtil,
-            DatabaseService databaseService,
+            TradersTable tradersTable,
             TranslationService translationService,
             OfferModificationUtil offerModificationUtil
         )
         {
             _loggingUtil = loggingUtil;
             _configUtil = configUtil;
-            _databaseService = databaseService;
+            _tradersTable = tradersTable;
             _translationService = translationService;
             _offerModificationUtil = offerModificationUtil;
 
-            TraderAssorts = new TraderOfferSource(_loggingUtil, _databaseService, RestrictTraderOffers);
+            TraderAssorts = new TraderOfferSource(_loggingUtil, _tradersTable, RestrictTraderOffers);
         }
 
         public void RestoreTraderOffers() => TraderAssorts.Enable();

@@ -13,14 +13,14 @@ namespace HardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(HealthTreatmentServiceView).GetMethod("method_7", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(HealthTreatmentServiceView).GetMethod(nameof(HealthTreatmentServiceView.AddTreatment), BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPrefix]
-        protected static bool PatchPrefix(HealthTreatmentServiceView __instance, ref bool ___bool_0)
+        protected static bool PatchPrefix(HealthTreatmentServiceView __instance, ref bool ____nothingToHeal)
         {
-            __instance.method_10();
-            ___bool_0 = false;
+            __instance.RecalculateCost();
+            ____nothingToHeal = false;
 
             return false;
         }

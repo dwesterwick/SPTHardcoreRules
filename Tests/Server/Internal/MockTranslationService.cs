@@ -1,6 +1,7 @@
 ﻿using HardcoreRules.Services;
 using HardcoreRules.Utils;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
+using SPTarkov.Server.Core.Services.Locales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,10 @@ namespace HardcoreRules.Server.Internal
         (
             LoggingUtil logger,
             ConfigUtil config,
-            DatabaseService databaseService,
+            LocaleTable localeTable,
             LocaleService localeService,
             ServerLocalisationService serverLocalisationService
-        ) : base(logger, config, databaseService, localeService, serverLocalisationService)
+        ) : base(logger, config, localeTable, localeService, serverLocalisationService)
         {
 
         }

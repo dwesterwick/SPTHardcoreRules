@@ -2,11 +2,13 @@
 using HardcoreRules.Server.Internal;
 using HardcoreRules.Utils;
 using HardcoreRules.Utils.OfferSourceUtils;
-using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Helpers.Items;
+using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
+using SPTarkov.Server.Core.Services.Locales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +26,9 @@ namespace HardcoreRules.Server
 
         private ModHelper _modHelper = null!;
         private ItemHelper _itemHelper = null!;
-        private DatabaseService _databaseService = null!;
+        private TradersTable _tradersTable = null!;
+        private TemplateTable _templateTable = null!;
+        private LocaleTable _localeTable = null!;
         private LocaleService _localeService = null!;
         private ServerLocalisationService _serverLocalisationService = null!;
 
@@ -41,16 +45,18 @@ namespace HardcoreRules.Server
             _configUtil = new MockConfigUtil(_modHelper);
             _loggingUtil = new LoggingUtil(_logger, _configUtil);
 
-            _offerModificationUtil = new OfferModificationUtil(_loggingUtil, _configUtil, _databaseService, _itemHelper);
-            _translationService = new MockTranslationService(_loggingUtil, _configUtil, _databaseService, _localeService, _serverLocalisationService);
-            _traderOffersUtil = new TraderOffersUtil(_loggingUtil, _configUtil, _databaseService, _translationService, _offerModificationUtil);
+            _offerModificationUtil = new OfferModificationUtil(_loggingUtil, _configUtil, _tradersTable, _templateTable, _itemHelper);
+            _translationService = new MockTranslationService(_loggingUtil, _configUtil, _localeTable, _localeService, _serverLocalisationService);
+            _traderOffersUtil = new TraderOffersUtil(_loggingUtil, _configUtil, _tradersTable, _translationService, _offerModificationUtil);
         }
 
         private void LoadSptDependencies()
         {
             _modHelper = DI.GetInstance().GetService<ModHelper>();
             _itemHelper = DI.GetInstance().GetService<ItemHelper>();
-            _databaseService = DI.GetInstance().GetService<DatabaseService>();
+            _tradersTable = DI.GetInstance().GetService<TradersTable>();
+            _templateTable = DI.GetInstance().GetService<TemplateTable>();
+            _localeTable = DI.GetInstance().GetService<LocaleTable>();
             _localeService = DI.GetInstance().GetService<LocaleService>();
             _serverLocalisationService = DI.GetInstance().GetService<ServerLocalisationService>();
         }
@@ -145,7 +151,7 @@ namespace HardcoreRules.Server
 
         private IEnumerable<Trader> GetTradersWithTradeOffers()
         {
-            return _databaseService.GetTraders()
+            return _tradersTable
                 .NotIncludingFence()
                 .WithOffers()
                 .Select(trader => trader.Value);

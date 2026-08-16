@@ -3,18 +3,18 @@ using HardcoreRules.Services.Internal;
 using HardcoreRules.Utils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace HardcoreRules.Services
 {
-    [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
+    [Injectable(TypePriority = OnLoadOrder.Preload + HardcoreRules_Server.LOAD_ORDER_OFFSET)]
     internal class FleaMarketRequiredLevelService : AbstractService
     {
-        private DatabaseService _databaseService;
+        private GlobalTable _globalTable;
 
-        public FleaMarketRequiredLevelService(LoggingUtil logger, ConfigUtil config, DatabaseService databaseService) : base(logger, config)
+        public FleaMarketRequiredLevelService(LoggingUtil logger, ConfigUtil config, GlobalTable globalTable) : base(logger, config)
         {
-            _databaseService = databaseService;
+            _globalTable = globalTable;
         }
 
         protected override void OnLoadIfModIsEnabled()
@@ -25,7 +25,7 @@ namespace HardcoreRules.Services
             }
 
             int minLevel = Config.CurrentConfig.Debug.FleaMarketMinLevel;
-            _databaseService.GetTables().Globals.Configuration.RagFair.MinUserLevel = minLevel;
+            _globalTable.Configuration.RagFair.MinUserLevel = minLevel;
             Logger.Info($"Set required player level for flea-market access to {minLevel}");
         }
     }

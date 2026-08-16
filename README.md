@@ -4,14 +4,11 @@ To start a new hardcore playthrough, create a new profile in the SPT launcher us
 
 ![Hardcore Playthrough profile type image](https://raw.githubusercontent.com/dwesterwick/SPTHardcoreRules/refs/heads/master/Assets/NewProfileHardcorePlaythrough.jpg)
 
-If you're using an existing hardcore profile from a previous version of this mod (that was compatible with SPT 3.9.x), you can still use it if you do one of the following:
-* Set **use_for_all_profiles=true** in _config.json_ to apply the hardcore ruleset to all profiles, regardless of their edition
-* Change **info.edition** to **"Hardcore Playthrough"** (case-sensitive) in the JSON data for your profile. **Always make a backup before manually changing your profile!**
-
 **If you're using [Fika](https://forge.sp-tarkov.com/mod/2326/project-fika), do not mix players who are using hardcore profiles with players who are not.** This will result in trader inventories and flea-market item availability not working correctly for some players. 
 
 This mod is highly customizable, so you can change the configuration to match the level of difficulty you want. Here are the settings you can change in the **config.json** file in this mod:
 * **services.flea_market.enabled**: if this is *false*, you can't list new offers, and there won't be any player offers. You can only use the flea-market interface to browse trader offers.
+* **services.flea_market.barter_offer_chance_for_players**: overrides SPT's chance for simulated player barter offers on the flea market (0% by default in SPT 4.1)
 * **services.flea_market.only_barter_offers**: if you've enabled the flea market, you can set this to *false* to disable all offers using currency.
 * **services.disable_trader_repairs**: Only repair kits can be used for repairs. 
 * **services.disable_insurance**: All items will be blacklisted from insurance, and the insurance screen will not be displayed when loading into a raid. In case you want to turn this off and on during a playthrough, this will not remove insurance for any items that were previously insured. 

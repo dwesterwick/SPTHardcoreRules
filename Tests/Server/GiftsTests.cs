@@ -1,10 +1,9 @@
 ﻿using HardcoreRules.Server.Internal;
 using HardcoreRules.Utils;
 using HardcoreRules.Utils.OfferSourceUtils;
-using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Helpers.Server;
 using SPTarkov.Server.Core.Models.Spt.Config;
-using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Servers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,6 @@ namespace HardcoreRules.Server
         private LoggingUtil _loggingUtil;
         private MockConfigUtil _configUtil;
 
-        private ConfigServer _configServer = null!;
         private ModHelper _modHelper = null!;
         private GiftsConfig _giftsConfig = null!;
 
@@ -36,15 +34,13 @@ namespace HardcoreRules.Server
             _configUtil = new MockConfigUtil(_modHelper);
             _loggingUtil = new LoggingUtil(_logger, _configUtil);
 
-            _giftOffersUtil = new GiftOffersUtil(_loggingUtil, _configServer);
+            _giftOffersUtil = new GiftOffersUtil(_loggingUtil, _giftsConfig);
         }
 
         private void LoadSptDependencies()
         {
             _modHelper = DI.GetInstance().GetService<ModHelper>();
-            _configServer = DI.GetInstance().GetService<ConfigServer>();
-
-            _giftsConfig = _configServer.GetConfig<GiftsConfig>();
+            _giftsConfig = DI.GetInstance().GetService<GiftsConfig>();
         }
 
         [Test]

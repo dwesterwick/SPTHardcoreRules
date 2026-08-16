@@ -1,6 +1,6 @@
 ﻿using HardcoreRules.Helpers;
+using SPTarkov.Common.Models.Logging;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.Models.Utils;
 
 namespace HardcoreRules.Utils
 {

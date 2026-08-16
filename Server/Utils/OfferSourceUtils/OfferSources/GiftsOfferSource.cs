@@ -1,25 +1,20 @@
 ﻿using HardcoreRules.Utils.Internal;
 using HardcoreRules.Utils.OfferSourceUtils.OfferSources.Internal;
 using SPTarkov.Server.Core.Models.Spt.Config;
-using SPTarkov.Server.Core.Servers;
 
 namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
 {
     internal class GiftsOfferSource : AbstractOfferSource
     {
         private LoggingUtil _loggingUtil;
-        private ConfigServer _configServer;
-
         private GiftsConfig _giftsConfig;
 
         private ObjectCache<Dictionary<string, Gift>> _originalGifts = new();
 
-        public GiftsOfferSource(LoggingUtil loggingUtil, ConfigServer configServer) : base()
+        public GiftsOfferSource(LoggingUtil loggingUtil, GiftsConfig giftsConfig) : base()
         {
             _loggingUtil = loggingUtil;
-            _configServer = configServer;
-
-            _giftsConfig = _configServer.GetConfig<GiftsConfig>();
+            _giftsConfig = giftsConfig;
         }
 
         protected override void OnUpdateCache()

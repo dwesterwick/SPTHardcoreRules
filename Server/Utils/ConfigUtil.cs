@@ -1,7 +1,7 @@
 ﻿using HardcoreRules.Configuration;
 using HardcoreRules.Helpers;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Helpers.Server;
 using System.Reflection;
 
 namespace HardcoreRules.Utils

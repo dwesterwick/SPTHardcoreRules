@@ -2,12 +2,12 @@
 using HardcoreRules.Utils.OfferRequirementWrappers;
 using HardcoreRules.Utils.OfferRequirementWrappers.Internal;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Helpers.Items;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Eft.Ragfair;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace HardcoreRules.Utils.OfferSourceUtils
 {
@@ -16,7 +16,8 @@ namespace HardcoreRules.Utils.OfferSourceUtils
     {
         private LoggingUtil _loggingUtil;
         private ConfigUtil _configUtil;
-        private DatabaseService _databaseService;
+        private TradersTable _tradersTable;
+        private TemplateTable _templateTable;
         private ItemHelper _itemHelper;
 
         private HashSet<MongoId> _money_Ids;
@@ -56,13 +57,15 @@ namespace HardcoreRules.Utils.OfferSourceUtils
         (
             LoggingUtil loggingUtil,
             ConfigUtil configUtil,
-            DatabaseService databaseService,
+            TradersTable tradersTable,
+            TemplateTable templateTable,
             ItemHelper itemHelper
         )
         {
             _loggingUtil = loggingUtil;
             _configUtil = configUtil;
-            _databaseService = databaseService;
+            _tradersTable = tradersTable;
+            _templateTable = templateTable;
             _itemHelper = itemHelper;
 
             _money_Ids = Money.GetMoneyTpls();
@@ -70,16 +73,16 @@ namespace HardcoreRules.Utils.OfferSourceUtils
 
         private MongoId[] GetWhiteListedTraders()
         {
-            return _databaseService.GetTraders()
-                .Where(trader => _configUtil.CurrentConfig.Traders.WhitelistTraders.Contains(trader.Key))
+            return _tradersTable
+                .Where(trader => _configUtil.CurrentConfig.Traders.WhitelistTraders.ContainsMongoId(trader.Key))
                 .Select(trader => trader.Key)
                 .ToArray();
         }
 
         private MongoId[] GetWhiteListedItems()
         {
-            return _databaseService.GetTables().Templates.Items
-                .Where(item => _configUtil.CurrentConfig.Traders.WhitelistItems.Contains(item.Key))
+            return _templateTable.Items
+                .Where(item => _configUtil.CurrentConfig.Traders.WhitelistItems.ContainsMongoId(item.Key))
                 .Select(item => item.Key)
                 .ToArray();
         }
@@ -88,7 +91,7 @@ namespace HardcoreRules.Utils.OfferSourceUtils
 
         public TemplateItem? GetItemTemplate(MongoId mongoId)
         {
-            if (!_databaseService.GetTables().Templates.Items.TryGetValue(mongoId, out TemplateItem? template))
+            if (!_templateTable.Items.TryGetValue(mongoId, out TemplateItem? template))
             {
                 _loggingUtil.Error($"Could not retrieve template {mongoId}");
                 return null;

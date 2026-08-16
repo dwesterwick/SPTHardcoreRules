@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SPT.Reflection.Patching;
 using EFT.UI;
 using HardcoreRules.Models;
+using EFT;
 
 namespace HardcoreRules.Patches
 {
@@ -14,7 +15,7 @@ namespace HardcoreRules.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuControllerClass).GetMethod(nameof(MainMenuControllerClass.ShowScreen), BindingFlags.Public | BindingFlags.Instance);
+            return typeof(MainMenuShowOperation).GetMethod(nameof(MainMenuShowOperation.ShowScreen), BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPostfix]
