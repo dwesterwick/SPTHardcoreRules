@@ -17,10 +17,10 @@ namespace HardcoreRules.Patches
         }
 
         [PatchPrefix]
-        protected static bool PatchPrefix(HealthTreatmentServiceView __instance, ref bool ___bool_0)
+        protected static bool PatchPrefix(HealthTreatmentServiceView __instance, ref bool ____nothingToHeal)
         {
             __instance.RecalculateCost();
-            ___bool_0 = false;
+            ____nothingToHeal = false;
 
             return false;
         }

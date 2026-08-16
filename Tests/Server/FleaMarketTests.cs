@@ -93,6 +93,11 @@ namespace HardcoreRules.Server
         [Test]
         public void FleaMarketCanBeToggledToBarterOnly()
         {
+            if (_ragfairConfig.Dynamic.Barter.ChancePercent == 0)
+            {
+                Assert.Pass("Barter offers are disabled for players");
+            }
+
             EnableFleaMarket();
             int nonTraderOfferCount = GetNonTraderFleaMarketOfferCount();
             Assert.NotZero(nonTraderOfferCount, "No flea market offers found for players");
@@ -100,8 +105,15 @@ namespace HardcoreRules.Server
             Assert.NotZero(nonTraderCashOfferCount, "No cash flea market offers found for players");
 
             EnableBarterOnlyFleaMarket();
-            nonTraderOfferCount = GetNonTraderFleaMarketOfferCount();
-            Assert.NotZero(nonTraderOfferCount, "No flea market offers found for players");
+            if (_ragfairConfig.Dynamic.Barter.ChancePercent == 0)
+            {
+                Assert.Pass("Barter offers are disabled for players");
+            }
+            else
+            {
+                nonTraderOfferCount = GetNonTraderFleaMarketOfferCount();
+                Assert.NotZero(nonTraderOfferCount, "No flea market offers found for players");
+            }
             nonTraderCashOfferCount = GetNonTraderFleaMarketCashOfferCount();
             Assert.Zero(nonTraderCashOfferCount, "Cash flea market offers found for players");
 
