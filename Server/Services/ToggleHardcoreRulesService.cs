@@ -1,8 +1,10 @@
 ﻿using HardcoreRules.Services.Internal;
 using HardcoreRules.Utils;
+using HardcoreRules.Utils.Internal;
 using HardcoreRules.Utils.OfferSourceUtils;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
+using SPTarkov.Server.Core.Models.Spt.Config;
 
 namespace HardcoreRules.Services
 {
@@ -11,21 +13,27 @@ namespace HardcoreRules.Services
     {
         public static bool HardcoreRulesEnabled { get; private set; } = false;
 
+        private RagfairConfig _ragfairConfig;
+
         private TraderOffersUtil _traderOffersUtil;
         private GiftOffersUtil _giftOffersUtil;
         private FenceOffersUtil _fenceOffersUtil;
         private FleaMarketOffersUtil _fleaMarketOffersUtil;
 
+        private ObjectCache<double> _fleaMarketPlayerBarterOfferChance = new();
+
         public ToggleHardcoreRulesService
         (
             LoggingUtil logger,
             ConfigUtil config,
+            RagfairConfig ragfairConfig,
             TraderOffersUtil traderOffersUtil,
             GiftOffersUtil giftOffersUtil,
             FenceOffersUtil fenceOffersUtil,
             FleaMarketOffersUtil fleaMarketOffersUtil
         ) : base(logger, config)
         {
+            _ragfairConfig = ragfairConfig;
             _traderOffersUtil = traderOffersUtil;
             _giftOffersUtil = giftOffersUtil;
             _fenceOffersUtil = fenceOffersUtil;
@@ -34,7 +42,7 @@ namespace HardcoreRules.Services
 
         protected override void OnLoadIfModIsEnabled()
         {
-            
+            _fleaMarketPlayerBarterOfferChance.CacheValueAndThrowIfNull(_ragfairConfig.Dynamic.Barter.ChancePercent);
         }
 
         public void ToggleHardcoreRules(bool enableHardcoreRules)
@@ -67,6 +75,10 @@ namespace HardcoreRules.Services
             {
                 _fleaMarketOffersUtil.DisableFleaMarket();
             }
+            else
+            {
+                _ragfairConfig.Dynamic.Barter.ChancePercent = Config.CurrentConfig.Services.FleaMarket.BarterOfferChanceForPlayers;
+            }
 
             if (Config.CurrentConfig.Traders.DisableFence)
             {
@@ -79,7 +91,7 @@ namespace HardcoreRules.Services
             }
 
             _traderOffersUtil.RemoveBannedTraderOffers();
-
+            
             HardcoreRulesEnabled = true;
 
             _fenceOffersUtil.RefreshFenceOffers();
@@ -108,6 +120,7 @@ namespace HardcoreRules.Services
             }
 
             _traderOffersUtil.RestoreTraderOffers();
+            _ragfairConfig.Dynamic.Barter.ChancePercent = _fleaMarketPlayerBarterOfferChance.GetValueAndThrowIfNull();
 
             HardcoreRulesEnabled = false;
 

@@ -8,6 +8,7 @@
 	"services": {
 		"flea_market": {
 			"enabled": false,
+			"barter_offer_chance_for_players": 1,
 			"only_barter_offers": true
 		},
 		"disable_trader_repairs": true,

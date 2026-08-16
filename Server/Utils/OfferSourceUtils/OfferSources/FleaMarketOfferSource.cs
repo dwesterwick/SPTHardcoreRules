@@ -40,7 +40,7 @@ namespace HardcoreRules.Utils.OfferSourceUtils.OfferSources
         protected override void OnRestoreCache()
         {
             _ragfairConfig.Dynamic.OfferItemCount = _originalOfferItemCount.GetValueAndThrowIfNull();
-            _globalTable.Configuration.RagFair.MaxActiveOfferCount = _originalMaxActiveOfferCount.GetValueAndThrowIfNull();
+            _globalTable.Configuration.RagFair.MaxActiveOfferCount = _originalMaxActiveOfferCount.GetValueAndThrowIfNull();            
         }
 
         protected override void OnDisable()

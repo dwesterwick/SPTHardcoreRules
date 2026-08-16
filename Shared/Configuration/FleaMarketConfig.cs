@@ -8,6 +8,9 @@ namespace HardcoreRules.Configuration
         [DataMember(Name = "enabled", IsRequired = true)]
         public bool Enabled { get; set; }
 
+        [DataMember(Name = "barter_offer_chance_for_players")]
+        public double BarterOfferChanceForPlayers { get; set; } = 0;
+
         [DataMember(Name = "only_barter_offers", IsRequired = true)]
         public bool OnlyBarterOffers { get; set; }
 
